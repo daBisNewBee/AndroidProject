@@ -439,7 +439,18 @@ public class RoomTest {
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
+
+//            ad5cb69e9878d045749ca485f89c7617    2
+//            8647b8eae9a0d72afb5d2c94aaec8987     1
+
             System.out.println("RoomTest.MIGRATION_1_2");
+            /*
+
+            complex schema changes需要：（属性的更改）
+            For example, changing the id of the user from an int to a String takes several steps
+
+            参考：https://medium.com/google-developers/understanding-migrations-with-room-f01e04b07929
+
             // 1. 创建临时婊（根据原表的schema）
             database.execSQL("CREATE TABLE IF NOT EXISTS `per_tab_tmp` (`uid` INTEGER NOT NULL, `age` TEXT, `sex` TEXT, PRIMARY KEY(`uid`))");
             // 2. 备份老婊的数据到临时婊
@@ -448,6 +459,7 @@ public class RoomTest {
             database.execSQL("DROP TABLE per_tab");
             // 4. 重命名临时表 为 老表名称
             database.execSQL("ALTER TABLE per_tab_tmp RENAME TO per_tab");
+            */
             // 5. 新增列
             database.execSQL("alter table per_tab add column lang TEXT");
         }
