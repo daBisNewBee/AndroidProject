@@ -104,6 +104,10 @@ public class RoomTest {
      I/System.out( 6930): person1 = com.exa.sqlite.room.Person@14c1360d
      *
      *
+     * 参考：
+     *  https://stackoverflow.com/questions/50082785/room-database-migration-didnt-properly-handle-conversion
+     *
+     *
      * @throws Exception
      */
     @Test
