@@ -9,6 +9,8 @@ import android.support.test.InstrumentationRegistry;
 import com.exa.sqlite.room.AppDatabase;
 import com.exa.sqlite.room.Book;
 import com.exa.sqlite.room.BookDao;
+import com.exa.sqlite.room.Person;
+import com.exa.sqlite.room.PersonDao;
 import com.exa.sqlite.room.User;
 import com.exa.sqlite.room.UserDao;
 
@@ -17,6 +19,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -66,6 +69,67 @@ public class RoomTest {
     @After
     public void tearDown() throws Exception {
         db.close();
+    }
+
+    /**
+     *
+     * 升级DB的几个步骤：
+     *
+     * 1. 需求：
+     * 假设version 从 1 升级到 3；
+     * 在1 -》 2 时，新增 "lang" 的列
+     * 在2 -》 3 时，新增 "hobby" 的列
+     *
+     * 2. 定义：MIGRATION_1_2、MIGRATION_2_3（注意：对老数据的备份在此处进行）
+     *  （也可一次定义 MIGRATION_1_3）
+     *
+     * 3. 在"per_tab"表中新增列：lang、hobby
+     *
+     * 4. 更新"AppDatabase"的version 为 3
+     *
+     * 5. 升级。
+     *
+     *
+     I/System.out( 6747): MyApplication.onCreate ==========
+     I/System.out( 6747): version = 1
+     I/System.out( 6747): person1 = com.exa.sqlite.room.Person@1b6174f8
+     I/System.out( 6747): person1 = com.exa.sqlite.room.Person@9f28dd1
+     I/System.out( 6747): person1 = com.exa.sqlite.room.Person@4224036
+
+     I/System.out( 6930): RoomTest.MIGRATION_1_2
+     I/System.out( 6930): RoomTest.MIGRATION_2_3
+     I/System.out( 6930): version = 3
+     I/System.out( 6930): person1 = com.exa.sqlite.room.Person@11e9fb37
+     I/System.out( 6930): person1 = com.exa.sqlite.room.Person@eb4e8a4
+     I/System.out( 6930): person1 = com.exa.sqlite.room.Person@14c1360d
+     *
+     *
+     * @throws Exception
+     */
+    @Test
+    public void upgradeTest() throws Exception {
+
+        int version = db.getOpenHelper().getWritableDatabase().getVersion();
+        System.out.println("version = " + version);
+
+        Person person = new Person(1,"28","male");
+        Person person2 = new Person(2,"29","female");
+        Person person3 = new Person(3,"30","female");
+
+        List<Person> personList = new ArrayList<>();
+        personList.add(person);
+        personList.add(person2);
+        personList.add(person3);
+
+        PersonDao personDao = db.personDao();
+        personDao.insertAll(personList);
+
+        personList.clear();
+        personList = personDao.getAll();
+        for (Person person1 : personList) {
+            System.out.println("person1 = " + person1);
+        }
+
     }
 
     /**
@@ -371,17 +435,32 @@ public class RoomTest {
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
-//            database.execSQL("CREATE TABLE `Fruit` (`id` INTEGER, "
-//                    + "`name` TEXT, PRIMARY KEY(`id`))");
+            System.out.println("RoomTest.MIGRATION_1_2");
+            // 1. 创建临时婊（根据原表的schema）
+            database.execSQL("CREATE TABLE IF NOT EXISTS `per_tab_tmp` (`uid` INTEGER NOT NULL, `age` TEXT, `sex` TEXT, PRIMARY KEY(`uid`))");
+            // 2. 备份老婊的数据到临时婊
+            database.execSQL("INSERT INTO per_tab_tmp SELECT * FROM per_tab");
+            // 3. 删除老婊
+            database.execSQL("DROP TABLE per_tab");
+            // 4. 重命名临时表 为 老表名称
+            database.execSQL("ALTER TABLE per_tab_tmp RENAME TO per_tab");
+            // 5. 新增列
+            database.execSQL("alter table per_tab add column lang TEXT");
         }
     };
 
     static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
-//            database.execSQL("ALTER TABLE Book "
-//                    + " ADD COLUMN pub_year INTEGER");
+            System.out.println("RoomTest.MIGRATION_2_3");
+            database.execSQL("CREATE TABLE IF NOT EXISTS `per_tab_tmp` (`uid` INTEGER NOT NULL, `age` TEXT, `sex` TEXT, `lang` TEXT, PRIMARY KEY(`uid`))");
+            database.execSQL("INSERT INTO per_tab_tmp SELECT * FROM per_tab");
+            database.execSQL("DROP TABLE per_tab");
+            database.execSQL("ALTER TABLE per_tab_tmp RENAME TO per_tab");
+
+            database.execSQL("alter table per_tab add column hobby TEXT");
         }
     };
+
 }
 

@@ -8,7 +8,7 @@ import android.arch.persistence.room.TypeConverters;
  * Created by user on 2018/7/28.
  */
 
-@Database(entities = {User.class, Book.class}, version = 3)
+@Database(entities = {User.class, Book.class, Person.class}, version = 1)
 @TypeConverters(Converters.class)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -16,5 +16,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
 
     public abstract BookDao bookDao();
+
+    public abstract PersonDao personDao();
 
 }
