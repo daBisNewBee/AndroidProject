@@ -20,7 +20,7 @@ public class Book {
 
     private String title;
 
-    @ColumnInfo(name = "user_id")
+    @ColumnInfo(name = "user_id", index = true)
     private int userId;
 
     public Book(int bookId, String title, int userId) {
