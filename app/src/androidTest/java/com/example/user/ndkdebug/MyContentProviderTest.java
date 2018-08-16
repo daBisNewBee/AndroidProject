@@ -103,6 +103,17 @@ public class MyContentProviderTest {
         }
     }
 
+    /**
+     *
+     插入1000 条数据:
+     通过ContentProvider 跨进程插入：
+     E/ExampleInstrumentedTest(14911): SPHelper takes 13257millis
+
+     直接SP插入：
+     E/ExampleInstrumentedTest(14911): SharedPreferences takes 6086millis
+     *
+     * @throws Exception
+     */
     @Test
     public void INSERT() throws Exception {
         ContentValues values = new ContentValues();
