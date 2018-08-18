@@ -38,6 +38,8 @@ android {
 
 dependencies {
 
+    implementation project(':plugin-library')
+
     /*
     *
     * Java反射库:

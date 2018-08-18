@@ -1,14 +1,24 @@
 package com.example.user.ndkdebug;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.os.Environment;
 import android.support.test.InstrumentationRegistry;
+
+import com.exa.plugin.lib.Callback;
+import com.exa.plugin.lib.IBean;
+import com.exa.plugin.lib.IDynamic;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 
 import dalvik.system.DexClassLoader;
@@ -40,6 +50,11 @@ import dalvik.system.PathClassLoader;
 public class dexClzLoaderTest {
 
     private final String SHOWSTRING_FULL_NAME = "com.exa.dexClassLoader.ShowString";
+
+    private final String BEAN_CLASS_FULL_NAME = "com.exa.plugin.Bean";
+
+    private final String DYNAMIC_CLASS_FULL_NAME = "com.exa.plugin.Dynamic";
+
     private Context context = null;
 
     @Before
@@ -76,11 +91,18 @@ public class dexClzLoaderTest {
         }
     }
 
+    /**
+     *
+     * 加载插件中的类！
+     *
+     * @throws Exception
+     */
     @Test
     public void Dex_Test() throws Exception {
 
         // dex压缩文件的路径（可以是apk,jar,zip格式）
-        String dexPath = "/sdcard/ShowString.dex";
+        String dexPath = "/sdcard/plugin-debug.apk";
+//        String dexPath = "/sdcard/ShowString.dex";
 
         // dex解压释放后的目录
         String dexOutputDirs = Environment.getExternalStorageDirectory().toString();
@@ -116,5 +138,104 @@ public class dexClzLoaderTest {
         String ret = (String)method.invoke(object);
         System.out.println("ret = " + ret);
 
+        /*
+        * 通过面向"接口"（抽象）编程调用插件的代码
+        *
+        * 反射调用插件的代码可读性差！
+        *
+        * */
+        Class<?> beanClass = dexClassLoader.loadClass(BEAN_CLASS_FULL_NAME);
+        IBean iBean = (IBean)beanClass.newInstance();
+        iBean.setName("Alice");
+        System.out.println("bean getName = " + iBean.getName());
+
+
+        /*
+        *
+        * 通过面向"切面"编程调用插件中的带回调方法
+        *
+        * */
+        Class<?> dynamicClass = dexClassLoader.loadClass(DYNAMIC_CLASS_FULL_NAME);
+        IDynamic iDynamic = (IDynamic)dynamicClass.newInstance();
+        iDynamic.methodWithCallback(new Callback() {
+            @Override
+            public void update(IBean bean) {
+                System.out.println("bean = " + bean.getName());
+            }
+        });
+
+    }
+
+    /**
+     *
+     * Android如何加载插件APK里面的资源 ？
+     *
+     * 宿主访问插件中的资源文件，包括assets、res下的各类资源。
+     *
+     * 注意：
+     *  这里的"AssetManager"其实对应了"插件apk中的所有资源"，并不只是assets目录下的！
+     *  是按照 "dexPath"加载的。
+     *
+     *  原理：
+     *  1. 获取资源文件必须要获得Resource对象
+     *
+     *  2. 获取插件的资源文件，必须获得插件的Resource对象
+     *
+     *  3. 插件apk构造出插件对应的AssetManager对象，并作为参数构造插件对应的Resource对象
+     *
+     * @throws Exception
+     */
+    @Test
+    public void loadPluginResources_Test() throws Exception {
+        String dexPath = "/sdcard/plugin-debug.apk";
+
+        PackageManager pm = context.getPackageManager();
+        PackageInfo packageInfo = pm.getPackageArchiveInfo(dexPath, PackageManager.GET_ACTIVITIES);
+        System.out.println(dexPath+" " +
+                "packageInfo = " + packageInfo.packageName);
+
+        AssetManager assetManager = AssetManager.class.newInstance();
+
+        System.out.println("before addAssetPath ------> ");
+        String[] assetFiles = assetManager.list("");
+        for (String assetFile : assetFiles) {
+            System.out.println("assetFile = " + assetFile);
+        }
+
+        Method addAssetPath = assetManager.getClass().getMethod("addAssetPath", String.class);
+
+        addAssetPath.invoke(assetManager, dexPath);
+
+        System.out.println("\nafter addAssetPath ------> ");
+        assetFiles = assetManager.list("");
+        for (String assetFile : assetFiles) {
+            System.out.println("assetFile = " + assetFile);
+        }
+
+        InputStream is = assetManager.open("plugin.ini");
+        byte[] tmpArray = new byte[is.available()];
+        is.read(tmpArray);
+        System.out.println("Read plugin.ini ---->\n"+new String(tmpArray));
+
+        Resources superRes = context.getResources();
+
+        Resources pluginRes = new Resources(assetManager
+                , superRes.getDisplayMetrics(), superRes.getConfiguration());
+
+        /*
+        *  注意与插件资源中的名称对应：
+        *
+        *  <string name="app_name_plugin">this is plugin string</string>
+        *
+        *  最后一个参数是插件的包名！
+        * */
+        int resId = pluginRes.getIdentifier("app_name_plugin","string","com.exa.plugin");
+        String value = pluginRes.getString(resId);
+        System.out.println("value = " + value);
+
+        // 宿主apk中的资源还必须使用原来的 superRes对象！
+        resId = superRes.getIdentifier("app_name","string","com.exa");
+        value = superRes.getString(resId);
+        System.out.println("value = " + value);
     }
 }
