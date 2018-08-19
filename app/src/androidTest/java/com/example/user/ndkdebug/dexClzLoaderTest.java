@@ -5,9 +5,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.test.InstrumentationRegistry;
 
+import com.exa.plugin.PluginUtil;
 import com.exa.plugin.lib.Callback;
 import com.exa.plugin.lib.IBean;
 import com.exa.plugin.lib.IDynamic;
@@ -19,6 +21,7 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import dalvik.system.DexClassLoader;
@@ -164,6 +167,26 @@ public class dexClzLoaderTest {
             }
         });
 
+        /*
+        *
+        * 切换皮肤: 加载插件APK中的 drawable/splash.jpg
+        *
+        * */
+        Class<?> RClz = dexClassLoader.loadClass("com.exa.plugin.R$drawable");
+        Field splashField = RClz.getDeclaredField("splash");
+        int splash_id = (int)splashField.get(RClz);
+
+        System.out.println("splash_id = " + splash_id);
+
+        Resources newRes = PluginUtil.createResources(dexPath, context);
+        Assert.assertNotNull(newRes);
+        Drawable Spashdrawable = newRes.getDrawable(splash_id);
+        System.out.println("Spashdrawable = " + Spashdrawable);
+
+        int spash_id_ex = newRes.getIdentifier("splas" +
+                "h","drawable","com.exa.plugin");
+        System.out.println("spash_id_ex = " + spash_id_ex);
+        Assert.assertEquals(splash_id, spash_id_ex);
     }
 
     /**

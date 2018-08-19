@@ -14,6 +14,10 @@ import android.app.Activity;
  * 4. hook点1：ActivityManagerNative 中的 "IActivityManagerSingleton"
  * 5. hook点2：ActivityThread 中的 "mH"
  *
+ *
+ * 参考：
+ *  https://www.jianshu.com/p/69bfbda302df
+ *
  * Created by user on 2018/8/18.
  */
 
