@@ -21,9 +21,12 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
+import dalvik.system.BaseDexClassLoader;
 import dalvik.system.DexClassLoader;
 import dalvik.system.PathClassLoader;
 
@@ -52,7 +55,7 @@ import dalvik.system.PathClassLoader;
 
 public class dexClzLoaderTest {
 
-    private final String SHOWSTRING_FULL_NAME = "com.exa.plugin.dexClassLoader.ShowString";
+    private final String SHOWSTRING_FULL_NAME = "com.exa.plugin.ShowString";
 
     private final String BEAN_CLASS_FULL_NAME = "com.exa.plugin.Bean";
 
@@ -60,9 +63,124 @@ public class dexClzLoaderTest {
 
     private Context context = null;
 
+    private String dexPath = null;
+
     @Before
     public void setUp() throws Exception {
         context = InstrumentationRegistry.getTargetContext();
+        // dex压缩文件的路径（可以是apk,jar,zip格式）
+        dexPath = "/sdcard/plugin-debug.apk";
+//        String dexPath = "/sdcard/ShowString.dex";
+    }
+
+    /**
+     *
+     * 插件加载机制方案一："合并dexElements数组"
+     * 思想：
+     *  合并系统默认加载器PathClassLoader和动态加载器DexClassLoader中的dexElements数组
+     * 缺点：
+     *  插件与宿主之间使用的类库有冲突，就会崩溃
+     * 比如：
+     *  Small
+     *
+     * public class BaseDexClassLoader extends ClassLoader {
+     *
+     *     private final DexPathList pathList;
+     *
+     *     protected Class<?> findClass(String name) throws ClassNotFoundException {
+     *          ...
+     *         Class c = pathList.findClass(name, suppressedExceptions);
+     *          ...
+     *     }
+     * }
+     *
+     * final class DexPathList {
+     *
+     *     private Element[] dexElements;
+     * }
+     *
+     * 插件加载机制方案二："替换LoadedApk中的mClassLoader"
+     * 缺点：
+     *  Hook过程复杂外，每一个版本的apk解析都有差别
+     * 比如：
+     *  DroidPlugin
+     *
+     * 参考：
+     *  https://www.jianshu.com/p/c58804962f73
+     *
+     * @throws Exception
+     */
+    @Test
+    public void Merge_Dex_Test() throws Exception {
+        // 1. 获取宿主的 pathList
+        PathClassLoader pathClassLoader = (PathClassLoader)context.getClassLoader();
+        Field pathListField = BaseDexClassLoader.class.getDeclaredField("pathList");
+        pathListField.setAccessible(true);
+        Object hostPathList = pathListField.get(pathClassLoader);
+        System.out.println("hostPathList = " + hostPathList);
+        /*
+        *
+        * hostPathList = DexPathList[[
+        * zip file "/system/framework/android.test.runner.jar",
+        * zip file "/data/app/com.exa.test-2/base.apk",
+        * zip file "/data/app/com.exa-1/base.apk"],
+        * nativeLibraryDirectories=[/data/app/com.exa-1/lib/x86_64, /vendor/lib64, /system/lib64]]
+        * */
+        // 2. 获取宿主的 dexElements
+        Field dexElementsField = hostPathList.getClass().getDeclaredField("dexElements");
+        dexElementsField.setAccessible(true);
+        Object hostDexElements = dexElementsField.get(hostPathList);
+        System.out.println("hostDexElements = " + hostDexElements);
+        // 打印出来就是上述三个 "zip file"
+
+        //指定dexoutputpath为APP自己的缓存目录
+        File dexOutputDir = context.getDir("dex",0);
+
+        DexClassLoader dexClassLoader = new DexClassLoader(dexPath
+//                , dexOutputDirs
+                , dexOutputDir.getAbsolutePath()
+                ,null
+                , context.getClassLoader());
+        // 3. 获取插件的 pathList
+        Object dexPathList = pathListField.get(dexClassLoader);
+        System.out.println("dexPathList = " + dexPathList);
+        /*
+        * dexPathList = DexPathList[[
+        * zip file "/sdcard/plugin-debug.apk"],
+        * nativeLibraryDirectories=[/vendor/lib64, /system/lib64]]
+        * */
+
+        // 4. 获取插件的 dexElements
+        Object dexDexElements = dexElementsField.get(dexPathList);
+        System.out.println("dexDexElements = " + dexDexElements);
+
+        // 5. 反射合并 宿主 与 插件 的dexElements，生成"combinEleArrayObj"
+        Class<?> elemClz = hostDexElements.getClass().getComponentType();
+        int hostEleLen = Array.getLength(hostDexElements);
+        int dexEleLen = Array.getLength(dexDexElements);
+
+        Object combinEleArrayObj = Array.newInstance(elemClz, hostEleLen + dexEleLen);
+        System.arraycopy(hostDexElements, 0, combinEleArrayObj, 0, hostEleLen);
+        System.arraycopy(dexDexElements, 0, combinEleArrayObj, hostEleLen, dexEleLen);
+        System.out.println("combinEleArrayObj = " + combinEleArrayObj);
+        // 此时已包括了上述4个 zipfile！
+
+        /*
+        * 关键一步！！！
+        * 6. 将合并后的 dexElements 设置到宿主的pathLlist对象
+        * 这样 宿主的pathList 就包括了插件的DexElement：
+        * zip file "/sdcard/plugin-debug.apk"],
+        * */
+        dexElementsField.set(hostPathList, combinEleArrayObj);
+
+        // 7. 此时可以从主 pathClassLoader 加载 插件中的类
+        Class<?> showStringClz = pathClassLoader.loadClass(SHOWSTRING_FULL_NAME);
+        Assert.assertNotNull(showStringClz);
+        Object object = showStringClz.newInstance();
+        Method method = showStringClz.getDeclaredMethod("sayHello");
+        Assert.assertNotNull(method);
+        String ret = (String)method.invoke(object);
+        System.out.println("ret = " + ret);
     }
 
     /**
@@ -103,10 +221,6 @@ public class dexClzLoaderTest {
     @Test
     public void Dex_Test() throws Exception {
 
-        // dex压缩文件的路径（可以是apk,jar,zip格式）
-        String dexPath = "/sdcard/plugin-debug.apk";
-//        String dexPath = "/sdcard/ShowString.dex";
-
         // dex解压释放后的目录
         String dexOutputDirs = Environment.getExternalStorageDirectory().toString();
 
@@ -135,8 +249,7 @@ public class dexClzLoaderTest {
         Class<?> showStringClz = dexClassLoader.loadClass(SHOWSTRING_FULL_NAME);
         Assert.assertNotNull(showStringClz);
         Object object = showStringClz.newInstance();
-        Method method = showStringClz.getDeclaredMethod("sayHello",
-                null);
+        Method method = showStringClz.getDeclaredMethod("sayHello");
         Assert.assertNotNull(method);
         String ret = (String)method.invoke(object);
         System.out.println("ret = " + ret);
