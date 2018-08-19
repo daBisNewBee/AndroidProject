@@ -1,4 +1,4 @@
-package com.exa.dexClassLoader;
+package com.exa.plugin.dexClassLoader;
 
 /**
  *

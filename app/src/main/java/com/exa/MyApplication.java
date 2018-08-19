@@ -3,6 +3,8 @@ package com.exa;
 import android.app.Application;
 import android.content.Context;
 
+import com.exa.cusview.MyViewActivity;
+import com.exa.plugin.HookUtil;
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
@@ -36,6 +38,16 @@ public class MyApplication extends Application {
                 .build();
 
         System.out.println("MyApplication.onCreate ========== ");
+
+        HookUtil hookUtil = new HookUtil(
+                this);
+        try {
+            hookUtil.hookSystemHandler();
+            hookUtil.hookAms();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("e = " + e);
+        }
     }
 
 }

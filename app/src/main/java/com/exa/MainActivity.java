@@ -19,6 +19,7 @@ import com.exa.mode.BaseActivity;
 import com.exa.mode.SignleTopActivity;
 import com.exa.mode.SingleTaskActivity;
 import com.exa.mode.StandardActivity;
+import com.exa.plugin.TargetActivity;
 
 /**
  *
@@ -116,6 +117,7 @@ public class MainActivity extends BaseActivity
         findViewById(R.id.btn_main_singleTop).setOnClickListener(this);
         findViewById(R.id.btn_main_stand).setOnClickListener(this);
         findViewById(R.id.btn_myView).setOnClickListener(this);
+        findViewById(R.id.btn_target_no_register).setOnClickListener(this);
 
         // Example of a call to a native method
         TextView tv = (TextView) findViewById(R.id.sample_text);
@@ -153,6 +155,9 @@ public class MainActivity extends BaseActivity
                 break;
             case R.id.btn_myView:
                 intent = new Intent(this, MyViewActivity.class);
+                break;
+            case R.id.btn_target_no_register:
+                intent = new Intent(this, TargetActivity.class);
                 break;
             default:
                 break;

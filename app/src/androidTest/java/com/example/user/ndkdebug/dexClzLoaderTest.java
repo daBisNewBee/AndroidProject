@@ -49,7 +49,7 @@ import dalvik.system.PathClassLoader;
 
 public class dexClzLoaderTest {
 
-    private final String SHOWSTRING_FULL_NAME = "com.exa.dexClassLoader.ShowString";
+    private final String SHOWSTRING_FULL_NAME = "com.exa.plugin.dexClassLoader.ShowString";
 
     private final String BEAN_CLASS_FULL_NAME = "com.exa.plugin.Bean";
 
