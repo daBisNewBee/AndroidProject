@@ -39,14 +39,20 @@ public class MyApplication extends Application {
 
         System.out.println("MyApplication.onCreate ========== ");
 
-        HookUtil hookUtil = new HookUtil(
-                this);
-        try {
-            hookUtil.hookSystemHandler();
-            hookUtil.hookAms();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("e = " + e);
+        /*
+        * 使用RePlugin时，此时作为插件apk，需要关闭hook
+        * */
+        boolean isHookActivity = false;
+        if (isHookActivity) {
+            HookUtil hookUtil = new HookUtil(
+                    this);
+            try {
+                hookUtil.hookSystemHandler();
+                hookUtil.hookAms();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("e = " + e);
+            }
         }
     }
 

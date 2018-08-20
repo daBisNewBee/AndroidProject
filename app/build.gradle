@@ -35,10 +35,18 @@ android {
         }
     }
 }
+/*
+*
+* 此时app作为插件，module "plugin"作为宿主。app包括JNI，为了验证宿主对插件的调用情况。
+*
+* */
+apply plugin: 'replugin-plugin-gradle'
 
 dependencies {
 
-    implementation project(':plugin-library')
+    compile 'com.qihoo360.replugin:replugin-plugin-lib:2.2.4'
+
+//    implementation project(':plugin-library')
 
     /*
     *
