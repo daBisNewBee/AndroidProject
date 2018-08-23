@@ -3,6 +3,7 @@ package com.exa;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.AssetManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -20,6 +21,9 @@ import com.exa.mode.SignleTopActivity;
 import com.exa.mode.SingleTaskActivity;
 import com.exa.mode.StandardActivity;
 import com.exa.plugin.TargetActivity;
+import com.qihoo360.replugin.RePlugin;
+
+import java.io.IOException;
 
 /**
  *
@@ -123,6 +127,44 @@ public class MainActivity extends BaseActivity
         TextView tv = (TextView) findViewById(R.id.sample_text);
         tv.setText(stringFromJNI());
 //        startAndBindService();
+    }
+
+    /*
+    *
+    * 解决：
+    * 插件SDK初始化依赖"host Context"（资源、so库等路径释放到宿主自定义目录，
+    * 使用插件Context会找不到相关目录），但是插件assets下的文件释放，仍需要
+    * 插件上下文，且要以前释放。
+    *
+    * */
+    private void releaseAssetsToHostAssets() throws IOException {
+        ClassLoader curClassLoader = this.getClassLoader();
+        System.out.println("curClassLoader = " + curClassLoader);
+        // curClassLoader = com.qihoo360.replugin.PluginDexClassLoader
+        // [DexPathList[[zip file "/data/user/0/com.exa.plugin/app_p_a/2104690500.jar"],
+        // nativeLibraryDirectories=[/data/data/com.exa.plugin/app_p_n/2104690500,
+        // /vendor/lib64, /system/lib64]]]
+        AssetManager curAssMang = this.getAssets();
+        String[] files = curAssMang.list("");
+        for (String file : files) {
+            System.out.println("file = " + file);
+            // file = SKFConfig.ini
+        }
+
+        String hostDataDir = RePlugin.getHostContext().getApplicationInfo().dataDir;
+        System.out.println("hostDataDir = " + hostDataDir);
+        // hostDataDir = /data/data/com.exa.plugin
+
+        ClassLoader hostClasLoader = RePlugin.getHostClassLoader();
+        System.out.println("hostClasLoader = " + hostClasLoader);
+        // hostClasLoader = dalvik.system.PathClassLoader
+        // [DexPathList[[zip file "/data/app/com.exa.plugin-1/base.apk"],
+        // nativeLibraryDirectories=[/vendor/lib64, /system/lib64]]]
+        AssetManager hostAssetManager = RePlugin.getHostContext().getAssets();
+        files = hostAssetManager.list("");
+        for (String file : files) {
+            System.out.println("file = " + file);
+        }
     }
 
     private void startAndBindService() {
