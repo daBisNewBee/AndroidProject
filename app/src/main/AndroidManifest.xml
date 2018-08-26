@@ -26,6 +26,13 @@
             android:process=":remote" />
         >
 
+        <service
+            android:name=".binder.IPCServer"
+            android:process=":ipc" />
+        >
+
+        <activity android:name=".binder.BinderActivity"></activity>
+
         <!--
         standard:
             每启动一个Activity就会在栈顶创建一个新的实例

@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.AssetManager;
+import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.exa.binder.BinderActivity;
 import com.exa.cusview.MyViewActivity;
 import com.exa.messenger.RemoteService;
 import com.exa.mode.BaseActivity;
@@ -21,7 +23,6 @@ import com.exa.mode.SignleTopActivity;
 import com.exa.mode.SingleTaskActivity;
 import com.exa.mode.StandardActivity;
 import com.exa.plugin.TargetActivity;
-import com.qihoo360.replugin.RePlugin;
 
 import java.io.IOException;
 
@@ -122,6 +123,7 @@ public class MainActivity extends BaseActivity
         findViewById(R.id.btn_main_stand).setOnClickListener(this);
         findViewById(R.id.btn_myView).setOnClickListener(this);
         findViewById(R.id.btn_target_no_register).setOnClickListener(this);
+        findViewById(R.id.btn_binder).setOnClickListener(this);
 
         // Example of a call to a native method
         TextView tv = (TextView) findViewById(R.id.sample_text);
@@ -137,6 +139,7 @@ public class MainActivity extends BaseActivity
     * 插件上下文，且要以前释放。
     *
     * */
+    /*
     private void releaseAssetsToHostAssets() throws IOException {
         ClassLoader curClassLoader = this.getClassLoader();
         System.out.println("curClassLoader = " + curClassLoader);
@@ -166,6 +169,7 @@ public class MainActivity extends BaseActivity
             System.out.println("file = " + file);
         }
     }
+    */
 
     private void startAndBindService() {
         Intent service = new Intent(this,RemoteService.class);
@@ -200,6 +204,9 @@ public class MainActivity extends BaseActivity
                 break;
             case R.id.btn_target_no_register:
                 intent = new Intent(this, TargetActivity.class);
+                break;
+            case R.id.btn_binder:
+                intent = new Intent(this, BinderActivity.class);
                 break;
             default:
                 break;
