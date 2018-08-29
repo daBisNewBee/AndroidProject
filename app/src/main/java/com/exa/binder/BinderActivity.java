@@ -85,7 +85,14 @@ public class BinderActivity extends Activity {
                 .getDeclaredMethod("getService",String.class);
 
         String[] services = (String[])listServicesMethod.invoke(null);
+        /*
+        userdeMacBook-Pro:Downloads user$ adb shell dumpsys -l|wc -l
+        121
+        *
+        * services size = 121
+        * */
         System.out.println("services size = " + services.length);
+        //
         for (String service : services) {
 //            System.out.println("\n" + "service = " + service);
             IBinder iBinder = (IBinder)getServiceMethod.invoke(null, service);
