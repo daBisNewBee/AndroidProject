@@ -49,7 +49,7 @@ dependencies {
     // 关闭，编译速度慢
 //    compile 'com.qihoo360.replugin:replugin-plugin-lib:2.2.4'
 
-//    implementation project(':plugin-library')
+    implementation project(':plugin-library')
 
     /*
     *
