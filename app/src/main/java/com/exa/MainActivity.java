@@ -206,7 +206,8 @@ public class MainActivity extends BaseActivity
                 intent = new Intent(this, TargetActivity.class);
                 break;
             case R.id.btn_binder:
-                intent = new Intent(this, BinderActivity.class);
+                intent = new Intent(this, ConstrainActivity.class);
+//                intent = new Intent(this, BinderActivity.class);
                 break;
             default:
                 break;
