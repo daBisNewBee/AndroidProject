@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.exa.binder.BinderActivity;
 import com.exa.cusview.MyViewActivity;
+import com.exa.eventbus.EventBusActivity;
 import com.exa.messenger.RemoteService;
 import com.exa.mode.BaseActivity;
 import com.exa.mode.SignleTopActivity;
@@ -124,10 +125,11 @@ public class MainActivity extends BaseActivity
         findViewById(R.id.btn_myView).setOnClickListener(this);
         findViewById(R.id.btn_target_no_register).setOnClickListener(this);
         findViewById(R.id.btn_binder).setOnClickListener(this);
+        findViewById(R.id.btnConStrain).setOnClickListener(this);
+        findViewById(R.id.btnEventBus).setOnClickListener(this);
 
         // Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
+        stringFromJNI();
 //        startAndBindService();
     }
 
@@ -206,8 +208,13 @@ public class MainActivity extends BaseActivity
                 intent = new Intent(this, TargetActivity.class);
                 break;
             case R.id.btn_binder:
+                intent = new Intent(this, BinderActivity.class);
+                break;
+            case R.id.btnConStrain:
                 intent = new Intent(this, ConstrainActivity.class);
-//                intent = new Intent(this, BinderActivity.class);
+                break;
+            case R.id.btnEventBus:
+                intent = new Intent(this, EventBusActivity.class);
                 break;
             default:
                 break;

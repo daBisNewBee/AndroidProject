@@ -8,6 +8,9 @@ import android.os.Bundle;
  * Android新特性介绍，ConstraintLayout完全解析：
  * https://blog.csdn.net/guolin_blog/article/details/53122387
  *
+ * 解析ConstraintLayout的性能优势：
+ * https://mp.weixin.qq.com/s/gGR2itbY7hh9fo61SxaMQQ
+ *
  * A. 基本操作：
  *
  * 添加约束：

@@ -69,12 +69,12 @@
         <provider
             android:name=".contProd.MyContentProvider"
             android:authorities="com.exa.MyContentProvider"
-            android:permission="MyContentProvider.READ_WRITE"></provider>
+            android:permission="MyContentProvider.READ_WRITE" />
 
         <!-- 预注册Activity，利用假的Activity来“运行”真的TargetActivity。 -->
         <activity android:name=".plugin.ProxyActivity" />
-        <activity android:name=".ConstrainActivity">
-        </activity>
+        <activity android:name=".ConstrainActivity"></activity>
+        <activity android:name=".eventbus.EventBusActivity"></activity>
     </application>
 
 </manifest>

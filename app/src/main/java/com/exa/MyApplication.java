@@ -37,7 +37,7 @@ public class MyApplication extends Application {
                 .addNetworkInterceptor(new StethoInterceptor())
                 .build();
 
-        System.out.println("MyApplication.onCreate ========== ");
+//        System.out.println("MyApplication.onCreate ========== ");
 
         /*
         * 使用RePlugin时，此时作为插件apk，需要关闭hook
