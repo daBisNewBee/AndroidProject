@@ -92,8 +92,14 @@ public class CachePoolTest {
 
     /**
      *
-     * 使用缓存池的好处：避免对象的创建和销毁。
+     * 使用缓存池的好处：
+     *      避免对象的创建和销毁，避免引发内存抖动
+     *
      * 比如，此处循环获取5次对象，但实际只调用了一次Girl的"构造函数"
+     *
+     * 场景：
+     *      需要高频临时对象的场合。
+     *      比如：FindState、PendingPost
      *
      * @throws Exception
      */
