@@ -19,9 +19,9 @@ android {
         }
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = ["room.schemaLocation":
-                                     "$projectDir/schemas".toString(),
-                             eventBusIndex : 'com.exa.eventbus.MyEventBusIndex']
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString(),
+                                eventBusIndex : 'com.exa.eventbus.MyEventBusIndex',
+                                mykey:'myvalue']
                 //生成索引的名称
             }
         }
@@ -47,6 +47,25 @@ android {
 //apply plugin: 'replugin-plugin-gradle'
 
 dependencies {
+
+    // 这个是自定义的注解处理器。采集"PrintMe"注解的方法信息
+    /*
+    *
+    * 注解处理器：
+    * 为编译时处理注解提供了可能，而不是运行时通过反射机制处理的注解！
+    *
+    * 是什么？
+    * 是javac的一个工具，它用来在编译时扫描和处理注解（Annotation）
+    * 你可以对自定义注解，并注册相应的注解处理器
+    *
+    * 输入：
+    * 以Java代码（或者编译过的字节码）作为输入
+    *
+    * 输出：
+    * 生成文件（通常是.java文件）
+    *
+    * */
+    annotationProcessor project(':processor')
 
     compile 'org.greenrobot:eventbus:3.1.1'
 

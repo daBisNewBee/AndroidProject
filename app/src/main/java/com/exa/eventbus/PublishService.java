@@ -29,4 +29,10 @@ public class PublishService extends Service {
 
     }
 
+    @PrintMe
+    public void start(String ip, int port){}
+
+    @PrintMe
+    public int stop(){return 0;}
+
 }
