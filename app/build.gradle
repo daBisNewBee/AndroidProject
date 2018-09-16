@@ -48,9 +48,10 @@ android {
 
 dependencies {
 
-    // 这个是自定义的注解处理器。采集"PrintMe"注解的方法信息
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
     /*
-    *
     * 注解处理器：
     * 为编译时处理注解提供了可能，而不是运行时通过反射机制处理的注解！
     *
@@ -63,6 +64,8 @@ dependencies {
     *
     * 输出：
     * 生成文件（通常是.java文件）
+    *
+    * 这个是自定义的注解处理器。采集"PrintMe"注解的方法信息
     *
     * */
     annotationProcessor project(':processor')

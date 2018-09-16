@@ -11,23 +11,26 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class EventBusActivity extends AppCompatActivity {
 
-    private TextView tvShowMsg;
+    @BindView(R.id.tvEventShow)
+    TextView tvShowMsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_bus);
-        tvShowMsg = findViewById(R.id.tvEventShow);
-        findViewById(R.id.btnUpdate).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                    EventBus.getDefault().post(new MessageEvent("来自于EventBus的消息！"));
-                    EventBus.getDefault().post(new EventBean("使用EventBean传递的消息！")
-                );
-            }
-        });
+        ButterKnife.bind(this);
+    }
+
+    @OnClick(R.id.btnUpdate)
+    void submit(){
+        EventBus.getDefault().post(new MessageEvent("来自于EventBus的消息！"));
+        EventBus.getDefault().post(new EventBean("使用EventBean传递的消息！"));
     }
 
     @Override
@@ -44,9 +47,7 @@ public class EventBusActivity extends AppCompatActivity {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.POSTING
-
-    )
+    @Subscribe(threadMode = ThreadMode.POSTING)
 //    @Subscribe(threadMode = ThreadMode.MAIN)
     public void Event(EventBean bean){
         System.out.println("EventBusActivity.EventBean ---->" + bean);

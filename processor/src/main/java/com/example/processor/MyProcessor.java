@@ -48,7 +48,7 @@ import javax.tools.Diagnostic;
  * Created by user on 2018/9/16.
  */
 
-// 指定支持的注解类型
+// 指定当前的处理器是注册给哪些注解的
 @SupportedAnnotationTypes({"com.exa.eventbus.PrintMe"})
 @SupportedOptions({"mykey","mykey2"})// "getSupportedOptions"引用
 public class MyProcessor extends AbstractProcessor {
