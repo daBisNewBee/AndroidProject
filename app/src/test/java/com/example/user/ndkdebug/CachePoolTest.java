@@ -6,6 +6,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ *
+ * 对象池
+ *
+ * 原理：
+ * 1. 初始化一个固定大小池子
+ * 2. 我们每次创建对象时候先去池子中找有没有，
+   3. 如果有直接取出，没有new出来使用后还到池子里。这样便可达到对象复用的目的
+ *
+ * 应用：
+ *  1. Message.obtain（使用链表）
+ *  2. 在View自定义中用到手势速度控制的VelocityTracker（使用数组）
+ *
+ * 代价：
+ *  对象池是静态的，池子过大，其中不释放的无用对象会占用一定内存空间
+ *
  * Created by user on 2018/9/12.
  */
 
