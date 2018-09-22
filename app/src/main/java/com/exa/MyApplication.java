@@ -22,9 +22,33 @@ public class MyApplication extends Application {
         return context;
     }
 
+    /*
+    * 会崩溃，想想为什么？
+    *
+    * java.lang.RuntimeException: Unable to instantiate application com.exa.MyApplication: java.lang.NullPointerException: Attempt to invoke virtual method 'java.lang.String android.content.Context.getPackageName()' on a null object reference
+           at android.app.LoadedApk.makeApplication(LoadedApk.java:971)
+           at android.app.ActivityThread.handleBindApplication(ActivityThread.java:5765)
+           at
+
+      联系：
+          static public Application newApplication(Class<?> clazz, Context context)
+            throws InstantiationException, IllegalAccessException,
+            ClassNotFoundException {
+        Application app = (Application)clazz.newInstance();
+        app.attach(context);
+        return app;
+    }
+    public MyApplication() {
+        String packAgeName = getPackageName();
+        System.out.println("MyApplication ----> packAgeName = " + packAgeName);
+    }
+    * */
+
+
     @Override
     public void onCreate() {
         super.onCreate();
+        // 其实 可以在 "attachBaseContext"后就执行context相关的初始化
         context = this;
 
         Stetho.initialize(
