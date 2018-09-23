@@ -2,11 +2,13 @@ package com.exa;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.StrictMode;
 
 import com.exa.cusview.MyViewActivity;
 import com.exa.plugin.HookUtil;
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.squareup.leakcanary.LeakCanary;
 
 import okhttp3.OkHttpClient;
 
@@ -50,7 +52,7 @@ public class MyApplication extends Application {
         super.onCreate();
         // 其实 可以在 "attachBaseContext"后就执行context相关的初始化
         context = this;
-
+        setupLeakCanary();
         Stetho.initialize(
                 Stetho.newInitializerBuilder(this)
                         .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
@@ -78,6 +80,15 @@ public class MyApplication extends Application {
                 System.out.println("e = " + e);
             }
         }
+    }
+
+    private void setupLeakCanary() {
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+//                .penaltyDeath()
+                .build());
+        LeakCanary.install(this);
     }
 
 }

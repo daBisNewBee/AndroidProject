@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.exa.binder.BinderActivity;
 import com.exa.cusview.MyViewActivity;
 import com.exa.eventbus.EventBusActivity;
+import com.exa.leakcanary.LeakActivity;
 import com.exa.messenger.RemoteService;
 import com.exa.mode.BaseActivity;
 import com.exa.mode.SignleTopActivity;
@@ -127,6 +128,7 @@ public class MainActivity extends BaseActivity
         findViewById(R.id.btn_binder).setOnClickListener(this);
         findViewById(R.id.btnConStrain).setOnClickListener(this);
         findViewById(R.id.btnEventBus).setOnClickListener(this);
+        findViewById(R.id.btn_leak).setOnClickListener(this);
 
         // Example of a call to a native method
         stringFromJNI();
@@ -215,6 +217,9 @@ public class MainActivity extends BaseActivity
                 break;
             case R.id.btnEventBus:
                 intent = new Intent(this, EventBusActivity.class);
+                break;
+            case R.id.btn_leak:
+                intent = new Intent(this, LeakActivity.class);
                 break;
             default:
                 break;
