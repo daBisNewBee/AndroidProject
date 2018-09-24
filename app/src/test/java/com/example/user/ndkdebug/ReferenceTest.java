@@ -1,5 +1,10 @@
 package com.example.user.ndkdebug;
 
+import android.os.StrictMode;
+
+import com.squareup.leakcanary.LeakCanary;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.ref.PhantomReference;
@@ -53,6 +58,13 @@ public class ReferenceTest {
             System.out.println(id + " Store.finalize ----------->");
         }
 
+        @Override
+        public String toString() {
+            return "Store{" +
+                    "id='" + id + '\'' +
+                    '}';
+        }
+
         public String getId() {
             return id;
         }
@@ -69,7 +81,7 @@ public class ReferenceTest {
         {
             Reference<Store> ref = (Reference<Store>)queue.poll();
             if (ref != null)
-                System.out.println(ref + "......" + ref.get());
+                System.out.println("在队列里发现了对象："+ ref + "......" + ref.get());
         }
     }
 
@@ -79,7 +91,7 @@ public class ReferenceTest {
         HashSet<WeakReference<Store>> weakHashSet = new HashSet<>();
         HashSet<PhantomReference<Store>> phantomHashSet = new HashSet<>();
 
-        // 创建10个软引用
+        // 1. 创建10个软引用
         for (int i = 0; i < 10; i++) {
             SoftReference<Store> soft = new SoftReference<>(new Store("soft" + i), queue);
             System.out.println(i + " create soft:" + soft.get());
@@ -90,6 +102,8 @@ public class ReferenceTest {
         System.gc();
         checkQueue();
 
+        // 2. 创建10个弱引用
+        queue.remove(1000);
         for (int i = 0; i < 10; i++) {
             WeakReference<Store> weak = new WeakReference<Store>(new Store("weak" + i), queue);
             System.out.println(i + " create weak:" + weak.get());
@@ -100,6 +114,8 @@ public class ReferenceTest {
         System.gc();
         checkQueue();
 
+        // 3. 创建10个虚引用
+        queue.remove(1000);
         for (int i = 0; i < 10; i++) {
             PhantomReference<Store> phantom = new PhantomReference<>(new Store("phan" + i), queue);
             System.out.println(i + " create phantom:" + phantom.get());
@@ -114,17 +130,40 @@ public class ReferenceTest {
     @Test
     public void ref_Test() throws Exception {
 
-        // 这是一个强引用
-        String str = "hello";
-        // 由上面的强引用创建一个软引用
-        SoftReference<String> soft = new SoftReference<String>(str);
-        str = null;
-        System.out.println("soft:" + soft.get());
+        // 基本数据类型是值传递
+        boolean shouldRunGC = true;
+        boolean tmp = shouldRunGC;
+        shouldRunGC = false;
+        Assert.assertEquals(tmp,true);
+        System.out.println("tmp = " + tmp);
 
-        str = "hello";
-        ReferenceQueue<? super String> q = new ReferenceQueue<String>();
+        // 引用传递
+        String str = "hello";
+        String tmpStr = str;
+        str = "world";
+        Assert.assertEquals("hello", tmpStr);
+        System.out.println("tmpStr = " + tmpStr);
+
+        // 由上面的强引用创建一个软引用
+        System.out.println("soft:");
+        SoftReference<Store> soft = new SoftReference<>(new Store("cao"), queue);
+        System.out.println("create soft = " + soft.get());
+        System.gc();
+        checkQueue();
+
+        queue.remove(1000);
+        System.out.println("weak:");
+        WeakReference<Store> weak = new WeakReference<>(new Store("ta"), queue);
+        System.out.println("create weak = " + weak.get()+" ref:"+weak);
+        System.gc();
+        checkQueue();
+
         // 创建一个虚引用
-        PhantomReference<String> p = new PhantomReference<>(str, q);
-        System.out.println(q.poll());
+        queue.remove(1000);
+        PhantomReference<Store> phantom = new PhantomReference<>(new Store("daye"), queue);
+        System.out.println("create phantom = " + phantom.get());
+        System.gc();
+        checkQueue();
     }
+
 }
