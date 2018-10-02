@@ -23,15 +23,42 @@ import java.util.HashSet;
  *
  *
  * 2. 软引用(SoftReference)
- *      内存不够才回收。
+ *      "内存不够时"才回收。
+ *      常用于缓存Cache机制。比如图片缓存：
+ *      SoftReference<Drawable> softReference = mImageCache.get(imageUrl);
+         if (softReference.get() != null)
+         {
+            return softReference.get();
+         }
+
  *
  * 3. 弱引用（WeakReference）
- *      被"垃圾回收器线程"发现就回收，不够内存是否足够
+ *      被"垃圾回收时"发现就回收，不够内存是否足够
  *      可以和"引用队列(ReferenceQueue)"联合使用，回收后，JVM会把该弱引用加入到该队列中。
+ *      常用于防止内存泄漏。
+ *      比如：
+ *       private MyHandler handler = new MyHandler(this);
+         private static class MyHandler extends Handler{
+             WeakReference<FirstActivity> weakReference;
+             MyHandler(FirstActivity activity) {
+                weakReference = new WeakReference<>(activity);
+             }
+
+             @Override
+             public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what){
+                }
+             }
+         }
  *
  * 4. 虚引用(PhantomReference)
  *      任何时候都可能被垃圾回收。类似于没有任何引用一样。
  *      和弱引用的一个区别在：必须和引用队列(ReferenceQueue)联合使用。
+ *      虚引用和前面的软引用、弱引用的最大不同：它并不影响对象的生命周期！
+ *
+ *  TODO：
+ *  未验证Android4.0后，软引用特性改变为被gc发现就清除，与弱引用相同！
  *
  * 参考：
  * https://www.jianshu.com/p/c0e5c13d5ecb
@@ -82,6 +109,8 @@ public class ReferenceTest {
             Reference<Store> ref = (Reference<Store>)queue.poll();
             if (ref != null)
                 System.out.println("在队列里发现了对象："+ ref + "......" + ref.get());
+            else
+                System.out.println("没有在队列里找到对象！");
         }
     }
 
