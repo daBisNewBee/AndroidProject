@@ -2,6 +2,7 @@ package com.example.user.ndkdebug;
 
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -28,22 +29,70 @@ import java.util.Iterator;
 
 public class HashCodeEqualTest {
 
+    /**
+     * new String("xxx")创建了几次对象？
+     *
+     * https://blog.csdn.net/Sun1956/article/details/53161560/
+     *
+     * @throws Exception
+     */
+    @Test
+    public void String_Test() throws Exception {
+        // 1. new String 创建了一次对象
+        String abc = "123";// // 在常量池中
+        String abc_str = new String("123");// 在堆上
+
+        // 验证同一个对象依赖的字符串常量相同："value数组"的地址相同
+        Field valueField = String.class.getDeclaredField("value");
+        valueField.setAccessible(true);
+        char[] abcValue = (char[]) valueField.get(abc);
+        char[] abcStrValue = (char[]) valueField.get(abc_str);
+        System.out.println("is Same Value = " + (abcStrValue == abcValue));
+
+        // 2. new String 创建了两次对象。
+        String ee = new String("456");
+        String ee_str = "456";
+        System.out.println("ee = " + ee.intern().hashCode());
+        System.out.println("ee_str = " + ee_str.intern().hashCode());
+        System.out.println("ee = " + (ee_str.intern() == ee.intern()));
+
+        // 3. intern的用法 TODO
+        String str1 = new StringBuilder().append("hel").append("lo").toString();
+        String str2 = new StringBuilder().append("ja").append("va").toString();
+
+        System.out.println(str1 == str1.intern()); // true
+        System.out.println(str2 == str2.intern()); // false why? TODO
+
+        String strr = new String("str01");
+        strr.intern();
+        String strrEx = new String("str01");
+        System.out.println(strr == strrEx);
+
+        String rev = new String("str02");
+        String revEx = new String("str02");
+        rev.intern();
+        System.out.println(rev == revEx);
+    }
+
     /*
-    *  int add(int, int);
-    Code:
-       0: iload_1
-       1: iload_2
-       2: iadd
-       3: istore_3
-       4: iload_3
-       5: ireturn
-    * */
+        *  int add(int, int);
+        Code:
+           0: iload_1
+           1: iload_2
+           2: iadd
+           3: istore_3
+           4: iload_3
+           5: ireturn
+        * */
     int add(int a1, int a2){
         int a3 = a1 + a2;
         return a3;
     }
 
     /**
+     *
+     * 参考：你真的了解try{ return }finally{}中的return？
+     * https://blog.csdn.net/stduent_/article/details/60955365
      *
      * 为何返回的是"100"，不是"150" ？
      *
