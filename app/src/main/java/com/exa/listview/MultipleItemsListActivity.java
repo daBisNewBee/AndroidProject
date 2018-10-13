@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -44,7 +45,54 @@ import java.util.TreeSet;
  */
 public class MultipleItemsListActivity extends ListActivity {
 
+    /*
+    *
+    * ListView的优化:
+    * 参考：
+    * https://www.jianshu.com/p/f0408a0f0610
+    *
+    * 0. convertView的复用
+    *
+    * 1. 使用ViewHolder模式来提高效率(避免findViewById，提升50%效率)
+    *
+    * 2. 异步加载：耗时的操作放在异步线程中
+    *
+    * 3. listView错位加载问题：一张图片在多个位置显示。
+    *   原因：重用了 convertView 且有异步操作。多个异步获取的图片指向同一块内存
+    *   解决：设置标志位
+    *
+    * 4. 为图片设置缓存
+    * LRUCache
+    *
+    * 5. ListView的滑动时停止加载和分页加载
+    * 在下载滑动停止时 ，从start到end之间的item图片
+    *
+    *
+    * */
     private MyCustomAdapter mAdapter;
+
+    // 如何统计ListView加载速度?
+    private AbsListView.OnScrollListener onScrollListener = new AbsListView.OnScrollListener() {
+        private int previousFirstVisibleItem = 0;
+        private long previousEventTime = 0;
+        private double speed = 0;
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem,
+                             int visibleItemCount, int totalItemCount) {
+            if (previousFirstVisibleItem != firstVisibleItem){
+                long currTime = System.currentTimeMillis();
+                long timeToScrollOneElement = currTime - previousEventTime;
+                System.out.println("cost:"+timeToScrollOneElement);
+                speed = ((double)1/timeToScrollOneElement)*1000;
+                previousFirstVisibleItem = firstVisibleItem;
+                previousEventTime = currTime;
+                System.out.println("Speed: " +speed + " elements/second");
+            }
+        }
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +105,7 @@ public class MultipleItemsListActivity extends ListActivity {
             }
         }
         setListAdapter(mAdapter);
+        getListView().setOnScrollListener(onScrollListener);
     }
 
     private class MyCustomAdapter extends BaseAdapter{
