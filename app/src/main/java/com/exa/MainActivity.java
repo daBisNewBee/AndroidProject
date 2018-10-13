@@ -12,6 +12,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ import com.exa.cusview.MyViewActivity;
 import com.exa.eventbus.EventBusActivity;
 import com.exa.leakcanary.LeakActivity;
 import com.exa.listview.MultipleItemsListActivity;
+import com.exa.listview.RecyclerViewActivity;
 import com.exa.messenger.RemoteService;
 import com.exa.mode.BaseActivity;
 import com.exa.mode.SignleTopActivity;
@@ -131,6 +133,7 @@ public class MainActivity extends BaseActivity
         findViewById(R.id.btnEventBus).setOnClickListener(this);
         findViewById(R.id.btn_leak).setOnClickListener(this);
         findViewById(R.id.btn_listview).setOnClickListener(this);
+        findViewById(R.id.btn_recyclerview).setOnClickListener(this);
 
         // Example of a call to a native method
         stringFromJNI();
@@ -225,6 +228,9 @@ public class MainActivity extends BaseActivity
                 break;
             case R.id.btn_listview:
                 intent = new Intent(this, MultipleItemsListActivity.class);
+                break;
+            case R.id.btn_recyclerview:
+                intent = new Intent(this, RecyclerViewActivity.class);
                 break;
             default:
                 break;

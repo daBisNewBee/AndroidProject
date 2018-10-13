@@ -114,4 +114,17 @@
         app:layout_constraintStart_toEndOf="@+id/btn_main_singleTop"
         app:layout_constraintTop_toBottomOf="@+id/btn_leak" />
 
+    <Button
+        android:id="@+id/btn_recyclerview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="RecyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.163"
+        app:layout_constraintStart_toEndOf="@+id/btn_main_signleTask"
+        app:layout_constraintTop_toBottomOf="@+id/btn_listview" />
+
 </android.support.constraint.ConstraintLayout>

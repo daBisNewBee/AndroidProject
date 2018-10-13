@@ -76,7 +76,8 @@
         <activity android:name=".ConstrainActivity" />
         <activity android:name=".eventbus.EventBusActivity" />
         <activity android:name=".leakcanary.LeakActivity" />
-        <activity android:name=".listview.MultipleItemsListActivity"></activity>
+        <activity android:name=".listview.MultipleItemsListActivity" />
+        <activity android:name=".listview.RecyclerViewActivity"></activity>
     </application>
 
 </manifest>
