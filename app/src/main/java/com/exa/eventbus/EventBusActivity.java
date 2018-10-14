@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.exa.R;
 
 import org.greenrobot.eventbus.EventBus;
@@ -15,6 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+@Route(path = "/eventbus/activity")
 public class EventBusActivity extends AppCompatActivity {
 
     @BindView(R.id.tvEventShow)

@@ -3,33 +3,17 @@ package com.exa;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.res.AssetManager;
-import android.os.Binder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.TextView;
 
-import com.exa.binder.BinderActivity;
-import com.exa.cusview.MyViewActivity;
-import com.exa.eventbus.EventBusActivity;
-import com.exa.leakcanary.LeakActivity;
-import com.exa.listview.MultipleItemsListActivity;
-import com.exa.listview.RecyclerViewActivity;
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.exa.messenger.RemoteService;
 import com.exa.mode.BaseActivity;
-import com.exa.mode.SignleTopActivity;
-import com.exa.mode.SingleTaskActivity;
-import com.exa.mode.StandardActivity;
-import com.exa.plugin.TargetActivity;
-
-import java.io.IOException;
 
 /**
  *
@@ -134,6 +118,7 @@ public class MainActivity extends BaseActivity
         findViewById(R.id.btn_leak).setOnClickListener(this);
         findViewById(R.id.btn_listview).setOnClickListener(this);
         findViewById(R.id.btn_recyclerview).setOnClickListener(this);
+        findViewById(R.id.btn_plugin).setOnClickListener(this);
 
         // Example of a call to a native method
         stringFromJNI();
@@ -194,47 +179,51 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onClick(View v) {
-        Intent intent = null;
         int id = v.getId();
         switch (id){
             case R.id.btn_main_signleTask:
-                intent = new Intent(this, SingleTaskActivity.class);
+                ARouter.getInstance().build("/signletask/activity").navigation();
                 break;
             case R.id.btn_main_singleInstance:
                 break;
             case R.id.btn_main_singleTop:
-                intent = new Intent(this, SignleTopActivity.class);
+                ARouter.getInstance().build("/singletop/activity").navigation();
                 break;
             case R.id.btn_main_stand:
-                intent = new Intent(this, StandardActivity.class);
+                ARouter.getInstance().build("/standard/activity").navigation();
                 break;
             case R.id.btn_myView:
-                intent = new Intent(this, MyViewActivity.class);
+                ARouter.getInstance().build("/myview/activity").navigation();
                 break;
             case R.id.btn_target_no_register:
-                intent = new Intent(this, TargetActivity.class);
+                ARouter.getInstance().build("/target/activity").navigation();
                 break;
             case R.id.btn_binder:
-                intent = new Intent(this, BinderActivity.class);
+                ARouter.getInstance().build("/binder/activity").navigation();
                 break;
             case R.id.btnConStrain:
-                intent = new Intent(this, ConstrainActivity.class);
+                ARouter.getInstance().build("/constrain/activity").navigation();
                 break;
             case R.id.btnEventBus:
-                intent = new Intent(this, EventBusActivity.class);
+                ARouter.getInstance().build("/eventbus/activity").navigation();
                 break;
             case R.id.btn_leak:
-                intent = new Intent(this, LeakActivity.class);
+                ARouter.getInstance().build("/leak/activity").navigation();
                 break;
             case R.id.btn_listview:
-                intent = new Intent(this, MultipleItemsListActivity.class);
+                ARouter.getInstance().build("/listview/activity").navigation();
                 break;
             case R.id.btn_recyclerview:
-                intent = new Intent(this, RecyclerViewActivity.class);
+                ARouter.getInstance().build("/recyclerview/activity").navigation();
+                break;
+            case R.id.btn_plugin:
+                ARouter.getInstance().build("/plugin/activity")
+                        .withString("name","liuwb")
+                        .withInt("age",18)
+                        .navigation();
                 break;
             default:
                 break;
         }
-        startActivity(intent);
     }
 }

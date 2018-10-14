@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.exa.R;
 
 /**
@@ -20,6 +21,7 @@ import com.exa.R;
  * Created by user on 2018/7/18.
  */
 
+@Route(path = "/singletop/activity")
 public class SignleTopActivity extends BaseActivity implements View.OnClickListener{
 
     @Override

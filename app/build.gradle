@@ -21,7 +21,9 @@ android {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString(),
                              eventBusIndex        : 'com.exa.eventbus.MyEventBusIndex',
-                             mykey                : 'myvalue']
+                             mykey                : 'myvalue',
+                             AROUTER_MODULE_NAME: project.getName(),
+                             AROUTER_GENERATE_DOC: "enable"]
                 //生成索引的名称
             }
         }
@@ -47,6 +49,9 @@ android {
 //apply plugin: 'replugin-plugin-gradle'
 
 dependencies {
+
+    compile 'com.alibaba:arouter-api:1.4.0'
+    annotationProcessor 'com.alibaba:arouter-compiler:1.2.1'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'

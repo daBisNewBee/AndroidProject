@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.exa.R;
 
 import java.util.ArrayList;
@@ -74,6 +75,7 @@ import java.util.List;
  * RecyclerView.getViewForPosition
  *
  */
+@Route(path = "/recyclerview/activity")
 public class RecyclerViewActivity extends Activity {
 
     @Override

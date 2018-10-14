@@ -3,6 +3,8 @@ package com.exa;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
+
 /**
  *
  * Android新特性介绍，ConstraintLayout完全解析：
@@ -47,6 +49,7 @@ import android.os.Bundle;
  *
  *
  */
+@Route(path = "/constrain/activity")
 public class ConstrainActivity extends AppCompatActivity {
 
     @Override

@@ -10,6 +10,7 @@ import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.exa.R;
 
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ import java.util.TreeSet;
  *
  *
  */
+@Route(path = "/listview/activity")
 public class MultipleItemsListActivity extends ListActivity {
 
     /*

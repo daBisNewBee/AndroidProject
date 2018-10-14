@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.exa.R;
 
 import java.lang.reflect.Field;
@@ -22,6 +23,7 @@ import java.lang.reflect.Method;
  * 参考：https://blog.csdn.net/zhenghaisen/article/details/76639392
  *
  */
+@Route(path = "/binder/activity")
 public class BinderActivity extends Activity {
 
     private IBinder binderClient;

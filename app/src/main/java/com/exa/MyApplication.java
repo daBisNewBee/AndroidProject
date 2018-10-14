@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.os.StrictMode;
 
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.exa.cusview.MyViewActivity;
 import com.exa.plugin.HookUtil;
 import com.facebook.stetho.Stetho;
@@ -52,6 +53,12 @@ public class MyApplication extends Application {
         super.onCreate();
         // 其实 可以在 "attachBaseContext"后就执行context相关的初始化
         context = this;
+
+        // ARouter 相关
+        ARouter.openLog();
+        ARouter.openDebug();
+        ARouter.init(this);
+
         setupLeakCanary();
         Stetho.initialize(
                 Stetho.newInitializerBuilder(this)
