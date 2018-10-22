@@ -36,7 +36,7 @@ public class LeakActivity extends Activity {
     @SuppressLint("StaticFieldLeak")
     private void startAsyncWork() {
         // This runnable is an anonymous class and therefore has a hidden reference to the outer
-        // class MainActivity. If the activity gets destroyed before the thread finishes (e.g. rotation),
+        // class ContactUriActivity. If the activity gets destroyed before the thread finishes (e.g. rotation),
         // the activity instance will leak.
         Runnable work = new Runnable() {
             @Override

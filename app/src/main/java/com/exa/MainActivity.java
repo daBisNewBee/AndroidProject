@@ -119,6 +119,7 @@ public class MainActivity extends BaseActivity
         findViewById(R.id.btn_listview).setOnClickListener(this);
         findViewById(R.id.btn_recyclerview).setOnClickListener(this);
         findViewById(R.id.btn_plugin).setOnClickListener(this);
+        findViewById(R.id.btn_conUri).setOnClickListener(this);
 
         // Example of a call to a native method
         stringFromJNI();
@@ -221,6 +222,9 @@ public class MainActivity extends BaseActivity
                         .withString("name","liuwb")
                         .withInt("age",18)
                         .navigation();
+                break;
+            case R.id.btn_conUri:
+                ARouter.getInstance().build("/glide/ContactUri").navigation();
                 break;
             default:
                 break;

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.user.ndkdebug.MainActivity"
+    android:orientation="vertical"
     tools:layout_editor_absoluteY="81dp">
 
     <Button
@@ -14,7 +14,8 @@
         android:text="进入standard"
         app:layout_constraintBottom_toTopOf="@+id/btn_main_singleTop"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="16dp" />
+        tools:layout_editor_absoluteX="16dp"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/btn_main_singleTop"
@@ -23,7 +24,8 @@
         android:text="进入singleTop"
         app:layout_constraintBottom_toTopOf="@+id/btn_main_signleTask"
         app:layout_constraintTop_toBottomOf="@+id/btn_main_stand"
-        tools:layout_editor_absoluteX="16dp" />
+        tools:layout_editor_absoluteX="16dp"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/btn_main_signleTask"
@@ -32,7 +34,8 @@
         android:text="进入SingleTask"
         app:layout_constraintBottom_toTopOf="@+id/btn_main_singleInstance"
         app:layout_constraintTop_toBottomOf="@+id/btn_main_singleTop"
-        tools:layout_editor_absoluteX="16dp" />
+        tools:layout_editor_absoluteX="16dp"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/btn_main_singleInstance"
@@ -41,7 +44,8 @@
         android:text="进入SigleInstance"
         app:layout_constraintBottom_toTopOf="@+id/btnConStrain"
         app:layout_constraintTop_toBottomOf="@+id/btn_main_signleTask"
-        tools:layout_editor_absoluteX="16dp" />
+        tools:layout_editor_absoluteX="16dp"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/btn_myView"
@@ -50,7 +54,8 @@
         android:text="自定义View"
         app:layout_constraintBottom_toTopOf="@+id/btn_target_no_register"
         app:layout_constraintTop_toBottomOf="@+id/btnEventBus"
-        tools:layout_editor_absoluteX="16dp" />
+        tools:layout_editor_absoluteX="16dp"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/btn_target_no_register"
@@ -59,7 +64,8 @@
         android:text="跳转Target（未注册）"
         app:layout_constraintBottom_toTopOf="@+id/btn_binder"
         app:layout_constraintTop_toBottomOf="@+id/btn_myView"
-        tools:layout_editor_absoluteX="16dp" />
+        tools:layout_editor_absoluteX="16dp"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/btn_binder"
@@ -68,7 +74,8 @@
         android:text="Binder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_target_no_register"
-        tools:layout_editor_absoluteX="16dp" />
+        tools:layout_editor_absoluteX="16dp"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/btnConStrain"
@@ -77,7 +84,8 @@
         android:text="conStrainLyt"
         app:layout_constraintBottom_toTopOf="@+id/btnEventBus"
         app:layout_constraintTop_toBottomOf="@+id/btn_main_singleInstance"
-        tools:layout_editor_absoluteX="16dp" />
+        tools:layout_editor_absoluteX="16dp"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/btnEventBus"
@@ -86,7 +94,8 @@
         android:text="EventBus"
         app:layout_constraintBottom_toTopOf="@+id/btn_myView"
         app:layout_constraintTop_toBottomOf="@+id/btnConStrain"
-        tools:layout_editor_absoluteX="16dp" />
+        tools:layout_editor_absoluteX="16dp"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/btn_leak"
@@ -112,7 +121,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.14"
         app:layout_constraintStart_toEndOf="@+id/btn_main_singleTop"
-        app:layout_constraintTop_toBottomOf="@+id/btn_leak" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_leak"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="31dp" />
 
     <Button
         android:id="@+id/btn_recyclerview"
@@ -139,5 +150,20 @@
         app:layout_constraintHorizontal_bias="0.141"
         app:layout_constraintStart_toEndOf="@+id/btn_main_singleInstance"
         app:layout_constraintTop_toBottomOf="@+id/btn_recyclerview" />
+
+    <Button
+        android:id="@+id/btn_conUri"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="contactURI"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.14"
+        app:layout_constraintStart_toEndOf="@+id/btnConStrain"
+        app:layout_constraintTop_toBottomOf="@+id/btn_plugin" />
 
 </android.support.constraint.ConstraintLayout>
