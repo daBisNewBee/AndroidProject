@@ -3,22 +3,17 @@ package com.exa;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
-import com.exa.cusview.MyViewActivity;
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.exa.messenger.RemoteService;
 import com.exa.mode.BaseActivity;
-import com.exa.mode.SignleTopActivity;
-import com.exa.mode.SingleTaskActivity;
-import com.exa.mode.StandardActivity;
 
 /**
  *
@@ -116,12 +111,60 @@ public class MainActivity extends BaseActivity
         findViewById(R.id.btn_main_singleTop).setOnClickListener(this);
         findViewById(R.id.btn_main_stand).setOnClickListener(this);
         findViewById(R.id.btn_myView).setOnClickListener(this);
+        findViewById(R.id.btn_target_no_register).setOnClickListener(this);
+        findViewById(R.id.btn_binder).setOnClickListener(this);
+        findViewById(R.id.btnConStrain).setOnClickListener(this);
+        findViewById(R.id.btnEventBus).setOnClickListener(this);
+        findViewById(R.id.btn_leak).setOnClickListener(this);
+        findViewById(R.id.btn_listview).setOnClickListener(this);
+        findViewById(R.id.btn_recyclerview).setOnClickListener(this);
+        findViewById(R.id.btn_plugin).setOnClickListener(this);
+        findViewById(R.id.btn_conUri).setOnClickListener(this);
 
         // Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
+        stringFromJNI();
 //        startAndBindService();
     }
+
+    /*
+    *
+    * 解决：
+    * 插件SDK初始化依赖"host Context"（资源、so库等路径释放到宿主自定义目录，
+    * 使用插件Context会找不到相关目录），但是插件assets下的文件释放，仍需要
+    * 插件上下文，且要以前释放。
+    *
+    * */
+    /*
+    private void releaseAssetsToHostAssets() throws IOException {
+        ClassLoader curClassLoader = this.getClassLoader();
+        System.out.println("curClassLoader = " + curClassLoader);
+        // curClassLoader = com.qihoo360.replugin.PluginDexClassLoader
+        // [DexPathList[[zip file "/data/user/0/com.exa.plugin/app_p_a/2104690500.jar"],
+        // nativeLibraryDirectories=[/data/data/com.exa.plugin/app_p_n/2104690500,
+        // /vendor/lib64, /system/lib64]]]
+        AssetManager curAssMang = this.getAssets();
+        String[] files = curAssMang.list("");
+        for (String file : files) {
+            System.out.println("file = " + file);
+            // file = SKFConfig.ini
+        }
+
+        String hostDataDir = RePlugin.getHostContext().getApplicationInfo().dataDir;
+        System.out.println("hostDataDir = " + hostDataDir);
+        // hostDataDir = /data/data/com.exa.plugin
+
+        ClassLoader hostClasLoader = RePlugin.getHostClassLoader();
+        System.out.println("hostClasLoader = " + hostClasLoader);
+        // hostClasLoader = dalvik.system.PathClassLoader
+        // [DexPathList[[zip file "/data/app/com.exa.plugin-1/base.apk"],
+        // nativeLibraryDirectories=[/vendor/lib64, /system/lib64]]]
+        AssetManager hostAssetManager = RePlugin.getHostContext().getAssets();
+        files = hostAssetManager.list("");
+        for (String file : files) {
+            System.out.println("file = " + file);
+        }
+    }
+    */
 
     private void startAndBindService() {
         Intent service = new Intent(this,RemoteService.class);
@@ -137,26 +180,54 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onClick(View v) {
-        Intent intent = null;
         int id = v.getId();
         switch (id){
             case R.id.btn_main_signleTask:
-                intent = new Intent(this, SingleTaskActivity.class);
+                ARouter.getInstance().build("/signletask/activity").navigation();
                 break;
             case R.id.btn_main_singleInstance:
                 break;
             case R.id.btn_main_singleTop:
-                intent = new Intent(this, SignleTopActivity.class);
+                ARouter.getInstance().build("/singletop/activity").navigation();
                 break;
             case R.id.btn_main_stand:
-                intent = new Intent(this, StandardActivity.class);
+                ARouter.getInstance().build("/standard/activity").navigation();
                 break;
             case R.id.btn_myView:
-                intent = new Intent(this, MyViewActivity.class);
+                ARouter.getInstance().build("/myview/activity").navigation();
+                break;
+            case R.id.btn_target_no_register:
+                ARouter.getInstance().build("/target/activity").navigation();
+                break;
+            case R.id.btn_binder:
+                ARouter.getInstance().build("/binder/activity").navigation();
+                break;
+            case R.id.btnConStrain:
+                ARouter.getInstance().build("/constrain/activity").navigation();
+                break;
+            case R.id.btnEventBus:
+                ARouter.getInstance().build("/eventbus/activity").navigation();
+                break;
+            case R.id.btn_leak:
+                ARouter.getInstance().build("/leak/activity").navigation();
+                break;
+            case R.id.btn_listview:
+                ARouter.getInstance().build("/listview/activity").navigation();
+                break;
+            case R.id.btn_recyclerview:
+                ARouter.getInstance().build("/recyclerview/activity").navigation();
+                break;
+            case R.id.btn_plugin:
+                ARouter.getInstance().build("/plugin/activity")
+                        .withString("name","liuwb")
+                        .withInt("age",18)
+                        .navigation();
+                break;
+            case R.id.btn_conUri:
+                ARouter.getInstance().build("/glide/ContactUri").navigation();
                 break;
             default:
                 break;
         }
-        startActivity(intent);
     }
 }

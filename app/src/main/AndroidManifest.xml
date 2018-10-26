@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.exa">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.example.android.contentprovidersample.provider.READ_WRITE" />
+    <uses-permission android:name="MyContentProvider.READ_WRITE" />
+
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -12,12 +19,18 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:taskAffinity="Main.task"></activity>
+            android:taskAffinity="Main.task" />
 
         <service
             android:name=".messenger.RemoteService"
             android:process=":remote" />
         >
+        <service
+            android:name=".binder.IPCServer"
+            android:process=":ipc" />
+        >
+        <activity android:name=".binder.BinderActivity" />
+        <activity android:name="com.bumptech.glide.samples.contacturi.ContactUriActivity" />
 
         <!--
         standard:
@@ -40,21 +53,34 @@
         <activity
             android:name=".mode.StandardActivity"
             android:launchMode="standard"
-            android:taskAffinity="standard.task"></activity>
+            android:taskAffinity="standard.task" />
         >
         <activity
             android:name=".mode.SignleTopActivity"
             android:launchMode="singleTop"
-            android:taskAffinity="signletop.task"></activity>
+            android:taskAffinity="signletop.task" />
         <activity
             android:name=".mode.SingleTaskActivity"
             android:launchMode="singleTask"
-            android:taskAffinity="signletask.task"></activity>
+            android:taskAffinity="signletask.task" />
         <activity
             android:name=".mode.SingleInstanceActivity"
-            android:launchMode="singleInstance"></activity>
-        <activity android:name=".mode.OtherActivity"></activity>
-        <activity android:name=".cusview.MyViewActivity"></activity>
+            android:launchMode="singleInstance" />
+        <activity android:name=".mode.OtherActivity" />
+        <activity android:name=".cusview.MyViewActivity" />
+
+        <provider
+            android:name=".contProd.MyContentProvider"
+            android:authorities="com.exa.MyContentProvider"
+            android:permission="MyContentProvider.READ_WRITE" />
+
+        <!-- 预注册Activity，利用假的Activity来“运行”真的TargetActivity。 -->
+        <activity android:name=".plugin.ProxyActivity" />
+        <activity android:name=".ConstrainActivity" />
+        <activity android:name=".eventbus.EventBusActivity" />
+        <activity android:name=".leakcanary.LeakActivity" />
+        <activity android:name=".listview.MultipleItemsListActivity" />
+        <activity android:name=".listview.RecyclerViewActivity"></activity>
     </application>
 
 </manifest>

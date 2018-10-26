@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="horizontal">
+    <ScrollView
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1">
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:orientation="vertical">
+            <Button
+              android:id="@+id/btn_clear"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:textAppearanceSmall"
+              android:text="清空日志"/>
+
+            <Button
+              android:id="@+id/btn_apk"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:textAppearanceSmall"
+              android:text="APK加载"/>
+
+            <Button
+              android:id="@+id/btn_jar"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:textAppearanceSmall"
+              android:text="Jar加载"/>
+
+            <Button
+              android:id="@+id/btn_jump_to_plugin"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:textAppearanceSmall"
+              android:text="跳转到插件Main"/>
+
+            <Button
+              android:id="@+id/btn_other"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:textAppearanceSmall"
+              android:text="其他"/>
+
+            <Button
+              android:id="@+id/btn_plugin_jni"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:textAppearanceSmall"
+              android:text="插件JNI方法"/>
+
+            <Button
+              android:id="@+id/btn_cert_revoke"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:textAppearanceSmall"
+              android:text="cert_revoke"/>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+    <ScrollView
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1">
+        <TextView
+          android:id="@+id/tv_info"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"/>
+    </ScrollView>
+</LinearLayout>

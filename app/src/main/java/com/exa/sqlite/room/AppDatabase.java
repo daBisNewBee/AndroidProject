@@ -8,7 +8,8 @@ import android.arch.persistence.room.TypeConverters;
  * Created by user on 2018/7/28.
  */
 
-@Database(entities = {User.class, Book.class, Person.class}, version = 1)
+// 导出表的schema信息：到“room.schemaLocation”指定的目录
+@Database(entities = {User.class, Book.class, Person.class}, version = 1, exportSchema = true)
 @TypeConverters(Converters.class)
 public abstract class AppDatabase extends RoomDatabase {
 
