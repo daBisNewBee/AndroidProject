@@ -167,5 +167,6 @@ public class ConCurrencyTEst {
             Thread.sleep(2000);
             System.out.println(Thread.currentThread().getId()+" after notify.");
         }
+        System.out.println("this is outer lock area.");
     }
 }
