@@ -1,0 +1,52 @@
+package com.exa;
+
+import java.nio.ByteBuffer;
+
+/**
+ *
+ * Java与原生代码通信的几个要点：
+ *
+ * （根据分配内存所在的位置不同）
+ *
+ * 1. Java堆。
+ *      在Java创建(new), 在JNI有两种方式接收java堆内存数组：
+ *      a. GetByteArrayElements (指针映射)
+ *      b. GetByteArrayRegion（值拷贝）
+ *      在Native创建，
+ *      a. NewByteArray + SetByteArrayRegion
+ *
+ * 2. 原生堆(DirectBuffer)。
+ *      两种创建方式：
+ *      a. 在Java创建，ByteBuffer.allocateDirect(5)
+ *         在Native获取，GetDirectBufferAddress
+ *      b. 在Native创建，NewDirectByteBuffer
+ *         在Java获取，ShortBuffer
+ *
+ *  思考，
+ *    分配数据缓存时，选择何种内存类型？Java堆，or，原生堆？
+ *    判断数据的最终出口，若要与外界通信，
+ *    最后的处理者是Native，则分配到原生堆更好！可以避免一次Java堆到Native堆的内存拷贝！
+ *
+ */
+public class JavaBean {
+
+    static {
+        System.loadLibrary("native-lib");
+    }
+
+    /*
+    *  从Java传递数组到Jni层
+    * */
+    public native int process(byte[] inbuf1, byte[] inbuf2, byte[] outbuf1, byte[] outbuf2);
+
+    /*
+    *  从Jni层传递数组到Java层
+    * */
+    public native byte[] nativeGetByteArray();
+
+    // 这里的ByteBuffer 必须是"allocateDirect"
+    public native void shareByteArrayToNative(ByteBuffer byteBuffer);
+
+    public native ByteBuffer getDirectBufferFromNative();
+
+}
