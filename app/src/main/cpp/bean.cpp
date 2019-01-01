@@ -207,6 +207,17 @@ Java_com_exa_JavaBean_getDirectBufferFromNative(JNIEnv *env, jobject instance) {
  *  https://blog.csdn.net/a785984/article/details/39254373
  *  2. Android Native 开发之 NewString 与 NewStringUtf 解析
  *  https://www.jianshu.com/p/ceb73cd39c10
+ *  3. C++访问Java的String字符串对象
+ *  https://blog.csdn.net/ku726999/article/details/39204399
+ *
+ *  结论：
+ *  1. 推荐使用GetStringRegion 和 GetStringUTFRegion，对于小字符串来说。
+ *  原因：
+ *      a. 缓冲区可以被编译器提前分配(TODO: why？)，而且永远不会产生内存溢出的异常
+ *      b. 处理原字符串的一部分，提供了index、len等param
+ *      c. 复制少量字符串的消耗是非常小的
+ *  2. 在JNI，优先使用 UTF-16相关的API。
+ *      与JVM内部编码方式一致，减少转码成UTF8的损耗
  *
  * */
 
