@@ -49,4 +49,15 @@ public class JavaBean {
 
     public native ByteBuffer getDirectBufferFromNative();
 
+    /*  JNI字符串处理 开始 */
+    public native String sendUTF8String(String msg);
+
+    public native String sendUTF16String(String msg);
+
+    public native String sendStringPointer(String msg);
+
+    public native String sendUTF8StringRegion(String msg);
+    /*  JNI字符串处理 结束 */
+
+    public native String modifiedUTF8Test(String msg);
 }

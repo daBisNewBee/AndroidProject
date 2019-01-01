@@ -21,6 +21,9 @@ public class EncodeTest {
      * FE FF
      *  表示UTF-16.
      *
+     * Unicode(UTF-8, UTF-16)令人混淆的概念:
+     * https://www.cnblogs.com/fnlingnzb-learner/p/6163205.html
+     *
      * 其他：
      * Java字符和字符串存在于以下几个地方：
      * 1. Java源码文件，*.java，可以是任意字符编码，如GBK，UTF-8
@@ -84,5 +87,22 @@ public class EncodeTest {
             System.out.format("%x ", i);
         }
 
+    }
+
+    @Test
+    public void encode_Test() throws Exception {
+        String raw = "永";
+        byte[] b = raw.getBytes("UTF-8");
+        for (byte i:
+             b) {
+            System.out.format("%x ",i);
+        }
+
+        System.out.println();
+        b = raw.getBytes("UTF-16");
+        for (byte i :
+                b) {
+            System.out.format("%x ",i);
+        }
     }
 }

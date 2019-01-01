@@ -7,7 +7,7 @@
 #include <Android/Log.h>
 #include <cstdlib>
 
-#define TAG "jni"
+#define TAG "System.out"
 
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,TAG ,__VA_ARGS__)
 
@@ -35,6 +35,48 @@
  *  堆外内存 之 DirectByteBuffer 详解：
  *  https://www.jianshu.com/p/007052ee3773
  * */
+
+void PrintBuffer(void* pBuff, unsigned int nLen)
+{
+    if (NULL == pBuff || 0 == nLen)
+    {
+        return;
+    }
+
+    const int nBytePerLine = 16;
+    unsigned char* p = (unsigned char*)pBuff;
+    char szHex[3*nBytePerLine+1] = {0};
+
+    LOGD("-----------------begin-------------------\n");
+    for (unsigned int i=0; i<nLen; ++i)
+    {
+        int idx = 3 * (i % nBytePerLine);
+        if (0 == idx)
+        {
+            memset(szHex, 0, sizeof(szHex));
+        }
+#ifdef WIN32
+        sprintf_s(&szHex[idx], 4, "%02x ", p[i]);// buff长度要多传入1个字节
+#else
+        snprintf(&szHex[idx], 4, "%02x ", p[i]); // buff长度要多传入1个字节
+#endif
+
+        // 以16个字节为一行，进行打印
+        if (0 == ((i+1) % nBytePerLine))
+        {
+            LOGD("%s\n", szHex);
+        }
+    }
+
+    // 打印最后一行未满16个字节的内容
+    if (0 != (nLen % nBytePerLine))
+    {
+        LOGD("%s\n", szHex);
+    }
+
+    LOGD("------------------end-------------------\n");
+}
+
 extern "C"
 JNIEXPORT jint JNICALL
 Java_com_exa_JavaBean_process(JNIEnv *env, jobject instance, jbyteArray inbuf1_, jbyteArray inbuf2_,
@@ -139,3 +181,143 @@ Java_com_exa_JavaBean_getDirectBufferFromNative(JNIEnv *env, jobject instance) {
     // 记得free！需要手动管理内存，不在JVM的管理范围！
     return directBuff;
 }
+
+/*
+ *  JNI字符串处理的几个记忆规律：
+ *
+ *  根据Java源字符串传递到JNI时，1. 是否需要拷贝，2. 拷贝的内存位置不同，
+ *
+ *  1. 拷贝，在JVM内存中。涉及到的几个函数:
+ *     GetStringUTFChars： 返回的是UTF-8编码的char*
+ *     GetStringChars   ： 返回的是UTF-16编码的jchar*
+ *     GetStringCritical： 返回类型同上，只是增加了返回源字符串指针的可能性，但不确保！
+ *                         用于源字符串较大(>1M)的场景
+ *  2. 不拷贝，在Native中预先分配的缓冲区。
+ *     GetStringUTFRegion：返回的是UTF-8编码的char*
+ *
+ *  其他：
+ *  1. JVM内部使用Unicode字符集（UTF-16编码）
+ *     因此，
+ *     a. GetStringChars 接收字符串不需要copy，而GetStringUTFChars要（TODO：实际验证时isCopy都为1）
+ *     b. 只有GetStringCritical方法，没有GetStringUTFCritical方法（转码UTF8必然要copy）
+ *  2. JNI使用"modified UTF-8"
+ *
+ *  参考：
+ *  1.JVM、JNI、CPP的编码类型，及编码流向
+ *  https://blog.csdn.net/a785984/article/details/39254373
+ *  2. Android Native 开发之 NewString 与 NewStringUtf 解析
+ *  https://www.jianshu.com/p/ceb73cd39c10
+ *
+ * */
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_exa_JavaBean_sendUTF8String(JNIEnv *env, jobject instance, jstring msg_) {
+    jboolean isCopy = false;
+
+    const char *msg = env->GetStringUTFChars(msg_, &isCopy);
+//    const char *msg = env->GetStringUTFChars(msg_, 0);
+    if (msg == NULL){
+        // 检查的原因：JVM 需要为新诞生的字符串分配内存空间
+        LOGD("msg == NULL!!");
+        return NULL;
+    }
+
+    /*
+     * 获取 UTF-8 编码字符串的长度，
+     * 与相同：也可以通过标准 C 函数 strlen 获取。
+     * */
+    int len = env->GetStringUTFLength(msg_);
+    LOGD("GetStringUTFLength:%d", len);
+
+    int lenStr = strlen(msg);
+    LOGD("strlen:%d", lenStr);
+
+    /*
+     * isCopy:(一般传"0")
+     *  true:
+     *      返回 JVM 内部源字符串的一份拷贝，并为新产生的字符串分配内存空间。
+     *  false:
+     *      表示返回原字符串的指针。意味着可以通过指针修改源字符串的内容，但不推荐
+     * */
+
+    LOGD("GetStringUTFChars. isCopy:%d", isCopy);
+    char buf[128] = {0};
+    sprintf(buf, "add jni prefix. %s", msg);
+
+    // release的原因是：在Get时，分配的新内存位于JVM内，
+    // 用于存储源字符串的拷贝，以便本地代码访问和修改。
+    // 因此，用完了要通知释放。
+    env->ReleaseStringUTFChars(msg_, msg);
+    // 通过调用 NewStringUTF 函数，会构建一个新的
+    // java.lang.String 字符串对象。这个新创建的
+    // 字符串会自动转换成 Java 支持的 Unicode 编码
+    return env->NewStringUTF(buf);
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_exa_JavaBean_sendUTF16String(JNIEnv *env, jobject instance, jstring msg_) {
+    /*
+     * "GetStringChars"取得UTF-16编码的宽字符串jchar*
+     * */
+    jboolean isCopy = false;
+    const jchar* msg = env->GetStringChars(msg_, &isCopy);
+    LOGD("GetStringChars. isCopy:%d", isCopy);
+    int len = env->GetStringLength(msg_);
+
+    env->ReleaseStringChars(msg_, msg);
+
+    return env->NewString(msg, len);
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_exa_JavaBean_sendStringPointer(JNIEnv *env, jobject instance, jstring msg_) {
+    jboolean isCopy = false;
+    const jchar *msg = env->GetStringCritical(msg_, &isCopy);
+    // 还是要检查！该函数只是增加返回字符串指针的可能性，但不一定！
+    if (msg == NULL){
+        return NULL;
+    }
+    LOGD("GetStringCritical. isCopy:%d", isCopy);
+    /*
+     * 区别于上述两个调用（GetStringUTFChars、GetStringChars）的isCopy返回1，
+     * 此处返回0，表示传递的是字符串指针！
+     * 用于源字符串内容较大，大约1M左右，拷贝效率较低的问题。
+     * */
+    env->ReleaseStringCritical(msg_, msg);
+    return env->NewString(msg, env->GetStringLength(msg_));
+    /*
+     * 考虑：
+     * 为何"JNI 中没有 Get/ReleaseStringUTFCritical 这样的函数"？
+     * */
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_exa_JavaBean_sendUTF8StringRegion(JNIEnv *env, jobject instance, jstring msg_) {
+    int len = env->GetStringLength(msg_);
+    char buf[128] = {0};
+    env->GetStringUTFRegion(msg_, 0, len, buf);
+    LOGD("GetStringUTFRegion:%s", buf);
+    return env->NewStringUTF(buf);
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_exa_JavaBean_modifiedUTF8Test(JNIEnv *env, jobject instance, jstring msg_) {
+    const char *msg = env->GetStringUTFChars(msg_, 0);
+
+    const jchar *msgg = env->GetStringChars(msg_, 0);
+
+    LOGD("GetStringUTFLength");
+    PrintBuffer((void*)msg, env->GetStringUTFLength(msg_));
+    LOGD("GetStringLength");
+    PrintBuffer((void*)msgg, env->GetStringLength(msg_)<<1);
+
+    env->ReleaseStringUTFChars(msg_, msg);
+
+    return env->NewStringUTF(msg);
+}
+
