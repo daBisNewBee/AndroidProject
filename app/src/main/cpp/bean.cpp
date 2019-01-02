@@ -320,14 +320,13 @@ JNIEXPORT jstring JNICALL
 Java_com_exa_JavaBean_modifiedUTF8Test(JNIEnv *env, jobject instance, jstring msg_) {
     const char *msg = env->GetStringUTFChars(msg_, 0);
 
-    const jchar *msgg = env->GetStringChars(msg_, 0);
-
-    LOGD("GetStringUTFLength");
+    LOGD("jni. modifiedUTF8Test:%s", msg);
     PrintBuffer((void*)msg, env->GetStringUTFLength(msg_));
-    LOGD("GetStringLength");
-    PrintBuffer((void*)msgg, env->GetStringLength(msg_)<<1);
 
     env->ReleaseStringUTFChars(msg_, msg);
+
+    const char *raw = "我爱祖国abcd\0efgh";
+    PrintBuffer((void*)raw, strlen(raw));
 
     return env->NewStringUTF(msg);
 }

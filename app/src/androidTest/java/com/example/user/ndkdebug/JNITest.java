@@ -89,10 +89,39 @@ public class JNITest {
         System.out.println("sendUTF8StringRegion rec = " + rec);
     }
 
+    /**
+     * 为何 JNI的api支持的是Modified UTF-8？不是标准UTF-8？
+     *
+     * 方便在JNI中调用libc字符串函数(以零结尾的字符串)
+     *
+     * 分析过程：
+     *
+     * 若字符串为：
+     * "我爱祖国abcd\\u0000efgh"
+     * 1. 标准的UTF-8是：
+     *      e6 88 91 e7 88 b1 e7 a5 96 e5 9b bd 61 62 63 64 0     65 66 67 68
+     * 2. Modified-UTF-8是：
+     *      e6 88 91 e7 88 b1 e7 a5 96 e5 9b bd 61 62 63 64 c0 80 65 66 67 68
+     *      即，对"\\u0000"的空字符编码，以双字节"0xc080"代替单字节"0x00"
+     * 3. 标准的libc 字符串函数遇"0x00"结束，而此处由于是"0xc080"，因此可以继续处理。
+     *
+     * https://developer.android.com/training/articles/perf-jni#utf-8-and-utf-16-strings
+     *
+     * @throws Exception
+     */
     @Test
-    public void MUTF8_Test() {
+    public void MUTF8_Test() throws Exception {
+
+        String raw = "我爱祖国abcd\u0000efgh";
+        byte[] byte_in_standard_utf8 = raw.getBytes("UTF-8");
+        for (byte i :
+                byte_in_standard_utf8) {
+            System.out.format("%x ", i);
+        }
+        System.out.println();
+
         JavaBean bean = new JavaBean();
-        String rec = bean.modifiedUTF8Test("abc");
+        String rec = bean.modifiedUTF8Test(raw);
         System.out.println("modifiedUTF8Test rec = " + rec);
     }
 }

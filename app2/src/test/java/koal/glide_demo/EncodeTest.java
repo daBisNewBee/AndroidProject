@@ -91,8 +91,10 @@ public class EncodeTest {
 
     @Test
     public void encode_Test() throws Exception {
-        String raw = "永";
+//        String raw = "永";
+        String raw = "我爱喜马拉雅\u0000";
         byte[] b = raw.getBytes("UTF-8");
+//        byte[] b = raw.getBytes("GBK");
         for (byte i:
              b) {
             System.out.format("%x ",i);
@@ -104,5 +106,15 @@ public class EncodeTest {
                 b) {
             System.out.format("%x ",i);
         }
+
+        // "Unicode转义字符"
+        char raw_wo = '\u6211'; // "我"
+        char raw_null = '\u0000';
+        char raw_ai = '\u7231';
+        String raw_s = "\u6211\u0000\u7231";
+        System.out.println("raw_wo = " + raw_wo);
+        System.out.println("raw_null = " + raw_null);
+        System.out.println("raw_ai = " + raw_ai);
+        System.out.println("raw_s = " + raw_s);
     }
 }
