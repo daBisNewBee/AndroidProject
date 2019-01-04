@@ -1,11 +1,14 @@
 package com.example.user.ndkdebug;
 
+import android.os.SystemClock;
+
 import com.exa.JavaBean;
 
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.ShortBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -123,5 +126,84 @@ public class JNITest {
         JavaBean bean = new JavaBean();
         String rec = bean.modifiedUTF8Test(raw);
         System.out.println("modifiedUTF8Test rec = " + rec);
+    }
+
+    /**
+     * 耗时统计：(ms)
+     *                      Java堆   Native堆
+     * 数据块大小：1kb        422     353
+     *           2kb        480     357
+     *           4kb        580     350
+     *           8kb        803     355
+     *
+     * 循环次数:  100 * 1024
+     *
+     * 数据量：   100MB
+     *           200MB
+     *           400MB
+     *           800MB
+     *
+     * 结论：
+     *  1. 使用Native堆时，单次不同的数据块大小在JNI通信时，耗时不变。可以理解为数据块大小不影响JNI拷贝效率
+     *  2. 使用Java堆时，单次数据块越大，耗时越长。
+     *          在数据块为4KB时，达到native的2倍不到；
+     *          1KB及以下时，耗时与native堆基本相同
+     */
+    @Test
+    public void speed_Test() {
+        JavaBean bean = new JavaBean();
+        final int raw_size_in_byte = 4 * 1024;
+        byte[] raw = new byte[raw_size_in_byte];
+        for (int i = 0; i < raw_size_in_byte; i++) {
+            raw[i] = (byte) i;
+        }
+
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(raw_size_in_byte);
+        byteBuffer.put(raw);
+
+        for (int j = 0; j < 5; j++) {
+            long start = SystemClock.currentThreadTimeMillis();
+            for (int i = 0; i < 100 * 1024; i++) {
+                bean.sendArrayWithCopy(raw);
+            }
+            long end = SystemClock.currentThreadTimeMillis();
+            System.out.println("Use Java Heap. cost:" + (end-start));
+
+            start = SystemClock.currentThreadTimeMillis();
+            for (int i = 0; i < 100 * 1024; i++) {
+                bean.sendArrayWithDirectBuf(byteBuffer);
+            }
+            end = SystemClock.currentThreadTimeMillis();
+            System.out.println("Use Native Heap. cost:" + (end-start));
+        }
+    }
+
+    @Test
+    public void shortSpeed_Test() {
+        JavaBean bean = new JavaBean();
+        final int raw_size_in_short = 4 * 1024; // short : 4 * 1024 == byte ：8 * 1024
+        short[] raw = new short[raw_size_in_short];
+        for (int i = 0; i < raw_size_in_short; i++) {
+            raw[i] = (short)i;
+        }
+
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(raw_size_in_short << 1);
+        ShortBuffer shortBuffer = byteBuffer.order(ByteOrder.LITTLE_ENDIAN).asShortBuffer();
+
+        for (int j = 0; j < 5; j++) {
+            long start = SystemClock.currentThreadTimeMillis();
+            for (int i = 0; i < 100 * 1024; i++) {
+                bean.sendArrayShortWithCopy(raw);
+            }
+            long end = SystemClock.currentThreadTimeMillis();
+            System.out.println("Use Java Heap. cost:" + (end-start));
+
+            start = SystemClock.currentThreadTimeMillis();
+            for (int i = 0; i < 100 * 1024; i++) {
+                bean.sendArrayShortWithDirectBuf(shortBuffer);
+            }
+            end = SystemClock.currentThreadTimeMillis();
+            System.out.println("Use Native Heap. cost:" + (end-start));
+        }
     }
 }

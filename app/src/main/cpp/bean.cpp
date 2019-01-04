@@ -331,3 +331,49 @@ Java_com_exa_JavaBean_modifiedUTF8Test(JNIEnv *env, jobject instance, jstring ms
     return env->NewStringUTF(msg);
 }
 
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_exa_JavaBean_sendArrayWithCopy(JNIEnv *env, jobject instance, jbyteArray in_) {
+//    jboolean isCopy = false;
+//    jbyte *in = env->GetByteArrayElements(in_, &isCopy);
+    jbyte *in = env->GetByteArrayElements(in_, NULL);
+//    LOGD("isCopy:%d", isCopy);
+//    int len = env->GetArrayLength(in_);
+//    LOGD("sendArrayWithCopy start. len:%d", len);
+//    PrintBuffer((void*)in, len);
+//    LOGD("sendArrayWithCopy end.");
+    env->ReleaseByteArrayElements(in_, in, 0);
+    return 0;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_exa_JavaBean_sendArrayWithDirectBuf(JNIEnv *env, jobject instance, jobject buffer) {
+    unsigned char* pBuf = (unsigned char*)env->GetDirectBufferAddress(buffer);
+//    int len = env->GetDirectBufferCapacity(buffer);
+//    LOGD("sendArrayWithDirectBuf start. len:%d ", len);
+//    PrintBuffer((void*)pBuf, len);
+//    LOGD("sendArrayWithDirectBuf end.");
+    return 0;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_exa_JavaBean_sendArrayShortWithCopy(JNIEnv *env, jobject instance, jshortArray in_) {
+    jshort *in = env->GetShortArrayElements(in_, NULL);
+//    int len = env->GetArrayLength(in_);
+//    LOGD("sendArrayShortWithCopy.. len:%d", len);
+//    PrintBuffer((void*)in, len << 1);
+    env->ReleaseShortArrayElements(in_, in, 0);
+    return 0;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_exa_JavaBean_sendArrayShortWithDirectBuf(JNIEnv *env, jobject instance, jobject buffer) {
+//    int len = env->GetDirectBufferCapacity(buffer);
+    short* pBuf = (short*)env->GetDirectBufferAddress(buffer);
+//    LOGD("sendArrayShortWithDirectBuf.. len:%d pBuf:%p", len, pBuf);
+//    PrintBuffer((void*)pBuf, len << 1);
+    return 0;
+}

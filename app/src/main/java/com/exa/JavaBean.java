@@ -1,6 +1,7 @@
 package com.exa;
 
 import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
 
 /**
  *
@@ -33,6 +34,15 @@ public class JavaBean {
     static {
         System.loadLibrary("native-lib");
     }
+
+    /* 测试方法*/
+    public native int sendArrayWithCopy(byte[] in);
+
+    public native int sendArrayWithDirectBuf(ByteBuffer buffer);
+
+    public native int sendArrayShortWithCopy(short[] in);
+
+    public native int sendArrayShortWithDirectBuf(ShortBuffer buffer);
 
     /*
     *  从Java传递数组到Jni层
