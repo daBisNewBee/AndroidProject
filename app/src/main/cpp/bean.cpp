@@ -77,6 +77,82 @@ void PrintBuffer(void* pBuff, unsigned int nLen)
     LOGD("------------------end-------------------\n");
 }
 
+// Java static method.
+// 这里的"static"表示静态函数，为了不导出到符号表，加快jvm的func的查找速度
+static jstring myClassFunc(JNIEnv *env, jclass type) {
+    return env->NewStringUTF("JNI. MyCLass");
+}
+
+// Java object method.
+static jstring modifiedUTF8Test(JNIEnv *env, jobject instance, jstring msg_) {
+    const char *msg = env->GetStringUTFChars(msg_, 0);
+
+    LOGD("jni. modifiedUTF8Test:%s", msg);
+    PrintBuffer((void*)msg, env->GetStringUTFLength(msg_));
+
+    env->ReleaseStringUTFChars(msg_, msg);
+
+    const char *raw = "我爱祖国abcd\0efgh";
+    PrintBuffer((void*)raw, strlen(raw));
+
+    return env->NewStringUTF(msg);
+}
+
+/*
+ * "signature"的获取方法：
+ * 1. cd /Users/user/Documents/git/NDKDebug/app/build/intermediates/classes/debug/
+ * 2. javap -s com/exa/JavaBean.class
+ * */
+static JNINativeMethod methods[] = {
+        // name         signature               fnPtr
+        {"myClassFunc", "()Ljava/lang/String;", (void*)&myClassFunc},
+        {"modifiedUTF8Test", "(Ljava/lang/String;)Ljava/lang/String;", (void*)&modifiedUTF8Test},
+        // 这里输入的错误的方法签名，会在loadLibrary时候检查，
+        // 优先于func被调用之前发现错误，这也是显示注册JNI方法的优势之一。
+};
+
+int registerNativeMethods(JNIEnv* env,
+                            const char* className,
+                            const JNINativeMethod* gMethods,
+                            int numMethods)
+{
+    jclass clazz;
+    int tmp;
+
+    clazz = env->FindClass(className);
+    if (clazz == NULL){
+        LOGD("FindClass:%s failed.", className);
+        return JNI_ERR;
+    }
+    // 关键方法：RegisterNatives
+    if ((tmp = env->RegisterNatives(clazz, methods, numMethods)) < 0){
+        LOGD("RegisterNatives failed. ret:%d", tmp);
+        return JNI_ERR;
+    }
+
+    return JNI_OK;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved) {
+    JNIEnv* env = NULL;
+    jint result = JNI_ERR;
+
+    if ((result = vm ->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_4)) != JNI_OK){
+        LOGD("JNI_OnLoad. GetEnv failed:%d", result);
+        return result;
+    }
+
+    if ((result = registerNativeMethods(env, "com/exa/JavaBean", methods, sizeof(methods)/ sizeof(methods[0]))) != JNI_OK){
+        LOGD("registerNativeMethods failed:%d", result);
+        return result;
+    }
+
+    result = JNI_VERSION_1_4;
+    LOGD("JNI_OnLoad end. result:%x" , result);
+    return result;
+}
+
 extern "C"
 JNIEXPORT jint JNICALL
 Java_com_exa_JavaBean_process(JNIEnv *env, jobject instance, jbyteArray inbuf1_, jbyteArray inbuf2_,
@@ -313,22 +389,6 @@ Java_com_exa_JavaBean_sendUTF8StringRegion(JNIEnv *env, jobject instance, jstrin
     env->GetStringUTFRegion(msg_, 0, len, buf);
     LOGD("GetStringUTFRegion:%s", buf);
     return env->NewStringUTF(buf);
-}
-
-extern "C"
-JNIEXPORT jstring JNICALL
-Java_com_exa_JavaBean_modifiedUTF8Test(JNIEnv *env, jobject instance, jstring msg_) {
-    const char *msg = env->GetStringUTFChars(msg_, 0);
-
-    LOGD("jni. modifiedUTF8Test:%s", msg);
-    PrintBuffer((void*)msg, env->GetStringUTFLength(msg_));
-
-    env->ReleaseStringUTFChars(msg_, msg);
-
-    const char *raw = "我爱祖国abcd\0efgh";
-    PrintBuffer((void*)raw, strlen(raw));
-
-    return env->NewStringUTF(msg);
 }
 
 extern "C"

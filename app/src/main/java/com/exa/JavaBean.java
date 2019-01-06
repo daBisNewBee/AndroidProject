@@ -31,7 +31,14 @@ import java.nio.ShortBuffer;
  */
 public class JavaBean {
 
+    /*
+    * JVM 查找 native 方法:
+    * 1.静态注册： 按照 JNI 规范的命名规则
+    * 2.（推荐）动态注册：调用 JNI 提供的 RegisterNatives 函数，将本地函数注册到 JVM 中
+    *
+    * */
     static {
+        // 回调 so中的 "JNI_OnLoad"
         System.loadLibrary("native-lib");
     }
 
@@ -70,4 +77,6 @@ public class JavaBean {
     /*  JNI字符串处理 结束 */
 
     public native String modifiedUTF8Test(String msg);
+
+    public static native String myClassFunc();
 }

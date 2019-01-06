@@ -206,4 +206,16 @@ public class JNITest {
             System.out.println("Use Native Heap. cost:" + (end-start));
         }
     }
+
+    @Test
+    public void registerMethods_Test() {
+        // static method.
+        String ret = JavaBean.myClassFunc();
+        System.out.println("myClassFunc ret = " + ret);
+
+        // object method.
+        JavaBean bean = new JavaBean();
+        ret = bean.modifiedUTF8Test("daBisNewBee");
+        System.out.println("modifiedUTF8Test ret = " + ret);
+    }
 }
