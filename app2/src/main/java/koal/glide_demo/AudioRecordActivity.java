@@ -1,5 +1,7 @@
 package koal.glide_demo;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -7,6 +9,7 @@ import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -44,6 +47,8 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
     // 录制缓冲大小
     private static final int bufferSize = AudioRecord.getMinBufferSize(sampleRateInHz, channelConfig, audioFormat);
 
+    private AudioDecoderThread mAudioDecoderThread;
+
     static {
         System.out.println("getMinBufferSize: " + bufferSize);
     }
@@ -56,12 +61,43 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
         findViewById(R.id.btn_stop_record).setOnClickListener(this);
         findViewById(R.id.btn_play).setOnClickListener(this);
         findViewById(R.id.btn_stop).setOnClickListener(this);
+        findViewById(R.id.btn_codec).setOnClickListener(this);
 
         try {
             audioFile = File.createTempFile("record-" + Long.toString(System.currentTimeMillis()), ".pcm", new File("/sdcard/"));
             System.out.println("创建录音文件：" + audioFile.getPath());
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        mAudioDecoderThread = new AudioDecoderThread();
+        checkPermission();
+    }
+
+    void checkPermission(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },
+                    0);
+            return;
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[] { Manifest.permission.READ_EXTERNAL_STORAGE },
+                    0);
+            return;
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[] { Manifest.permission.RECORD_AUDIO },
+                    0);
+            return;
         }
     }
 
@@ -80,6 +116,20 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.btn_stop:
                 isPlaying = false;
+            case R.id.btn_codec:
+                if (!isRecording)
+                {
+                    try {
+                        mAudioDecoderThread.startPlay("/sdcard/pcm/record.aac");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    mAudioDecoderThread.stop();
+                }
+                isRecording = !isRecording;
                 break;
             default:
                 break;
