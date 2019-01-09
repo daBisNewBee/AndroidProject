@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:orientation="horizontal">-->
+
+        <koal.glide_demo.MyView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="这是View"/>
+    <!--android:layout_weight="1"-->
+    <!--避免使用"weight"，在LinearLayout的布局下，会增加onMeasure的次数-->
+    <!--</LinearLayout>-->
+
+</LinearLayout>

@@ -21,6 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".AudioRecordActivity"></activity>
+        <activity android:name=".LayoutActivity"></activity>
     </application>
 
 </manifest>
