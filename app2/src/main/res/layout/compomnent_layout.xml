@@ -4,22 +4,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ViewStub
-        android:id="@+id/viewstub_img"
-        android:layout_width="wrap_content"
-        android:layout_marginLeft="25dp"
-        android:layout_height="wrap_content"
-        android:layout="@layout/viewstub_imageview_layout" />
+    <!--使用该方法可以提取layout： "Refactor" -> "Extract" -> "Layout" -->
+    <include
+        android:id="@+id/id_cannot_be_found"
+        layout="@layout/abc_layout" />
+    <!--注意：小心在这里声明id， 若子layout为merge，那么该id就找不到了！-->
 
-    <ViewStub
-        android:id="@+id/viewstub_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout="@layout/viewstub_textview_layout" />
-
-    <Button
-        android:id="@+id/btn_inflat_viewstub"
+    <include
+        android:id="@+id/outter_layout_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="加载" />
+        layout="@layout/nested_frame_layout" />
+    <!--"outter_layout_id"用来覆盖子layout中的"innder_layout_id"-->
+
 </LinearLayout>

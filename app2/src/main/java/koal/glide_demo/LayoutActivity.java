@@ -45,6 +45,47 @@ import org.w3c.dom.Text;
  * 3. setVisibility 的巧妙使用：
  *    通过该方法实现inflat
  *
+ *  "Include" 的用法注意：（实现"布局模块化"）
+ *  1. 技巧：使用IDE提取子layout：
+ *     "Refactor" -> "Extract" -> "Layout" （抽取布局）
+ *     "Refactor" -> "Extract" -> "Style" （抽取样式）
+ *
+ *  2. include标签中的属性，会复写子layout的属性
+ *     必须复写width、height属性，其他layout属性才会生效
+ *     建议：
+ *     1. 在子layout设置好好宽高位置
+ *     2. id同名
+ *
+ *  3. 技巧："tools:showIn"的使用方便开发
+ *
+ *  参考：
+ *  https://developer.android.google.cn/training/improving-layouts/reusing-layouts
+ *
+ *  "Merge"的用法注意：（减少UI层级）
+ *
+ *  1. ViewStub标签中的layout布局不能使用merge标签
+ *  "<merge /> can be used only with a valid ViewGroup root and attachToRoot=true"
+ *
+ *  2. merge标签必须使用在根布局
+ *
+ *  3. 对merge标签的属性设置无效，因为merge是个tag，不是view！
+ *     比如，设置的id无法find等。
+ *
+ *  4. 小心：在根布局include标签下声明id， 若子layout为merge，那么该id就找不到了。原因如3
+ *
+ *  5. 一般配合include使用，常用于根布局为LinearLayout、FrameLayout，
+ *    RelativeLayout其实也可以用，只是位置关系容易混乱
+ *
+ *  6. 根布局是FrameLayout且不需要设置background或padding等属性,可以用merge代替
+ *    TODO：为什么不需要设置bg、padding等属性？
+ *
+ *  大总结：
+ *  布局优化三大方法：
+ *  1. include：布局模块化，但是有嵌套冗余布局的可能
+ *  2. merge：减少层级
+ *  3. viewStub：延迟加载
+ *
+ *
  */
 public class LayoutActivity extends Activity {
 
@@ -84,5 +125,23 @@ public class LayoutActivity extends Activity {
                 count++;
             }
         });
+
+        TextView nestedTv = findViewById(R.id.nested_textview);
+        nestedTv.setText("在主app中访问include布局中的textview.");
+        // 验证子layout的id被outer复写
+        View outerLayout = findViewById(R.id.outter_layout_id);
+        System.out.println("outerLayout = " + outerLayout);
+        /*
+        * outerLayout = android.widget.FrameLayout{77dfe96 V.E...... ......ID 0,0-0,0 #7f070054 app:id/outter_layout_id}
+         * */
+        View interLayout = findViewById(R.id.innder_layout_id);
+        System.out.println("不应该有值 interLayout = " + interLayout);
+
+        /*
+        * 考虑：
+        * "id_cannot_be_found"的id为什么找不到？
+        * */
+        View viewCannotBeFound = findViewById(R.id.id_cannot_be_found);
+        System.out.println("viewCannotBeFound = " + viewCannotBeFound);
     }
 }

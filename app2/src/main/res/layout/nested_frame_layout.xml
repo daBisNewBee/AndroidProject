@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/innder_layout_id"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorAccent"
+    tools:showIn="@layout/compomnent_layout">
+
+    <!--"tools:showIn"仅在源码出现，为了IDE在方便查看、编辑-->
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/nested_textview"
+        android:textSize="40dp"
+        android:text="这是位于nested布局中的字体"/>
+
+</FrameLayout>

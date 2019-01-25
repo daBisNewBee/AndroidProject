@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:showIn="@layout/compomnent_layout">
+
+    <ViewStub
+        android:id="@+id/viewstub_img"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_height="wrap_content"
+        android:layout="@layout/viewstub_imageview_layout" />
+
+    <ViewStub
+        android:id="@+id/viewstub_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout="@layout/viewstub_textview_layout" />
+    <!--必须要指定layout_width和layout_height属性，否则运行就会报错-->
+
+    <Button
+        android:id="@+id/btn_inflat_viewstub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="加载" />
+</merge>
