@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".DpPxSpActivity">
+
+    <Button
+        android:id="@+id/btn_px"
+        android:layout_width="150px"
+        android:layout_height="wrap_content"
+        android:text="150px"/>
+
+    <View
+        android:id="@+id/divider_px"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider" />
+
+    <Button
+        android:id="@+id/btn_dp2px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="dp2px" />
+
+    <Button
+        android:id="@+id/btn_dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="150dp" />
+
+    <View
+        android:id="@+id/divider_dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+
+    <TextView
+        android:id="@+id/tv_20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="20dp" />
+
+    <Space
+        android:layout_width="4dp"
+        android:layout_height="4dp"/>
+
+    <TextView
+        android:id="@+id/tv_20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="20sp" />
+
+    <Space
+        android:layout_width="4dp"
+        android:layout_height="4dp"/>
+
+    <TextView
+        android:id="@+id/tv_20px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20px"
+        android:text="20px" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="-10dp"
+        android:background="@color/colorAccent"
+        android:orientation="horizontal">
+
+        <!--
+        在LinearLayout中设置
+        "android:padding="20dp""相当于
+        在ImageView中设置
+        android:layout_margin="20dp"
+
+        即：
+        Padding 为内边距，指该控件内部内容，如文本/图片距离该控件的边距
+        Margin 为外边距，指该控件距离边父控件的边距
+
+        padding的好处：
+        如果imageview对应的图片比较小，点击不容易点中，通过增加padding可以增大点触敏感度
+
+        margin：
+        给控件加了一个一定距离的空白边，显示效果只与值大小正负相关，与其他元素边界无关。
+        为负值时，该控件与其相邻控件的距离是负值，从显示效果讲就是覆盖某一方向上其它控件。
+        -->
+
+        <ImageView
+            android:padding="50dp"
+            android:layout_margin="20dp"
+            android:background="@color/colorPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher"/>
+    </LinearLayout>
+</LinearLayout>
