@@ -1,4 +1,4 @@
-package koal.glide_demo;
+package koal.glide_demo.record;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import koal.glide_demo.R;
 
 /**
  *

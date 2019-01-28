@@ -1,4 +1,4 @@
-package koal.glide_demo;
+package koal.glide_demo.ui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import koal.glide_demo.R;
 
 /**
  * px、dp(dip:device independent pixels)、sp用法相关：

@@ -1,4 +1,4 @@
-package koal.glide_demo;
+package koal.glide_demo.record;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

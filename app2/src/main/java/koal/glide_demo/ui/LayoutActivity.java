@@ -1,4 +1,4 @@
-package koal.glide_demo;
+package koal.glide_demo.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
+
+import koal.glide_demo.R;
 
 /**
  *

@@ -7,6 +7,9 @@ import android.view.View;
 
 import javax.inject.Inject;
 import koal.glide_demo.dagger.Pot;
+import koal.glide_demo.record.AudioRecordActivity;
+import koal.glide_demo.ui.DpPxSpActivity;
+import koal.glide_demo.ui.LayoutActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -20,6 +23,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        DaggerActivityComponent.create().inject(this);
 //        System.out.println("mPot = " + mPot.show());
         findViewById(R.id.btn_record).setOnClickListener(this);
+        findViewById(R.id.btn_dpi).setOnClickListener(this);
+        findViewById(R.id.btn_layout).setOnClickListener(this);
     }
 
     @Override
@@ -28,6 +33,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (id){
             case R.id.btn_record:
                 startActivity(new Intent(this, AudioRecordActivity.class));
+                break;
+            case R.id.btn_dpi:
+                startActivity(new Intent(this, DpPxSpActivity.class));
+                break;
+            case R.id.btn_layout:
+                startActivity(new Intent(this, LayoutActivity.class));
                 break;
             default:
                 break;
