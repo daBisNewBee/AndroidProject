@@ -1,13 +1,19 @@
 package koal.glide_demo.ui.framely;
 
 import android.app.Activity;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -44,6 +50,12 @@ public class FrameLayoutActivity extends Activity {
     FrameLayout mFrame = null;
 
     MeziView mMeziView = null;
+
+    private int count = 0;
+    private long timeMillis = 0;
+    private long timeMillis2 = 0;
+    private long timeMillis3 = 0;
+    private View view;
 
     private Handler mHandler = new Handler(){
         private int count = 0;
@@ -89,6 +101,75 @@ public class FrameLayoutActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        speedTest();
+
+        frameTest();
+    }
+
+    /*
+    * Android 不同布局类型measure、layout、draw耗时对比
+    * https://blog.csdn.net/qq_18757557/article/details/80495405
+    * TODO: 无法验证
+    * */
+    private void speedTest() {
+        ViewGroup root = new FrameLayout(this) {
+            @Override
+            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                long l = System.nanoTime();
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                timeMillis += (System.nanoTime() - l);
+                if (++count == 1000) {
+                    Log.e("cww", "finish measure: " + timeMillis);
+                } else {
+                    System.out.println("onMeasure count = " + count);
+                    if (count < 1000) {
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                view.requestLayout();
+                                view.invalidate();
+                            }
+                        }, 0);
+                    }
+                }
+            }
+
+            @Override
+            protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+                long l = System.nanoTime();
+                super.onLayout(changed, left, top, right, bottom);
+                timeMillis2 += (System.nanoTime() - l);
+                if (count == 1000) {
+                    Log.e("cww", "finish layout: " + timeMillis2);
+                }
+            }
+
+            @Override
+            protected void dispatchDraw(Canvas canvas) {
+                long l = System.nanoTime();
+                super.dispatchDraw(canvas);
+                timeMillis3 += (System.nanoTime() - l);
+                if (count == 1000) {
+                    Log.e("cww", "finish draw: " + timeMillis3);
+                }
+            }
+
+        };
+
+//        ViewGroup root = new FrameLayout(this);
+        for (int i = 0; i < 10; i++) {
+            FrameLayout rootLocal = new FrameLayout(this);
+            root.addView(rootLocal);
+            root = rootLocal;
+        }
+
+        TextView tv = new TextView(this);
+        tv.setTextSize(100);
+        tv.setText("hello world.");
+        root.addView(tv);
+    }
+
+    private void frameTest() {
         setContentView(R.layout.activity_frame_layout);
 
         mFrame = (FrameLayout)findViewById(R.id.mylayout);
@@ -101,7 +182,8 @@ public class FrameLayoutActivity extends Activity {
                 ((MeziView)v).bitmapX = event.getX() - 150;
                 ((MeziView)v).bitmapY = event.getY() - 150;
                 v.invalidate();
-                return true;
+                // 返回false，继续让onClick处理
+                return false;
             }
         });
         mFrame.addView(mMeziView);
@@ -112,5 +194,28 @@ public class FrameLayoutActivity extends Activity {
                 mHandler.sendEmptyMessage(0x1111);
             }
         }, 0, 200);
+    }
+
+    private boolean isMask = false;
+    private TextView maskTv = null;
+
+    // 遮罩层
+    public void onClick(View view){
+        if (isMask){
+            mFrame.removeView(maskTv);
+            isMask = false;
+        }else {
+            maskTv = new TextView(this);
+            maskTv.setText("I`m a mask textview");
+            maskTv.setTextColor(Color.BLUE);
+            maskTv.setTextSize(20);
+            maskTv.setGravity(Gravity.CENTER);
+            maskTv.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
+            maskTv.setBackgroundColor(Color.parseColor("#38000000"));
+            mFrame.addView(maskTv);
+            isMask = true;
+        }
+
     }
 }

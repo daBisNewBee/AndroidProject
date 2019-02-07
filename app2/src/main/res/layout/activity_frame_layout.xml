@@ -30,21 +30,22 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="#FF01FF"
+        android:onClick="onClick"
         android:layout_gravity="center"/>
 
     <!--半透明，模仿"功能引导页"等-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#38000000"
-        android:gravity="center">
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="#38000000"-->
+        <!--android:gravity="center">-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="50sp"
-            android:text="最外面一层"/>
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="50sp"-->
+            <!--android:text="最外面一层"/>-->
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
 
 </FrameLayout>

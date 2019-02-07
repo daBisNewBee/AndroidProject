@@ -87,6 +87,9 @@ import koal.glide_demo.R;
  *  2. merge：减少层级
  *  3. viewStub：延迟加载
  *
+ *  几个比较有用的结论：
+ *  怎样优化你的布局层级结构之RelativeLayout和LinearLayout及FrameLayout性能分析：
+ *  https://blog.csdn.net/qq_18757557/article/details/80495405
  *
  */
 public class LayoutActivity extends Activity {
