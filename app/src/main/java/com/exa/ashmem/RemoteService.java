@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
-import android.os.RemoteException;
 import android.util.Log;
 
 import com.example.user.ndkdebug.IShmService;
+
+import java.io.FileInputStream;
+import java.util.Arrays;
 
 public class RemoteService extends Service {
 	
@@ -24,9 +26,18 @@ public class RemoteService extends Service {
 			try {
 				final ParcelFileDescriptor pfd = service.getFD();
 				Log.v("ashmem", "RemoteService getFD:"+pfd.getFd());
-				AshmemManager.doOperaLater(pfd.getFd());
+				if (AshmemManager.isUseMemoryFile){
+					FileInputStream fis = new FileInputStream(pfd.getFileDescriptor());
+					byte[] buf2Read = new byte[1024];
+					int len = 0;
+					len += fis.read(buf2Read);
+					Log.v("ashmem", "RemoteService read len:" + len);
+					Log.v("ashmem", "buf2Read:" + Arrays.toString(buf2Read));
+				} else {
+					AshmemManager.doOperaLater(pfd.getFd());
+				}
 				RemoteService.this.stopSelf();
-			} catch (RemoteException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

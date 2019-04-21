@@ -7,6 +7,8 @@ package com.exa.ashmem;
  */
 public class AshmemManager {
 
+    public static boolean isUseMemoryFile = false;
+
     private static AshmemManager INSTANCE;
 
     public static AshmemManager getInstance(){

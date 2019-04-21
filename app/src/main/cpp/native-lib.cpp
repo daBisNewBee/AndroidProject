@@ -42,6 +42,7 @@ Java_com_exa_ashmem_AshmemManager_doOperaNow(
         JNIEnv *env,
         jclass /* this */,
         jint fd) {
+    // 将共享内存映射到用户空间
     pthread_mutex_t *p_mutex=(pthread_mutex_t*)mmap(NULL, sizeof(pthread_mutex_t), PROT_READ|PROT_WRITE, MAP_SHARED,fd,0);
     if( MAP_FAILED==p_mutex )
     {
