@@ -1,10 +1,13 @@
 package com.exa;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.os.StrictMode;
+import android.util.Log;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.exa.ashmem.AshmemManager;
 import com.exa.cusview.MyViewActivity;
 import com.exa.plugin.HookUtil;
 import com.facebook.stetho.Stetho;
@@ -18,6 +21,11 @@ import okhttp3.OkHttpClient;
  */
 
 public class MyApplication extends Application {
+
+    // Used to load the 'native-lib' library on application startup.
+    static {
+        System.loadLibrary("native-lib");
+    }
 
     private static Context context;
 
@@ -47,12 +55,30 @@ public class MyApplication extends Application {
     }
     * */
 
+    private String getCurrentProcessName(){
+        int pid = android.os.Process.myPid();
+        String processName = "";
+        ActivityManager activityManager = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningAppProcessInfo process: activityManager.getRunningAppProcesses()){
+            if (process.pid == pid)
+                processName = process.processName;
+        }
+        return processName;
+    }
+
+    private boolean isMainProcess(){
+        return context.getPackageName().equals(getCurrentProcessName());
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         // 其实 可以在 "attachBaseContext"后就执行context相关的初始化
         context = this;
+        if (isMainProcess()){
+            Log.v("ashmem", "into isMainProcess...");
+            AshmemManager.getInstance().setFd2Ashmem(AshmemManager.initAndGetFd2Ashmem());
+        }
 
         // ARouter 相关
         ARouter.openLog();

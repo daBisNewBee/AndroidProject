@@ -12,6 +12,7 @@ import android.os.RemoteException;
 import android.view.View;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.exa.ashmem.AshmemManager;
 import com.exa.messenger.RemoteService;
 import com.exa.mode.BaseActivity;
 
@@ -43,11 +44,6 @@ import com.exa.mode.BaseActivity;
  */
 public class MainActivity extends BaseActivity
         implements View.OnClickListener{
-
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
-    }
 
     private Messenger CMessenger = new Messenger(new Handler(){
         @Override
@@ -120,6 +116,7 @@ public class MainActivity extends BaseActivity
         findViewById(R.id.btn_recyclerview).setOnClickListener(this);
         findViewById(R.id.btn_plugin).setOnClickListener(this);
         findViewById(R.id.btn_conUri).setOnClickListener(this);
+        findViewById(R.id.btn_ashmem).setOnClickListener(this);
 
         // Example of a call to a native method
         stringFromJNI();
@@ -225,6 +222,19 @@ public class MainActivity extends BaseActivity
                 break;
             case R.id.btn_conUri:
                 ARouter.getInstance().build("/glide/ContactUri").navigation();
+                break;
+            case R.id.btn_ashmem:
+                new Thread(){
+                    public void run(){
+                       AshmemManager.doOperaNow(AshmemManager.getInstance().getFd2Ashmem());
+                    }
+                }.start();
+                new Thread(){
+                    public void run(){
+                        Intent intent = new Intent(MainActivity.this, com.exa.ashmem.RemoteService.class);
+                        startService(intent);
+                    }
+                }.start();
                 break;
             default:
                 break;

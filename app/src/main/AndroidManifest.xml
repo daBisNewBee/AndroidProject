@@ -21,14 +21,19 @@
             android:name=".MainActivity"
             android:taskAffinity="Main.task" />
 
+        <service android:name=".ashmem.RemoteService"
+            android:process=":service"></service>
+        
+        <service android:name=".ashmem.ShmService"></service>
+
         <service
             android:name=".messenger.RemoteService"
-            android:process=":remote" />
-        >
+            android:process=":remote" ></service>
+
         <service
             android:name=".binder.IPCServer"
-            android:process=":ipc" />
-        >
+            android:process=":ipc" ></service>
+
         <activity android:name=".binder.BinderActivity" />
         <activity android:name="com.bumptech.glide.samples.contacturi.ContactUriActivity" />
 
