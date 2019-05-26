@@ -72,7 +72,8 @@ public class MainFragment extends Fragment {
                 getFragmentManager()
                         .beginTransaction()
                         .addToBackStack("")
-                        .replace(R.id.frag_container, new OtherFragment())
+//                        .replace(R.id.frag_container, new OtherFragment())
+                        .replace(R.id.empty_frag_container, new OtherFragment())
                         .commit();
             }
         });
