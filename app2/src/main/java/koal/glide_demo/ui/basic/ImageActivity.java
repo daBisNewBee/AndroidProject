@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -21,8 +23,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import koal.glide_demo.R;
+import koal.glide_demo.ui.fragment.MainFragment;
 
-public class ImageActivity extends Activity {
+public class ImageActivity extends FragmentActivity implements MainFragment.OnFragmentInteractionListener {
 
     private FrameLayout mImageContainer;
     private ImageView mAlbumCover;
@@ -34,6 +37,12 @@ public class ImageActivity extends Activity {
         setContentView(R.layout.activity_image);
         mImageContainer = findViewById(R.id.image_container);
         mAlbumCover = findViewById(R.id.album_cover);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.frag_container, new MainFragment())
+                    .commit();
+        }
         // 用户首选方向，表示支持屏幕旋转
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
         System.out.println("ImageActivity.onCreate");
@@ -172,5 +181,10 @@ public class ImageActivity extends Activity {
         System.out.println("params height = " + params.height);
         System.out.println("params width = " + params.width);
         mAlbumCover.setLayoutParams(params);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        System.out.println("ImageActivity.onFragmentInteraction");
     }
 }
