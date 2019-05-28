@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import koal.glide_demo.R;
+import koal.glide_demo.utlis.FlagsUtlis;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,6 +78,30 @@ public class MainFragment extends Fragment {
                         .commit();
             }
         });
+
+        rootView.findViewById(R.id.btn_set_flags).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                FlagsUtlis.setScreenOrientation(getActivity(), true);
+                FlagsUtlis.setFlags(getActivity());
+            }
+
+        });
+        rootView.findViewById(R.id.btn_unset_flags).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                FlagsUtlis.setScreenOrientation(getActivity(), false);
+                FlagsUtlis.unsetFlags(getActivity());
+            }
+        });
+
+        rootView.findViewById(R.id.btn_show_flags).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FlagsUtlis.showFlags(getActivity());
+            }
+        });
+
         return rootView;
     }
 

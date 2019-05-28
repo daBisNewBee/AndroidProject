@@ -19,4 +19,48 @@
         android:layout_height="wrap_content"
         android:text="跳转到OtherFragment"/>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|right"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/btn_set_flags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="clip_vertical"
+            android:text="设置flags" />
+
+        <Button
+            android:id="@+id/btn_unset_flags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="重置flags"/>
+
+
+        <Button
+            android:id="@+id/btn_show_flags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|right"
+            android:text="显示flags"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:textSize="20sp"
+        android:text="位于左下角"
+        android:layout_gravity="bottom|left"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:textSize="20sp"
+        android:text="位于右下角"
+        android:layout_gravity="bottom|right"/>
+
 </FrameLayout>

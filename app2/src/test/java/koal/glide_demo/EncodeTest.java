@@ -1,6 +1,11 @@
 package koal.glide_demo;
 
+import android.util.Log;
+
 import org.junit.Test;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 public class EncodeTest {
     /**
@@ -116,5 +121,29 @@ public class EncodeTest {
         System.out.println("raw_null = " + raw_null);
         System.out.println("raw_ai = " + raw_ai);
         System.out.println("raw_s = " + raw_s);
+    }
+
+    private boolean hasBooleanFlag(int target, int flag) {
+        return (target & flag) == flag;
+    }
+
+    @Test
+    public void getFieldName() throws Exception {
+        int[] data = new int[]{0x00000400, 0x00000401};
+        int target = data[0] | data[1];
+
+        Class clz = Class.forName("koal.glide_demo.dagger.module.Cat");
+        Field[] fields = clz.getDeclaredFields();
+        for (int i = 0; i < fields.length; i++) {
+            Field one = fields[i];
+            int mod = one.getModifiers();
+            if (Modifier.isFinal(mod) && Modifier.isStatic(mod) && Modifier.isPublic(mod)) {
+                int value = one.getInt(null);
+                if (hasBooleanFlag(target, value)){
+                    System.out.println("value = " + value + " name:" + one.getName());
+                }
+            }
+            System.out.println("one = " + one);
+        }
     }
 }
