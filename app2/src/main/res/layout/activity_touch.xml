@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".touch.TouchActivity">
+
+    <koal.glide_demo.touch.MyLinearLayout
+        android:id="@+id/my_linear_layout_outer"
+        android:background="@color/colorAccent"
+        android:orientation="horizontal"
+        android:layout_below="@id/my_linear_layout"
+        android:contentDescription="外层布局"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="这里是外层布局"/>
+
+        <koal.glide_demo.touch.MyLinearLayout
+            android:id="@+id/my_linear_layout_inner"
+            android:background="@color/colorPrimary"
+            android:layout_marginStart="100dp"
+            android:contentDescription="内层布局"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="这里是内层布局"/>
+
+            <koal.glide_demo.touch.MyButton
+                android:id="@+id/btn_inner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClickOther"
+                android:text="TouchMyButton" />
+
+        </koal.glide_demo.touch.MyLinearLayout>
+
+    </koal.glide_demo.touch.MyLinearLayout>
+
+    <!--
+    RelativeLayout布局里:
+    1、当设置为android:layout_height="wrap_content"时，最下面的控件layout_marginBottom属性无效，
+        如果其他控件使用layout_above让自己处于最下面的控件之上，那么layout_marginBottom属性有效。(也无效！)
+    2、当设置为android:layout_height="match_parent"时，或者高度为固定值，那么最下面的控件layout_marginBottom属性才会有效
+    -->
+
+    <koal.glide_demo.touch.MyLinearLayout
+        android:id="@+id/my_linear_layout"
+        android:layout_centerVertical="true"
+        android:background="@color/colorAccent"
+        android:orientation="horizontal"
+        android:contentDescription="一层布局"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="这里是一层布局"/>
+
+        <koal.glide_demo.touch.MyButton
+            android:id="@+id/btn_other"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickOther"
+            android:text="TouchMyButton" />
+
+    </koal.glide_demo.touch.MyLinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <!--
+        子控件的"layout_marginBottom"是否有效，与直接嵌套的父控件"layout_height"有关，与根布局该属性无关
+        -->
+
+        <TextView
+            android:id="@+id/my_textview1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="30dp"
+            android:text="textview1"
+            android:textSize="20sp" />
+
+        <View
+            android:layout_width="0px"
+            android:layout_height="0px"
+            android:layout_below="@+id/my_textview1"
+            />
+
+        <!--<TextView-->
+            <!--android:id="@+id/my_textview2"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_above="@+id/my_textview1"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_marginBottom="80dp"-->
+            <!--android:text="textview2"-->
+            <!--android:textSize="20sp" />-->
+
+    </RelativeLayout>
+
+</RelativeLayout>
