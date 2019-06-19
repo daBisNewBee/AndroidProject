@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import koal.glide_demo.R;
 
+// https://www.runoob.com/w3cnote/android-tutorial-viewpager.html  ViewPager的简单使用
 public class OneActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
