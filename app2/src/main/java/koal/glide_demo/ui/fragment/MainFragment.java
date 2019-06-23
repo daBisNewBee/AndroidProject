@@ -3,7 +3,9 @@ package koal.glide_demo.ui.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +67,7 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d("test", "onCreateView: ");
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         rootView.findViewById(R.id.btn_jump_to_other).setOnClickListener(new View.OnClickListener() {
@@ -105,6 +108,30 @@ public class MainFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        Log.d("test", "onActivityCreated: ");
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        Log.d("test", "onStart: ");
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        Log.d("test", "onResume: ");
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroyView() {
+        Log.d("test", "onDestroyView: ");
+        super.onDestroyView();
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -114,6 +141,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
+        Log.d("test", "onAttach: ");
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
@@ -125,6 +153,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onDetach() {
+        Log.d("test", "onDetach: ");
         super.onDetach();
         mListener = null;
     }

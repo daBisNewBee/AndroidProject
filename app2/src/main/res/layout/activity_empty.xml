@@ -1,16 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.basic.EmptyActivity">
 
+    <LinearLayout
+        android:id="@+id/linear_first"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_add"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="add"/>
+
+        <Button
+            android:id="@+id/btn_hide"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="hide"/>
+
+        <Button
+            android:id="@+id/btn_attach"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="attach"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linear_second"
+        android:layout_below="@id/linear_first"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_remove"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="remove"/>
+
+        <Button
+            android:id="@+id/btn_show"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="show"/>
+
+        <Button
+            android:id="@+id/btn_detach"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="detach"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linear_third"
+        android:layout_below="@id/linear_second"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_pop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="pop"/>
+
+        <Button
+            android:id="@+id/btn_replace"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="replace"/>
+
+        <Button
+            android:id="@+id/btn_test"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="test"/>
+
+    </LinearLayout>
+
     <FrameLayout
         android:id="@+id/empty_frag_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="200dp"
+        android:layout_height="300dp"
+        android:layout_centerInParent="true"
+        android:background="#7FFFAA"
+        >
+    </FrameLayout>
+    
+    <FrameLayout
+        android:id="@+id/left_bottom_container"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="#7FFFAA"
+        android:layout_width="120dp"
+        android:layout_height="180dp">
 
     </FrameLayout>
 
-</LinearLayout>
+    <FrameLayout
+        android:id="@+id/right_bottom_container"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:background="#7FFFAA"
+        android:layout_width="120dp"
+        android:layout_height="180dp">
+
+    </FrameLayout>
+
+</RelativeLayout>

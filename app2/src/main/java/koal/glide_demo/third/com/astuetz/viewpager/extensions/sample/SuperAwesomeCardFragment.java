@@ -66,7 +66,7 @@ public class SuperAwesomeCardFragment extends Fragment {
 		v.setLayoutParams(params);
 		v.setGravity(Gravity.CENTER);
 		v.setBackgroundResource(R.mipmap.background_card);
-		v.setText("CARD " + (position + 1));
+		v.setText("CARD " + position);
 
 		fl.addView(v);
 		return fl;

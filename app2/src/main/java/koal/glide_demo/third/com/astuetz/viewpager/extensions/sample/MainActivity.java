@@ -25,16 +25,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
 
@@ -71,17 +71,17 @@ public class MainActivity extends AppCompatActivity {
 		tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
 			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-				Log.v("todo", "onPageScrolled position = [" + position + "], positionOffset = [" + positionOffset + "], positionOffsetPixels = [" + positionOffsetPixels + "]");
+//				System.out.println("onPageScrolled position = [" + position + "], positionOffset = [" + positionOffset + "], positionOffsetPixels = [" + positionOffsetPixels + "]");
 			}
 
 			@Override
 			public void onPageSelected(int position) {
-				Log.v("todo", "onPageSelected position = [" + position + "]");
+//				System.out.println("onPageSelected position = [" + position + "]");
 			}
 
 			@Override
 			public void onPageScrollStateChanged(int state) {
-				Log.v("todo", "onPageScrollStateChanged state = [" + state + "]");
+//				System.out.println("onPageScrollStateChanged state = [" + state + "]");
 			}
 		});
 		changeColor(currentColor);
@@ -197,7 +197,29 @@ public class MainActivity extends AppCompatActivity {
 		}
 	};
 
+	/*
+	* FragmentStatePagerAdapter:
+	* 	只缓存frag的"state"
+	* 				position
+	* 	切到：		2		3	4
+	* 	destroy:	0		1	2
+	* 	init:		1,2,3	4	5
+	*
+	* 	"当Fragment对用户不见得时，整个Fragment会被销毁， 只会保存Fragment的状态"
+	* 	destroyItem：remove
+	*
+	* FragmentPagerAdapter：
+	* 	只缓存当前及左右两边的frag
+	* 	destroyItem：detach
+	*
+	* 总结：
+	* FragmentPagerAdapter适合固定的页面较少、页面内容为静态数据的场合；
+	* FragmentStatePagerAdapter则适合于页面较多或者页面内容为动态数据(需占用大量内存)的情况！
+	*
+	* */
+//	public class MyPagerAdapter extends FragmentStatePagerAdapter {
 	public class MyPagerAdapter extends FragmentPagerAdapter {
+
 
 		private final String[] TITLES = { "Categories", "Home", "Top Paid", "Top Free", "Top Grossing", "Top New Paid",
 				"Top New Free", "Trending" };
@@ -214,6 +236,18 @@ public class MainActivity extends AppCompatActivity {
 		@Override
 		public int getCount() {
 			return TITLES.length;
+		}
+
+		@Override
+		public Object instantiateItem(ViewGroup container, int position) {
+			System.out.println("instantiateItem container = [" + container + "], position = [" + position + "]");
+			return super.instantiateItem(container, position);
+		}
+
+		@Override
+		public void destroyItem(ViewGroup container, int position, Object object) {
+			System.out.println("destroyItem container = [" + container + "], position = [" + position + "], object = [" + object + "]");
+			super.destroyItem(container, position, object);
 		}
 
 		@Override
