@@ -1,1 +1,2 @@
 include ':app', ':plugin-library', ':plugin', ':processor', ':app2'
+include ':ViewPagerDemo'
