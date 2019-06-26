@@ -1,5 +1,6 @@
 package koal.glide_demo.ui.basic;
 
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.Fragment;
@@ -19,16 +20,18 @@ import koal.glide_demo.ui.fragment.OtherFragment;
 
 /**
  *
- * add:
- *    onAttach:
- *    onCreateView:
- *    onActivityCreated:
- *    onStart:
- *    onResume:
+ * DecorView
  *
- *    onDestroyView:
- *    onDetach:
+ * "android.R.id.content"相关：
  *
+ * 1. "android.R.id.content" 为什么是一个FrameLayout？(ContentFrameLayout)
+ *     TODO:
+ *
+ * 2. 为什么 "android.R.id.content as container for Fragment"， 即：".add(android.R.id.content, new MainFragment())" ？
+ *    若添加在Activity的父布局，会产生布局冗余。
+ *    （比如原content 为 Framelayout，Activity 也是，则产生两个 Framelayout，冗余了）
+ *    ps：需要注意api14、19的不同，content只是屏幕的部分
+ *    (https://stackoverflow.com/questions/24712227/android-r-id-content-as-container-for-fragment)
  *
  */
 public class EmptyActivity extends AppCompatActivity
@@ -50,8 +53,8 @@ public class EmptyActivity extends AppCompatActivity
 //            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 
         }
-        setContentView(R.layout.activity_empty);
         getSupportActionBar().hide();
+        setContentView(R.layout.activity_empty);
         findViewById(R.id.btn_add).setOnClickListener(this);
         findViewById(R.id.btn_remove).setOnClickListener(this);
         findViewById(R.id.btn_hide).setOnClickListener(this);
@@ -62,6 +65,15 @@ public class EmptyActivity extends AppCompatActivity
         findViewById(R.id.btn_replace).setOnClickListener(this);
         findViewById(R.id.btn_test).setOnClickListener(this);
         mFragmentManager = getSupportFragmentManager();
+
+        Rect frame = new Rect();
+        getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
+        int statusBarHeight = frame.top;
+        Log.v("todo", "statusBarHeight = " + statusBarHeight);
+
+        int contentTop = findViewById(android.R.id.content).getTop();
+        Log.v("todo", "contentTop = " + contentTop);
+
     }
 
     @Override
@@ -87,6 +99,15 @@ public class EmptyActivity extends AppCompatActivity
                         .add(R.id.empty_frag_container, new MainFragment(),MAIN_FRAGMENT_TAG)
 //                        .add(R.id.empty_frag_container, new OtherFragment(),"other_fragment_tag")
                         .addToBackStack("这里随便传什么");
+
+                // ximalaya 模拟
+//                mFragmentManager
+//                        .beginTransaction()
+//                        .setCustomAnimations(R.anim.framework_slide_in_right, R.anim.framework_slide_out_right
+//                                , R.anim.framework_slide_in_right, R.anim.framework_slide_out_right)
+//                        .add(android.R.id.content, new MainFragment())
+//                        .addToBackStack(null)
+//                        .commitAllowingStateLoss();
                 break;
             case R.id.btn_remove:
                 /*
