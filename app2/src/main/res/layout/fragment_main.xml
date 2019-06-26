@@ -10,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:textStyle="bold"
         android:text="这里是MainFragment" />
 
     <Button
@@ -51,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
-        android:textSize="20sp"
+        android:textSize="10sp"
         android:text="位于左下角"
         android:layout_gravity="bottom|left"/>
 
@@ -59,7 +60,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
-        android:textSize="20sp"
+        android:textSize="10sp"
         android:text="位于右下角"
         android:layout_gravity="bottom|right"/>
 
