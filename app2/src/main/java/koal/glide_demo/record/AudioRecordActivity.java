@@ -7,10 +7,15 @@ import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder;
+import android.media.audiofx.AcousticEchoCanceler;
+import android.media.audiofx.AudioEffect;
+import android.media.audiofx.AutomaticGainControl;
+import android.media.audiofx.NoiseSuppressor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import java.io.BufferedInputStream;
@@ -138,6 +143,10 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    private boolean hasMicrophone() {
+        return this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_MICROPHONE);
+    }
+
     class RecordTask extends AsyncTask<Void,Integer,Void>{
 
         @Override
@@ -149,10 +158,48 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
                 DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(audioFile)));
 
                 AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRateInHz, channelConfig, audioFormat, bufferSize);
+                audioRecord.startRecording();
+
+                /*
+                * AudioRecord需要使用 "AudioSource.VOICE_COMMUNICATION" 的源
+                * 下面才能正常运行
+                * */
+                boolean isAgc = AutomaticGainControl.isAvailable();
+                Log.v("todo", "AutomaticGainControl isAgc = " + isAgc);
+                if (isAgc && hasMicrophone()) {
+                    AutomaticGainControl agc = AutomaticGainControl.create(audioRecord.getAudioSessionId());
+                    boolean getEnabled = agc.getEnabled();
+                    Log.v("todo", "getEnabled = " + getEnabled);
+                    assert (AudioEffect.SUCCESS == agc.setEnabled(true));
+                    getEnabled = agc.getEnabled();
+                    Log.v("todo", "After set getEnabled = " + getEnabled);
+                }
+
+                // TODO:实际效果不明显！！没卵用
+                boolean isAec = AcousticEchoCanceler.isAvailable();
+                Log.v("todo", "AcousticEchoCanceler isAec = " + isAec);
+                if (isAec && hasMicrophone()) {
+                    AcousticEchoCanceler aec = AcousticEchoCanceler.create(audioRecord.getAudioSessionId());
+                    boolean getEnabled = aec.getEnabled();
+                    Log.v("todo", "getEnabled = " + getEnabled);
+                    assert AudioEffect.SUCCESS == aec.setEnabled(true);
+                    getEnabled = aec.getEnabled();
+                    Log.v("todo", "After set getEnabled = " + getEnabled);
+                }
+
+                boolean isNs = NoiseSuppressor.isAvailable();
+                Log.v("todo", "NoiseSuppressor isNs = " + isNs);
+                if (isNs && hasMicrophone()) {
+                    NoiseSuppressor ns = NoiseSuppressor.create(audioRecord.getAudioSessionId());
+                    boolean getEnabled = ns.getEnabled();
+                    Log.v("todo", "getEnabled = " + getEnabled);
+                    assert AudioEffect.SUCCESS == ns.setEnabled(true);
+                    getEnabled = ns.getEnabled();
+                    Log.v("todo", "After set getEnabled = " + getEnabled);
+                }
 
                 short[] buffer = new short[bufferSize];
 
-                audioRecord.startRecording();
                 isRecording = true;
 
                 int r = 0;
