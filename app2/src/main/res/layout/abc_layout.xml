@@ -3,8 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     tools:showIn="@layout/compomnent_layout">
 
+    <!--
+    android:inflatedId
+    根节点id，设置后将作为其子layout("viewstub_imageview_layout")的根节点id
+    TODO:无法设置"viewstub_img"以外的值
+    -->
     <ViewStub
         android:id="@+id/viewstub_img"
+        android:inflatedId="@+id/viewstub_img"
         android:layout_width="wrap_content"
         android:layout_marginLeft="25dp"
         android:layout_height="wrap_content"
