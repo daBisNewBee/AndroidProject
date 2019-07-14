@@ -2,12 +2,19 @@ package koal.glide_demo.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
+
+import java.util.zip.Inflater;
 
 import koal.glide_demo.R;
 
@@ -95,6 +102,8 @@ import koal.glide_demo.R;
 public class LayoutActivity extends Activity {
 
     private static int count = 0;
+    private ViewGroup mRootView;
+    private View mLayoutAdded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +111,11 @@ public class LayoutActivity extends Activity {
 //        setContentView(R.layout.frame_layout);
 //        setContentView(R.layout.linear_layout);
 //        setContentView(R.layout.relative_layout);
-        setContentView(R.layout.compomnent_layout);
+        mRootView = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.compomnent_layout, null, false);
+        setContentView(mRootView);
+//        setContentView(R.layout.compomnent_layout);
+
+        infalteLayoutByJava();
 
         findViewById(R.id.btn_inflat_viewstub).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,5 +161,74 @@ public class LayoutActivity extends Activity {
         * */
         View viewCannotBeFound = findViewById(R.id.id_cannot_be_found);
         System.out.println("viewCannotBeFound = " + viewCannotBeFound);
+    }
+
+    private void infalteLayoutByJava() {
+        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.weight = 1;
+        // 必须设置textview的center！字体才会居中，这里设置没用！
+//        params.gravity = Gravity.CENTER;
+        TextView tv1 = new TextView(this);
+        tv1.setTextSize(20);
+        tv1.setGravity(Gravity.CENTER);
+        tv1.setText("操他妈1");
+        linearLayout.addView(tv1,params);
+
+        TextView tv2 = new TextView(this);
+        tv2.setTextSize(20);
+        tv2.setGravity(Gravity.CENTER);
+        tv2.setText("操他妈2");
+        linearLayout.addView(tv2,params);
+
+        mRootView.addView(linearLayout);
+    }
+
+    /*
+    * 动态加载xml布局几个注意点：
+    * 1. 若要使用"addView"加载，inflate时的"attachToRoot"必须为false
+    * 2. attachToRoot 为 false 时，需要注意的"root"的输入（TODO: 原因未知）
+    *    attachToRoot 为 true 时，root传啥都一样
+    *
+    * 其他：
+    *   "动态添加Java布局":"infalteLayoutByJava"
+    *
+    * 参考：
+    *   Android 动态添加布局的两种方式：
+    *       https://www.jianshu.com/p/06c9c6685108
+    * */
+    public void onClick(View view){
+        int id = view.getId();
+        switch (id){
+            case R.id.btn_dynamic_load_layout:
+                // 可选方式：
+//                View view1 = View.inflate(this, R.layout.record_ll_time_count, null);
+                // 方法一：直接添加布局到父布局（缺点：无法自定义在父布局中的位置）
+//                mLayoutAdded = LayoutInflater.from(this).inflate(R.layout.record_ll_time_count, mRootView, true);
+
+                // 方法二：实际和方法一没有卵区别，不指定params的情况下.
+                // ps: mRootView 若为"null", 子布局宽度会match_parent效果
+//                mLayoutAdded = LayoutInflater.from(this).inflate(R.layout.record_ll_time_count, mRootView, false);
+//                mRootView.addView(mLayoutAdded);
+
+                // 方法三：
+                int width  = DpPxSpActivity.dp2px(this, 118);
+                int height  = DpPxSpActivity.dp2px(this, 118);
+                mLayoutAdded = LayoutInflater.from(this).inflate(R.layout.record_ll_time_count, null, false);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
+                params.gravity = Gravity.CENTER_HORIZONTAL;
+                mRootView.addView(mLayoutAdded, params);
+                break;
+            case R.id.btn_dynamic_unload_layout:
+                if (mLayoutAdded != null) {
+                    mRootView.removeView(mLayoutAdded);
+                    mLayoutAdded = null;
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
