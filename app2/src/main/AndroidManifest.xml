@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -13,45 +14,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.basic.EmptyActivity">
+        <activity android:name=".video.LiveCameraActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
-        </activity>
-        <activity android:name=".third.com.astuetz.viewpager.extensions.sample.MainActivity">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
+        <activity android:name=".ui.basic.EmptyActivity">
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+        </activity>
+        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".third.com.astuetz.viewpager.extensions.sample.MainActivity">
+
         </activity>
         <activity android:name=".record.AudioRecordActivity" />
         <activity android:name=".ui.LayoutActivity" />
         <activity android:name=".ui.DpPxSpActivity" />
-        <activity android:name=".ui.framely.FrameLayoutActivity">
-        </activity>
+        <activity android:name=".ui.framely.FrameLayoutActivity"></activity>
         <activity android:name=".touch.TouchActivity">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
         </activity>
         <activity
             android:name=".ui.basic.ImageActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|locale|layoutDirection|smallestScreenSize">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
         </activity>
-        <activity android:name=".ui.basic.DynamicActivity">
-        </activity>
+        <activity android:name=".ui.basic.DynamicActivity"></activity>
     </application>
 
 </manifest>
