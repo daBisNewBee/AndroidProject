@@ -1,6 +1,7 @@
 package koal.glide_demo.video;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -8,17 +9,21 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
 
 import java.io.IOException;
 
@@ -73,7 +78,11 @@ public class LiveCameraActivity extends AppCompatActivity implements TextureView
     private Camera mCamera;
     private String [] permissions = {Manifest.permission.CAMERA};
 
+    private EditText mEditText;
+    private ViewTreeObserver.OnGlobalLayoutListener mOnGlobalLayoutListener;
+
     private float rotate = 90.0f;
+    private View mContentView;
 
     /**
      *  注意：这里表示可以在子线程中更新UI！！！！TextureView、SurfaceView都是！
@@ -119,7 +128,8 @@ public class LiveCameraActivity extends AppCompatActivity implements TextureView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_texture_view);
+        mContentView = LayoutInflater.from(this).inflate(R.layout.activity_texture_view, null, false);
+        setContentView(mContentView);
 
         mSurfaceView = findViewById(R.id.surface_view_camera);
         mSurfaceHolder = mSurfaceView.getHolder();
@@ -166,6 +176,66 @@ public class LiveCameraActivity extends AppCompatActivity implements TextureView
         mTextureView.setSurfaceTextureListener(this);
 
         ActivityCompat.requestPermissions(this, permissions, 200);
+
+        mEditText = findViewById(R.id.live_edit_text);
+        mEditText.requestFocus();
+    }
+
+    private void registerGlobalLayoutListener() {
+        if (mOnGlobalLayoutListener == null) {
+            mOnGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    Rect rect = new Rect();
+                    getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+                    int rootInvisibleHeight = getWindow().getDecorView().getRootView().getHeight() - rect.bottom;
+                    Log.d("todo", "rect = " + rect);
+                    Log.d("todo", "onGlobalLayout rootInvisibleHeight = " + rootInvisibleHeight);
+                    if (rootInvisibleHeight > 200) {
+                        Log.d("todo", "若不可视区域高度大于100，这里键盘显示.");
+                    } else {
+                        Log.d("todo", "这里键盘隐藏.");
+                    }
+                }
+            };
+        }
+        mContentView.getViewTreeObserver().addOnGlobalLayoutListener(mOnGlobalLayoutListener);
+    }
+
+    private void unregisterGlobalLayoutListener() {
+        if (mOnGlobalLayoutListener != null && mContentView != null) {
+            mContentView.getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        showSoftInputMethod();
+        registerGlobalLayoutListener();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        hideSoftInputMethod();
+        unregisterGlobalLayoutListener();
+    }
+
+    private void showSoftInputMethod() {
+        InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Context
+                .INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.showSoftInput(mEditText, InputMethodManager.SHOW_IMPLICIT);
+        }
+    }
+
+    private void hideSoftInputMethod() {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+        }
     }
 
     @Override

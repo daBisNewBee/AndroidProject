@@ -59,7 +59,7 @@ public class MyApplication extends Application {
         new Handler(getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d("todo", "准备投递异常！！！！");
+//                Log.d("todo", "准备投递异常！！！！");
 //                throw new RuntimeException("这里发生运行时异常！！！！！！");
 //                CrashReport.testJavaCrash(); // CRASHTYPE_JAVA_CRASH = 0;
 //                CrashReport.testNativeCrash(); // CRASHTYPE_NATIVE = 2;

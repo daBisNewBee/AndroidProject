@@ -16,6 +16,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/seekbar_rorate"/>
 
+    <EditText
+        android:id="@+id/live_edit_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="点击可以操我"
+        android:layout_below="@id/percent_seek"/>
+
     <SurfaceView
         android:id="@+id/surface_view_camera"
         android:layout_width="250dp"
