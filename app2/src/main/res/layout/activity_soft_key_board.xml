@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.SoftKeyBoardActivity">
+
+    <TextView
+        android:id="@+id/textview_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="60dp"
+        android:layout_centerHorizontal="true"
+        android:text="演示软键盘用法"
+        android:textSize="30sp"/>
+
+    <TextView
+        android:id="@+id/textview_sec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textview_top"
+        android:layout_marginTop="60dp"
+        android:layout_centerHorizontal="true"
+        android:text="22222222222"
+        android:textSize="30sp"/>
+
+    <TextView
+        android:id="@+id/textview_third"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textview_sec"
+        android:layout_marginTop="60dp"
+        android:layout_centerHorizontal="true"
+        android:text="333333333333"
+        android:textSize="30sp"/>
+
+    <TextView
+        android:id="@+id/textview_forth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textview_third"
+        android:layout_marginTop="60dp"
+        android:layout_centerHorizontal="true"
+        android:text="44444444444"
+        android:textSize="30sp"/>
+
+    <TextView
+        android:id="@+id/textview_five"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textview_forth"
+        android:layout_marginTop="60dp"
+        android:layout_centerHorizontal="true"
+        android:text="555555555555"
+        android:textSize="30sp"/>
+
+    <TextView
+        android:id="@+id/textview_six"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bottom_ll"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="60dp"
+        android:layout_centerHorizontal="true"
+        android:text="666666666666"
+        android:textSize="30sp"/>
+
+
+    <LinearLayout
+        android:id="@+id/bottom_ll"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/colorAccent"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:text="请输入内容:"/>
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="点击可以操我"/>
+
+    </LinearLayout>
+    
+    <FrameLayout
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="60dp"
+        android:background="@color/colorPrimary">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/colorAccent"
+            android:gravity="center"
+            android:text="完成"/>
+    </FrameLayout>
+    
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/background_tab_pressed"/>
+
+</RelativeLayout>
