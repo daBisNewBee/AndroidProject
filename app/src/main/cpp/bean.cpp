@@ -83,18 +83,62 @@ static jstring myClassFunc(JNIEnv *env, jclass type) {
     return env->NewStringUTF("JNI. MyCLass");
 }
 
+//jstring to char*
+char* jstringTostring(JNIEnv* env, jstring jstr)
+{
+    char* rtn = NULL;
+    jclass clsstring = env->FindClass("java/lang/String");
+    jstring strencode = env->NewStringUTF("utf-8");
+    jmethodID mid = env->GetMethodID(clsstring, "getBytes", "(Ljava/lang/String;)[B");
+    jbyteArray barr= (jbyteArray)env->CallObjectMethod(jstr, mid, strencode);
+    jsize alen = env->GetArrayLength(barr);
+    jbyte* ba = env->GetByteArrayElements(barr, JNI_FALSE);
+    if (alen > 0)
+    {
+        rtn = (char*)malloc(alen + 1);
+        memcpy(rtn, ba, alen);
+        rtn[alen] = 0;
+    }
+    env->ReleaseByteArrayElements(barr, ba, 0);
+    return rtn;
+}
+
 // Java object method.
 static jstring modifiedUTF8Test(JNIEnv *env, jobject instance, jstring msg_) {
+
+    /*
+     * 关于"jstring"：
+     * 实际是个"String"对象，因此调用其getBytes方法可以得到字节码
+     * */
+    char * data = jstringTostring(env, msg_);
+    PrintBuffer((void*)data, strlen(data));
+
     const char *msg = env->GetStringUTFChars(msg_, 0);
 
     LOGD("jni. modifiedUTF8Test:%s", msg);
+    LOGD("这是经过修改后UTF-8编码的字符串：");
     PrintBuffer((void*)msg, env->GetStringUTFLength(msg_));
 
+    LOGD("这是拷贝后的字符串：");// 由于"0x00"已经被替换成"0xc080"，因为可以完整拷贝
+    char * dst = (char*)malloc(env->GetStringUTFLength(msg_));
+    strcpy(dst, msg);
+    PrintBuffer((void*)dst, strlen(dst));
+
     env->ReleaseStringUTFChars(msg_, msg);
+
+//    jboolean isCopy;
+//    const jchar* msg2 = env->GetStringChars(msg_, &isCopy);
+//    PrintBuffer((void*)msg2, env->GetStringLength(msg_));
+//    env->ReleaseStringChars(msg_, msg2);
 
     const char *raw = "我爱祖国abcd\0efgh";
     PrintBuffer((void*)raw, strlen(raw));
 
+    /*
+     * 这里如果传入非MUTF8，会报错：
+     * JNI DETECTED ERROR IN APPLICATION:
+     * input is not valid Modified UTF-8: illegal start byte 0xfd'
+     * */
     return env->NewStringUTF(msg);
 }
 
@@ -200,21 +244,23 @@ Java_com_exa_JavaBean_process(JNIEnv *env, jobject instance, jbyteArray inbuf1_,
     return 0;
 }
 
+unsigned char gBuff[1024 * 4] = {0};
+
 extern "C"
 JNIEXPORT jbyteArray JNICALL
 Java_com_exa_JavaBean_nativeGetByteArray(JNIEnv *env, jobject instance) {
 
-    unsigned char buff[10];
-
-    for (int i = 0; i < 10; ++i) {
-        buff[i] = i;
-    }
+//    unsigned char buff[10];
+//
+//    for (int i = 0; i < 10; ++i) {
+//        buff[i] = i;
+//    }
 
     // 1. 通过 NewByteArray 在堆上分配数组对象
-    jbyteArray array = env->NewByteArray(10);
+    jbyteArray array = env->NewByteArray(1024 * 4);
 
     // 2. 通过SetByteArrayRegion 把本地的数组数据拷贝到堆上分配的数组中去
-    env->SetByteArrayRegion(array, 0, 10, (jbyte*)buff);
+    env->SetByteArrayRegion(array, 0, 1024 * 4, (jbyte*)gBuff);
     // 所谓的："Region calls"
 
     // 3. 通过返回值将分配的数组对象返回到Java层即可
@@ -267,7 +313,7 @@ Java_com_exa_JavaBean_getDirectBufferFromNative(JNIEnv *env, jobject instance) {
  *     GetStringUTFChars： 返回的是UTF-8编码的char*
  *     GetStringChars   ： 返回的是UTF-16编码的jchar*
  *     GetStringCritical： 返回类型同上，只是增加了返回源字符串指针的可能性，但不确保！
- *                         用于源字符串较大(>1M)的场景
+ *                         用于源字符串较大(>1M)的场景，测试该方法很慢！
  *  2. 不拷贝，在Native中预先分配的缓冲区。
  *     GetStringUTFRegion：返回的是UTF-8编码的char*
  *
@@ -340,6 +386,24 @@ Java_com_exa_JavaBean_sendUTF8String(JNIEnv *env, jobject instance, jstring msg_
     // java.lang.String 字符串对象。这个新创建的
     // 字符串会自动转换成 Java 支持的 Unicode 编码
     return env->NewStringUTF(buf);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_exa_JavaBean_sendUTF8StringOnly(JNIEnv *env, jobject instance, jstring msg_) {
+    jboolean isCopy = false;
+    const char *msg = env->GetStringUTFChars(msg_, &isCopy);
+    env->ReleaseStringUTFChars(msg_, msg);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_exa_JavaBean_sendUTF16StringOnly(JNIEnv *env, jobject instance, jstring msg_) {
+    jboolean isCopy = false;
+//    const jchar* msg = env->GetStringCritical(msg_, &isCopy);
+//    env->ReleaseStringCritical(msg_, msg);
+    const jchar* msg = env->GetStringChars(msg_, &isCopy);
+    env->ReleaseStringChars(msg_, msg);
 }
 
 extern "C"

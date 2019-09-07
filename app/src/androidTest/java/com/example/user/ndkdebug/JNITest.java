@@ -71,6 +71,29 @@ public class JNITest {
     }
 
     @Test
+    public void encodeTypeSpeedTest() {
+        String rawData = "大大萨达撒大萨达撒大硕大的撒大所萨达所大所多大萨达撒abcdefghijklm";
+        JavaBean bean = new JavaBean();
+        long start,end;
+
+        for (int j = 0; j < 5; j++) {
+            start = System.currentTimeMillis();
+            for (int i = 0; i < 1000000; i++) {
+                bean.sendUTF8StringOnly(rawData);
+            }
+            end = System.currentTimeMillis();
+            System.out.println("UTF8 cost = " + (end-start) +" ms" );
+
+            start = System.currentTimeMillis();
+            for (int i = 0; i < 1000000; i++) {
+                bean.sendUTF16StringOnly(rawData);
+            }
+            end = System.currentTimeMillis();
+            System.out.println("UTF16 cost = " + (end-start) +" ms" );
+        }
+    }
+
+    @Test
     public void string_Test() {
         Charset charset = Charset.defaultCharset();
         System.out.println("defaultCharset = " + charset);
@@ -129,19 +152,14 @@ public class JNITest {
     }
 
     /**
+     * JNI拷贝存在代价(正向Java -> Native)
+     *
      * 耗时统计：(ms)
-     *                      Java堆   Native堆
-     * 数据块大小：1kb        422     353
-     *           2kb        480     357
-     *           4kb        580     350
-     *           8kb        803     355
-     *
-     * 循环次数:  100 * 1024
-     *
-     * 数据量：   100MB
-     *           200MB
-     *           400MB
-     *           800MB
+     *                      Java堆   Native堆    常规调用  循环次数         数据量
+     * 数据块大小：1kb        375     353           1      100 * 1024      100MB
+     *           2kb        480     357           1      100 * 1024      200MB
+     *           4kb        580     350           1      100 * 1024      400MB
+     *           8kb        775     355           1      100 * 1024      800MB
      *
      * 结论：
      *  1. 使用Native堆时，单次不同的数据块大小在JNI通信时，耗时不变。可以理解为数据块大小不影响JNI拷贝效率
@@ -152,7 +170,7 @@ public class JNITest {
     @Test
     public void speed_Test() {
         JavaBean bean = new JavaBean();
-        final int raw_size_in_byte = 4 * 1024;
+        final int raw_size_in_byte = 8 * 1024;
         byte[] raw = new byte[raw_size_in_byte];
         for (int i = 0; i < raw_size_in_byte; i++) {
             raw[i] = (byte) i;
@@ -175,7 +193,37 @@ public class JNITest {
             }
             end = SystemClock.currentThreadTimeMillis();
             System.out.println("Use Native Heap. cost:" + (end-start));
+
+            start = SystemClock.currentThreadTimeMillis();
+            for (int i = 0; i < 100 * 1024; i++) {
+                bean.sendArray(raw);
+            }
+            end = SystemClock.currentThreadTimeMillis();
+            System.out.println("Use java call. cost:" + (end-start));
         }
+    }
+
+    /**
+     * JNI拷贝存在代价(反向，Native -> Java)
+     *
+     * 1kb  485ms
+     * 2kb  650ms
+     * 4kb  1057ms
+     * 8kb  1509ms
+     *
+     * 数据量：1kb * 1024 * 100
+     */
+    @Test
+    public void getByteArrayCostTest() {
+        JavaBean bean = new JavaBean();
+        long start, end;
+        start = System.currentTimeMillis();
+        for (int i = 0; i < 1024 * 100; i++) {
+            byte[] arrayGet = bean.nativeGetByteArray();
+        }
+        end = System.currentTimeMillis();
+        System.out.println("cost = " + (end - start) + "ms");
+//        System.out.println("arrayGet size = " + arrayGet.length);
     }
 
     @Test
@@ -208,14 +256,28 @@ public class JNITest {
     }
 
     @Test
-    public void registerMethods_Test() {
+    public void registerMethods_Test() throws Exception {
         // static method.
         String ret = JavaBean.myClassFunc();
         System.out.println("myClassFunc ret = " + ret);
 
+        /*
+        * UTF-16:
+        * fe ff 0 64 0 61 0 42 0 69 0 73 0 4e 0 65 0 77 0 42 0 65 0 65
+        *
+        * UTF-8:
+        * e6 88 91 e6 98 af 64 61 42 69 73 4e 65 77 42 65 65
+        * */
+        String raw = "我是daBisNewBee";
+        byte[] rawByte = raw.getBytes("UTF-16");
+        System.out.println("UTF-16 编码后的字符串：");
+        for (byte i: rawByte) {
+            System.out.format("%x ", i);
+        }
+        System.out.println();
         // object method.
         JavaBean bean = new JavaBean();
-        ret = bean.modifiedUTF8Test("daBisNewBee");
+        ret = bean.modifiedUTF8Test(raw);
         System.out.println("modifiedUTF8Test ret = " + ret);
     }
 }

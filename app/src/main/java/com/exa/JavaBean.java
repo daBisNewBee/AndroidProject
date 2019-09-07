@@ -47,6 +47,10 @@ public class JavaBean {
 
     public native int sendArrayWithDirectBuf(ByteBuffer buffer);
 
+    public int sendArray(byte[] in){
+        return 0;
+    }
+
     public native int sendArrayShortWithCopy(short[] in);
 
     public native int sendArrayShortWithDirectBuf(ShortBuffer buffer);
@@ -68,8 +72,10 @@ public class JavaBean {
 
     /*  JNI字符串处理 开始 */
     public native String sendUTF8String(String msg);
+    public native void sendUTF8StringOnly(String msg);
 
     public native String sendUTF16String(String msg);
+    public native void sendUTF16StringOnly(String msg);
 
     public native String sendStringPointer(String msg);
 
