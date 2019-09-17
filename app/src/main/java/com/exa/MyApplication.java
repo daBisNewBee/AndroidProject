@@ -80,9 +80,35 @@ public class MyApplication extends Application {
             AshmemManager.getInstance().setFd2Ashmem(AshmemManager.initAndGetFd2Ashmem());
         }
 
-        // ARouter 相关
+        /*
+        * ARouter 相关
+        *
+        * 原理本质：
+        * 1. 注解处理器生成"分组表"类
+        *    比如，"ARouter$$Group$$leak.class"
+        *
+        * 2. 在"分组表"类中，指定了"url"与对应类的"映射关系"
+        *    比如，"/leak/activity" 对应 "LeakActivity.class"
+        *
+        * 3. 运行时，url根据"映射关系",找到对应实际类，跳转、打开指定调用
+        *    比如，ARouter.getInstance().build("/glide/ContactUri").navigation();
+        *    类似于startActivity(ContactUriActivity.java)
+        *
+        * 要点：
+        * 能够精确匹配url，这个映射关系是关键！
+        * 但是直接保存映射关系，太慢！
+        * "分组表类"封装映射关系，解决直接保存映射关系体积太大的问题，但是扫描分组表类太慢成了最大问题！！
+        *
+        * 作用：
+        * 组件化解耦：startActivity时指定"url"代替类限定名
+        *
+        * 2019.9.16 技术分享讨论
+        * 较大项目弃用的原因是：
+        * 新版本初始化时，需要从apk中扫描class得到分组表，很耗时！！影响启动时间！！
+        * TODO： 时间需要验证
+        * */
         ARouter.openLog();
-        ARouter.openDebug();
+        ARouter.openDebug();// 该步骤决定需要分组表是从apk中扫描获得还是从本地sp中加载
         ARouter.init(this);
 
         setupLeakCanary();
