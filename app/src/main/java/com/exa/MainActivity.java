@@ -16,6 +16,10 @@ import com.exa.ashmem.AshmemManager;
 import com.exa.messenger.RemoteService;
 import com.exa.mode.BaseActivity;
 
+import java.util.Enumeration;
+
+import dalvik.system.DexFile;
+
 /**
  *
  * 一句话概括：
@@ -121,6 +125,51 @@ public class MainActivity extends BaseActivity
         // Example of a call to a native method
         stringFromJNI();
 //        startAndBindService();
+
+        try {
+            scanClassesFromApk();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     *
+     * 获取apk下所有的class，验证ARouter中的加载速度的问题
+     * TODO: 并没有很慢？
+     *
+     * 09-18 23:52:34.798 25603 25603 I System.out: cost:21 ms
+     * 09-18 23:52:34.798 25603 25603 I System.out: num = 19716
+     *
+     * 09-18 23:55:10.144 28779 28779 I System.out: cost:20 ms
+     * 09-18 23:55:10.144 28779 28779 I System.out: num = 47347
+     *
+     * 09-18 23:57:37.471 29599 29599 I System.out: cost:35 ms
+     * 09-18 23:57:37.471 29599 29599 I System.out: num = 47347
+     * 09-18 23:57:37.471 29599 29599 I System.out: appOwnedNum = 31893
+     *
+     * @throws
+     */
+    private void scanClassesFromApk() throws Exception {
+        // /data/app/com.exa-LIm7s0OAbToV6aAp2H84dQ==/base.apk
+//        String filePath = this.getPackageCodePath();
+        String filePath = "/data/app/com.ximalaya.ting.android-r4VmzLi3VZs_nZp5M7C_Xw==/base.apk";
+        System.out.println("getPackageCodePath = " + filePath);
+        DexFile dexFile = new DexFile(filePath);
+        Enumeration<String> dexEntries = dexFile.entries();
+        int num = 0, appOwnedNum = 0;
+        long start = System.currentTimeMillis();
+        while (dexEntries.hasMoreElements()) {
+            String className = dexEntries.nextElement();
+            if (className.startsWith("com.ximalaya.ting.android")) {
+//                System.out.println("className = " + className);
+                appOwnedNum++;
+            }
+            num++;
+        }
+        System.out.println("cost:" + (System.currentTimeMillis() - start) +" ms");
+        System.out.println("num = " + num);
+        System.out.println("appOwnedNum = " + appOwnedNum);
     }
 
     /*
