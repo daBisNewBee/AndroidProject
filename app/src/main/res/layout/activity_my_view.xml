@@ -32,26 +32,33 @@
                 android:text="textview2"/>
         </com.exa.cusview.ViewGroup2>
 
-        <com.exa.cusview.ViewGroup2
-            android:layout_margin="20dp"
+        <com.exa.cusview.PressLineView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="#0000ff"
-            android:orientation="vertical"
-            android:gravity="center">
-            <com.exa.cusview.MyView1
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#f58407"
-                android:text="textview1" />
-            <com.exa.cusview.MyView2
-                android:layout_marginTop="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#dedede"
-                android:text="textview2"/>
-        </com.exa.cusview.ViewGroup2>
+            android:layout_margin="20dp"
+            android:background="#FFFFFF"/>
+
+        <!--<com.exa.cusview.ViewGroup2-->
+            <!--android:layout_margin="20dp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:background="#0000ff"-->
+            <!--android:orientation="vertical"-->
+            <!--android:gravity="center">-->
+            <!--<com.exa.cusview.MyView1-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="#f58407"-->
+                <!--android:text="textview1" />-->
+            <!--<com.exa.cusview.MyView2-->
+                <!--android:layout_marginTop="10dp"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="#dedede"-->
+                <!--android:text="textview2"/>-->
+        <!--</com.exa.cusview.ViewGroup2>-->
     </com.exa.cusview.ViewGroup1>
 
 </RelativeLayout>
