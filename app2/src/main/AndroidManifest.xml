@@ -15,6 +15,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ui.TimePickerActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ui.SoftKeyBoardActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,20 +31,18 @@
         </activity>
         <activity
             android:name=".video.LiveCameraActivity"
-            android:windowSoftInputMode="adjustResize">
-
-        </activity>
-        <activity android:name=".ui.basic.EmptyActivity"></activity>
+            android:windowSoftInputMode="adjustResize"></activity>
+        <activity android:name=".ui.basic.EmptyActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".third.com.astuetz.viewpager.extensions.sample.MainActivity"></activity>
+        <activity android:name=".third.com.astuetz.viewpager.extensions.sample.MainActivity" />
         <activity android:name=".record.AudioRecordActivity" />
         <activity android:name=".ui.LayoutActivity" />
         <activity android:name=".ui.DpPxSpActivity" />
         <activity android:name=".ui.framely.FrameLayoutActivity" />
-        <activity android:name=".touch.TouchActivity"></activity>
+        <activity android:name=".touch.TouchActivity" />
         <activity
             android:name=".ui.basic.ImageActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|locale|layoutDirection|smallestScreenSize"></activity>
+            android:configChanges="orientation|screenSize|keyboardHidden|locale|layoutDirection|smallestScreenSize" />
         <activity android:name=".ui.basic.DynamicActivity" />
     </application>
 

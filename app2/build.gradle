@@ -23,6 +23,7 @@ android {
 }
 
 dependencies {
+    implementation 'cn.carbswang.android:NumberPickerView:1.2.0'
     implementation 'com.squareup.okhttp3:okhttp:3.14.2'
 
 //    api 'com.tencent.bugly:crashreport:2.8.6'
