@@ -7,6 +7,7 @@
     tools:context=".ui.TimePickerActivity">
 
     <LinearLayout
+        android:id="@+id/ll_time_picker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -58,5 +59,51 @@
             app:npv_TextColorNormal="#000000"
             app:npv_WrapSelectorWheel="true"/>
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_time_picker"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_scroll_to"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="scrollTo" />
+
+        <Button
+            android:id="@+id/btn_scroll_by"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="scrollBy" />
+
+        <Button
+            android:id="@+id/btn_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="reset" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_target"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="@color/background_tab_pressed"
+        android:text="FUCK My Life."
+        android:gravity="center"
+        android:textColor="#000000"
+        android:textSize="12sp"
+        android:layout_centerInParent="true"/>
+
+    <Button
+        android:id="@+id/btn_target"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_target"
+        android:layout_centerHorizontal="true"
+        android:text="test" />
 
 </RelativeLayout>

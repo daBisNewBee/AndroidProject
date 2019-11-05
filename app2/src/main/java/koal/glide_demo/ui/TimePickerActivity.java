@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,9 +18,11 @@ import java.lang.reflect.Field;
 import cn.carbswang.android.numberpickerview.library.NumberPickerView;
 import koal.glide_demo.R;
 
-public class TimePickerActivity extends Activity {
+public class TimePickerActivity extends Activity implements View.OnClickListener{
 
     private ViewGroup mRootView;
+    private TextView mTvTarget;
+    private Button mBtnTarget;
 
 
     @Override
@@ -27,6 +30,13 @@ public class TimePickerActivity extends Activity {
         super.onCreate(savedInstanceState);
         mRootView = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.activity_time_picker, null, false);
         setContentView(mRootView);
+
+        mTvTarget = findViewById(R.id.tv_target);
+        mBtnTarget = findViewById(R.id.btn_target);
+
+        findViewById(R.id.btn_scroll_to).setOnClickListener(this::onClick);
+        findViewById(R.id.btn_scroll_by).setOnClickListener(this::onClick);
+        findViewById(R.id.btn_reset).setOnClickListener(this::onClick);
 
         NumberPickerView hourNumberPickerView  = findViewById(R.id.hour_number_picker);
         hourNumberPickerView.setDisplayedValues(new String[]{"1","2","3","4","5","6","7"});
@@ -80,5 +90,45 @@ public class TimePickerActivity extends Activity {
                 }
             }
         }, 1000);
+    }
+
+    /**         |正
+     *          |
+     *  (10,10) |
+     *          | View 的中心
+     * ---------|---------- x
+     * 正       |          负
+     *          |  (-10,-10)
+     *          |
+     *          |y 负
+     *
+     * 几个认识：
+     * 1. scrollTo 绝对移动，scrollBy 相对移动
+     * 2. 移动的只是View的内容，其位置不变，getX，getY不变
+     * 3. 移动的中心，是View的中心
+     * @param v
+     */
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        float x = mTvTarget.getX();
+        float y = mTvTarget.getY();
+        Log.d("test", "onClick: x:" + x + " y:" + y);
+        switch (id) {
+            case R.id.btn_scroll_to:
+                mTvTarget.scrollTo(0,20);
+                mBtnTarget.scrollTo(0,20);
+                break;
+            case R.id.btn_scroll_by:
+                mTvTarget.scrollBy(-10,-10);
+                mBtnTarget.scrollBy(10,10);
+                break;
+            case R.id.btn_reset:
+                mTvTarget.scrollTo(0, 0);
+                mBtnTarget.scrollTo(0, 0);
+                break;
+            default:
+                break;
+        }
     }
 }
