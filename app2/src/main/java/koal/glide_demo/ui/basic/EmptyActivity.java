@@ -12,11 +12,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
+import java.util.Collections;
 import java.util.List;
 
 import koal.glide_demo.R;
 import koal.glide_demo.ui.fragment.MainFragment;
 import koal.glide_demo.ui.fragment.OtherFragment;
+
+import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
 /**
  *
@@ -32,6 +35,15 @@ import koal.glide_demo.ui.fragment.OtherFragment;
  *    （比如原content 为 Framelayout，Activity 也是，则产生两个 Framelayout，冗余了）
  *    ps：需要注意api14、19的不同，content只是屏幕的部分
  *    (https://stackoverflow.com/questions/24712227/android-r-id-content-as-container-for-fragment)
+ *
+ * 3. add(), show(), hide(), replace()的那点事
+ *   区别：
+ *   show、hide只改变可见性(setVisibility是true还是false)，onHiddenChanged回调，不会触发生命周期
+ *   replace 会销毁视图，即调用onDestoryView、onCreateView等一系列生命周期
+ *
+ *   场景：
+ *   show、hide:当前Fragment很高可能性再次复用，性能较高
+ *   replace：原有Fragment占用大量内存，需及时销毁
  *
  */
 public class EmptyActivity extends AppCompatActivity
@@ -98,6 +110,7 @@ public class EmptyActivity extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
+        Fragment findFrag;
         // 事务不能全局，只能被提交一次
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         int id = v.getId();
@@ -114,7 +127,7 @@ public class EmptyActivity extends AppCompatActivity
                         .add(R.id.empty_frag_container, new MainFragment(),MAIN_FRAGMENT_TAG)
 //                        .add(R.id.empty_frag_container, new OtherFragment(),"other_fragment_tag")
                         .addToBackStack("这里随便传什么");
-
+//                transaction.add(R.id.empty_frag_container, new OtherFragment(), OTHER_FRAGMENT_TAG)                        .addToBackStack(""); // add多次，验证"popBackStack"弹出所有
                 // ximalaya 模拟
 //                mFragmentManager
 //                        .beginTransaction()
@@ -146,33 +159,56 @@ public class EmptyActivity extends AppCompatActivity
                 * onDestroyView:
                 * onDetach:
                 * */
-                mFragmentManager.popBackStack();
+                mFragmentManager.popBackStack(); // 只弹出最顶上一个
+//                mFragmentManager.popBackStack(null, POP_BACK_STACK_INCLUSIVE); // 可以pop所有Frag
                 break;
             case R.id.btn_attach:
                 break;
             case R.id.btn_detach:
                 break;
             case R.id.btn_hide:
+                findFrag = mFragmentManager.findFragmentByTag(MAIN_FRAGMENT_TAG);
+                if (findFrag != null) {
+                    transaction.hide(findFrag);
+                } else {
+                    Log.d("test", "找不到fragment. return.");
+                }
                 break;
             case R.id.btn_show:
+                findFrag = mFragmentManager.findFragmentByTag(MAIN_FRAGMENT_TAG);
+                if (findFrag != null) {
+                    transaction.show(findFrag);
+                } else {
+                    Log.d("test", "找不到fragment. return.");
+                }
                 break;
             case R.id.btn_replace:
+//                transaction.add(R.id.empty_frag_container, new OtherFragment(), OTHER_FRAGMENT_TAG).addToBackStack("");
                 transaction.replace(R.id.empty_frag_container, new OtherFragment(), OTHER_FRAGMENT_TAG);
                 break;
             case R.id.btn_test:
-                List<Fragment> list = mFragmentManager.getFragments();
-                if (list.size() == 0) {
-                    Log.d("test", "没有可用fragment. return.");
-                    return;
-                }
-                for (Fragment fragment : list) {
-                    Log.d("test", "fragment: " + fragment.toString());
-                }
-
+                printFragments(mFragmentManager);
                 break;
             default:
                 break;
         }
         transaction.commit();
+    }
+
+    private void printFragments(FragmentManager fragmentManager) {
+        List<Fragment> list = fragmentManager.getFragments();
+        if (list.size() == 0) {
+            Log.d("test", "没有可用fragment. return.");
+            return;
+        }
+        for (Fragment fragment : list) {
+            Log.d("test", "fragment: " + fragment.toString());
+//            FragmentManager childFM = fragment.getFragmentManager();
+//            FragmentManager childFM = fragment.getChildFragmentManager();
+//            if (childFM.getFragments().size() > 0) {
+//                Log.d("todo", "发现子Fragment size = " + childFM.getFragments().size());
+//                printFragments(childFM);
+//            }
+        }
     }
 }

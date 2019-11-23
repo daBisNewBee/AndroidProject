@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import koal.glide_demo.R;
 import koal.glide_demo.utlis.FlagsUtlis;
 
@@ -76,8 +78,8 @@ public class MainFragment extends Fragment {
                 getFragmentManager()
                         .beginTransaction()
                         .addToBackStack("")
-//                        .replace(R.id.frag_container, new OtherFragment())
-                        .replace(R.id.empty_frag_container, new OtherFragment())
+                        .add(R.id.fl_center_bottom_container, new OtherFragment())
+//                        .replace(R.id.empty_frag_container, new OtherFragment())
                         .commit();
             }
         });
@@ -87,6 +89,10 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
 //                FlagsUtlis.setScreenOrientation(getActivity(), true);
                 FlagsUtlis.setFlags(getActivity());
+                List<Fragment> list = getFragmentManager().getFragments();
+                for (Fragment fragment : list) {
+                    Log.d("todo", "getFragmentManager fragment = " + fragment);
+                }
             }
 
         });
@@ -95,6 +101,10 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
 //                FlagsUtlis.setScreenOrientation(getActivity(), false);
                 FlagsUtlis.unsetFlags(getActivity());
+                List<Fragment> list = getChildFragmentManager().getFragments();
+                for (Fragment fragment : list) {
+                    Log.d("todo", "getChildFragmentManager fragment = " + fragment);
+                }
             }
         });
 
@@ -112,6 +122,12 @@ public class MainFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         Log.d("test", "onActivityCreated: ");
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        Log.d("todo", "onHiddenChanged() called with: hidden = [" + hidden + "]");
     }
 
     @Override

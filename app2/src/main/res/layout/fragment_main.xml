@@ -20,6 +20,15 @@
         android:layout_height="wrap_content"
         android:text="跳转到OtherFragment"/>
 
+    <FrameLayout
+        android:id="@+id/fl_center_bottom_container"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="#7FFFAA"
+        android:layout_width="120dp"
+        android:layout_height="180dp">
+
+    </FrameLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
