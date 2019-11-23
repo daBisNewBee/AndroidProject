@@ -64,6 +64,21 @@ public class EmptyActivity extends AppCompatActivity
         findViewById(R.id.btn_pop).setOnClickListener(this);
         findViewById(R.id.btn_replace).setOnClickListener(this);
         findViewById(R.id.btn_test).setOnClickListener(this);
+
+        /*
+        * "android.support.v4.app.Fragment" 与 "android.app.Fragment"区别：
+        * 1. 前者的Activity必须继承自"FragmentActivity"
+        *    后者可以继承自"Activity"
+        *
+        * 2. 获取的FragmentManager的方式不同：
+        *    前者："getSupportFragmentManager"
+        *    后者："getFragmentManager"
+        *    本质：就是因为3.0以下的Activity不含有"FragmentManager"，因此需要构造含有"FragmentManager"的FragmentActivity，来获得一样的能力
+        *
+        * 3. 支持的最低版本不同：
+        *    前者：4 （即，1.6 ，其实也是xxx.v4.xxx 命名的原由；v7表示最低支持到2.1）
+        *    后者：11 （Fragment正式是在API 3.0以后引入的）
+        * */
         mFragmentManager = getSupportFragmentManager();
 
         Rect frame = new Rect();
