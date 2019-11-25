@@ -3,11 +3,14 @@ package com.exa.listview;
 import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
@@ -107,7 +110,48 @@ public class MultipleItemsListActivity extends ListActivity {
             }
         }
         setListAdapter(mAdapter);
+        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("todo", "onItemClick() called with: parent = [" + parent + "], view = [" + view + "], position = [" + position + "], id = [" + id + "]");
+                mAdapter.getDataList().set(position, "修改后的数据: pos:" + position);
+
+                /*
+                * 比较三种更新数据方式的区别？
+                *
+                * 1.直接更新：
+                * 点击某个item，会更新全部item，效率低
+                *
+                * 2. 只更新单个View，但是方式错误。
+                *    原因：getChildAt传入的实际是"可见pos"
+                *    办法：需要做转换。即第一个可见view的pos是10，点击第13个item，对应的可见item的pos其实是第3个。
+                *    因此，需要(13-10=3)
+                *
+                * 3. 只更新单个View，正确方法
+                *
+                * 参考：
+                * Android ListView优化之局部刷新：
+                * https://my.oschina.net/u/2296916/blog/782338
+                * */
+//                mAdapter.notifyDataSetChanged(); // 1.
+//                View item = getListView().getChildAt(position); // 2.
+//                mAdapter.getView(position, item, getListView());
+                notifyDataSetChanged(position, getListView()); // 3.
+            }
+        });
         getListView().setOnScrollListener(onScrollListener);
+    }
+
+    private void notifyDataSetChanged(int position, ListView listView) {
+        int firstVisiblePosition = listView.getFirstVisiblePosition();
+        int lastVisiblePosition = listView.getLastVisiblePosition();
+        Log.d("todo", "firstVisiblePosition = " + firstVisiblePosition);
+        Log.d("todo", "lastVisiblePosition = " + lastVisiblePosition);
+        if (position >= firstVisiblePosition && position <= lastVisiblePosition) {
+            View item = listView.getChildAt(position - firstVisiblePosition);
+            mAdapter.getView(position, item, listView);
+        }
+
     }
 
     private class MyCustomAdapter extends BaseAdapter{
@@ -138,7 +182,12 @@ public class MultipleItemsListActivity extends ListActivity {
 
         @Override
         public int getItemViewType(int position) {
+//            return TYPE_ITEM;
             return mSeparatorsSet.contains(position) ? TYPE_SEPARATOR : TYPE_ITEM;
+        }
+
+        public List<String> getDataList() {
+            return mData;
         }
 
         @Override
@@ -219,6 +268,7 @@ public class MultipleItemsListActivity extends ListActivity {
                 holder = (ViewHolder) convertView.getTag();
             }
             holder.textView.setText(mData.get(position));
+            Log.d("todo", "convertView = " + convertView);
             return convertView;
         }
     }
