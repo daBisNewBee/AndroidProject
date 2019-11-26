@@ -41,6 +41,10 @@ import java.util.Set;
  *    1. 一定要用Iterator的remove方法！
  *    2. 多线程做好同步操作
  *
+ * 7. 参考：
+ *    ConcurrentModificationException 异常 (fail-fast)
+ *    https://blog.csdn.net/qq_36827957/article/details/94718139
+ *
  * foreach和iterator抉择问题？
  * https://www.jianshu.com/p/085da555c435?utm_source=desktop&utm_medium=timeline
  *
