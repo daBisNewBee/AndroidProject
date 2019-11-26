@@ -12,6 +12,38 @@ import java.util.Random;
 import java.util.Set;
 
 /**
+ *
+ * "快速失效"(fail-fast) 是什么？
+ *
+ * 1. 一种理念，fail-fast就是在做系统设计的时候先考虑异常情况，一旦发生异常，直接停止并上报。
+ *
+ * 2. 一个简单例子：
+    public int divide(int divisor,int dividend){
+       if(dividend == 0){
+           throw new RuntimeException("dividend can't be null");
+       }
+       return divisor/dividend;
+    }
+ *
+ * 3. 几个相关概念：ConcurrentModificationException、错误检测机制
+ *
+ * 4. 本质："modCount" 和 "expectedModCount" 的不相等
+ *    modCount: 该集合实际被修改的次数。 因此，对集合的修改(add、remove)会随时反应到这个值上！
+ *    expectedModCount: 这个迭代器预期该集合被修改的次数
+ *
+ * 5. 所以，发生了ConcurrentModificationException，就一定发生了并发修改吗？
+ *    不一定！！！
+ *    原因可能是，
+ *    1. 编码类错误. 在迭代器中使用list.remove 的方法直接删除元素
+ *    2. 并发修改发生. 一边在foreach，一边在add、remove
+ *
+ * 6. 结论、方法：
+ *    1. 一定要用Iterator的remove方法！
+ *    2. 多线程做好同步操作
+ *
+ * foreach和iterator抉择问题？
+ * https://www.jianshu.com/p/085da555c435?utm_source=desktop&utm_medium=timeline
+ *
  * Created by wenbin.liu on 2019-11-26
  *
  * @author wenbin.liu
@@ -132,6 +164,12 @@ public class ConcurrentModificationExceptionTest {
     }
 
     boolean isStop;
+
+    /**
+     * 一种推荐的并发修改集合的方式
+     *
+     * @throws Exception
+     */
     @Test
     public void main_test() throws Exception {
 //        final Set<Integer> set = new HashSet<Integer>();
@@ -145,10 +183,12 @@ public class ConcurrentModificationExceptionTest {
                 int i;
                 while (true) {
                     try {
-                        i = new Random().nextInt(1000);
-//                        System.out.println("准备加入到Set...");
-                        set.add(i);
-//                        System.out.println("加入到Set:" + i);
+//                        synchronized (set) {
+                            i = new Random().nextInt(1000);
+                        System.out.println("准备加入到Set...");
+                            set.add(i);
+//                        }
+                        System.out.println("加入到Set:" + i);
                     } catch (Exception e) {
                         e.printStackTrace();
                         System.out.println("ADD Exception:" + e.getMessage());
@@ -169,7 +209,7 @@ public class ConcurrentModificationExceptionTest {
                 while (true) {
                     synchronized (set) {
                         try {
-                            iter = set.iterator();
+                            iter = set.iterator(); // 想想这个初始化放到循环外面去，行不行？为什么不行？
 //                            System.out.println("开始迭代..");
                             int i;
                             while (iter.hasNext()) {
