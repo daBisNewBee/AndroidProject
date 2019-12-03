@@ -3,6 +3,8 @@ package koal.glide_demo.ui.basic;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -22,6 +24,27 @@ import koal.glide_demo.ui.fragment.OtherFragment;
 import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
 /**
+ *
+ * 几个思考：
+ * 1. Fragment回退栈，有一个"过渡"的作用
+ *    Frag一旦被addToBackStack，那么remove不会真正将Frag从栈内清除！popBackStack才可以！
+ *    引申："回退栈"的作用：
+ *      Fragment1 -> Fragment2   replace/ remove、add
+ *      Fragment2 -> Fragment1   popBackStack
+ *      Fragment2 -> Fragment3   同1
+ *      Fragment3 -> Fragment1   popBackStackImmediate
+ *      方便之间的相互跳转，类似Activity的栈管理方式
+ * 2.
+ *
+ *
+ * 几个问题点：
+ * 1、getActivity()空指针
+ * 2、异常：Can not perform this action after onSaveInstanceState
+ * 3、Fragment重叠异常-----正确使用hide、show的姿势
+ * 4、Fragment嵌套的那些坑
+ * 5、未必靠谱的出栈方法remove()
+ * 6、多个Fragment同时出栈的深坑BUG
+ * 7、深坑 Fragment转场动画
  *
  * DecorView
  *
@@ -44,6 +67,13 @@ import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
  *   场景：
  *   show、hide:当前Fragment很高可能性再次复用，性能较高
  *   replace：原有Fragment占用大量内存，需及时销毁
+ *
+ *  TODO:
+ *  1. "未必靠谱的出栈方法remove()"，remove后，getFragments()为空，但是说明有值？？
+ *
+ *  参考：
+ *  Fragment全解析系列（一）：那些年踩过的坑
+ *  https://www.jianshu.com/p/d9143a92ad94
  *
  */
 public class EmptyActivity extends AppCompatActivity
@@ -100,12 +130,56 @@ public class EmptyActivity extends AppCompatActivity
 
         int contentTop = findViewById(android.R.id.content).getTop();
         Log.v("todo", "contentTop = " + contentTop);
+    }
 
+    private void testTransactions() {
+        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+        transaction
+                .add(R.id.empty_frag_container, new MainFragment(), MAIN_FRAGMENT_TAG)
+//                        .add(R.id.empty_frag_container, new OtherFragment(),"other_fragment_tag")
+                .addToBackStack("这里随便传什么");
+        transaction.commitAllowingStateLoss();
+//        transaction.commit();
     }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
+        Log.d("test", "onFragmentInteraction() called with: uri = [" + uri + "]");
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("test", "EmptyActivity onResume() called");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d("test", "onSaveInstanceState() called with: outState = [" + outState + "]");
+        new Handler(Looper.myLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                /*
+                * 重现异常：
+                * E/AndroidRuntime: FATAL EXCEPTION: main
+                    Process: koal.glide_demo, PID: 14097
+                    java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState
+                        at android.support.v4.app.FragmentManagerImpl.checkStateLoss(FragmentManager.java:2044)
+                        at android.support.v4.app.FragmentManagerImpl.enqueueAction(FragmentManager.java:2067)
+                        at android.support.v4.app.BackStackRecord.commitInternal(BackStackRecord.java:680)
+                        at android.support.v4.app.BackStackRecord.commit(BackStackRecord.java:634)
+                        at koal.glide_demo.ui.basic.EmptyActivity.testTransactions(EmptyActivity.java:114)
+                        at koal.glide_demo.ui.basic.EmptyActivity.access$000(EmptyActivity.java:51)
+                        at koal.glide_demo.ui.basic.EmptyActivity$1.run(EmptyActivity.java:136)
+                  原因：
+                    在"onSaveInstanceState"之后，仍旧执行Fragment事务
+                  解决办法：
+                    "commit"改为"commitAllowingStateLoss"
+                * */
+//                testTransactions();
+            }
+        },1000);
     }
 
     @Override
@@ -125,6 +199,9 @@ public class EmptyActivity extends AppCompatActivity
                 * */
                 transaction
                         .add(R.id.empty_frag_container, new MainFragment(),MAIN_FRAGMENT_TAG)
+                        .setCustomAnimations(R.anim.framework_slide_in_right, 0, 0, R.anim.framework_slide_out_right) // TODO:未发现效果！
+                        // 注意这里的顺序！.setCustomAnimations(进栈动画, exit, popEnter, 出栈动画))
+                        // setCustomAnimations(enter, exit)只能设置进栈动画，第二个参数并不是设置出栈动画；
 //                        .add(R.id.empty_frag_container, new OtherFragment(),"other_fragment_tag")
                         .addToBackStack("这里随便传什么");
 //                transaction.add(R.id.empty_frag_container, new OtherFragment(), OTHER_FRAGMENT_TAG)                        .addToBackStack(""); // add多次，验证"popBackStack"弹出所有

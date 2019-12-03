@@ -16,23 +16,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.TimePickerActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".ui.SoftKeyBoardActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".video.LiveCameraActivity"
             android:windowSoftInputMode="adjustResize"></activity>
-        <activity android:name=".ui.basic.EmptyActivity" />
+        <activity android:name=".ui.basic.EmptyActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".third.com.astuetz.viewpager.extensions.sample.MainActivity" />
         <activity android:name=".record.AudioRecordActivity" />

@@ -60,6 +60,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("test", "MainFragment onCreate() called with: savedInstanceState = [" + savedInstanceState + "]");
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -69,7 +70,7 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("test", "onCreateView: ");
+        Log.d("test", "MainFragment onCreateView: ");
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         rootView.findViewById(R.id.btn_jump_to_other).setOnClickListener(new View.OnClickListener() {
@@ -120,7 +121,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        Log.d("test", "onActivityCreated: ");
+        Log.d("test", "MainFragment onActivityCreated: ");
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -132,19 +133,19 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onStart() {
-        Log.d("test", "onStart: ");
+        Log.d("test", "MainFragment onStart: ");
         super.onStart();
     }
 
     @Override
     public void onResume() {
-        Log.d("test", "onResume: ");
+        Log.d("test", "MainFragment onResume: ");
         super.onResume();
     }
 
     @Override
     public void onDestroyView() {
-        Log.d("test", "onDestroyView: ");
+        Log.d("test", "MainFragment onDestroyView: ");
         super.onDestroyView();
     }
 
@@ -157,7 +158,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
-        Log.d("test", "onAttach: ");
+        Log.d("test", "MainFragment onAttach: ");
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
@@ -169,7 +170,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onDetach() {
-        Log.d("test", "onDetach: ");
+        Log.d("test", "MainFragment onDetach: ");
         super.onDetach();
         mListener = null;
     }
