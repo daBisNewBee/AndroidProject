@@ -23,19 +23,24 @@ android {
 }
 
 dependencies {
+    api "com.airbnb.android:lottie:2.7.0"
+
     implementation 'cn.carbswang.android:NumberPickerView:1.2.0'
     implementation 'com.squareup.okhttp3:okhttp:3.14.2'
 
 //    api 'com.tencent.bugly:crashreport:2.8.6'
 //    api 'com.tencent.bugly:nativecrashreport:3.6.0'
 
-    implementation 'com.astuetz:pagerslidingtabstrip:1.0.1'
+    api ('com.astuetz:pagerslidingtabstrip:1.0.1') {
+        // 通过"./gradlew :app2:dependencies" 查看重复依赖，定位到此项，手动剔除
+        exclude group: 'com.android.support', module: 'support-v4'
+    }
 
     implementation 'com.google.dagger:dagger:2.18'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.18'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:26.+'
+//    implementation 'com.android.support:appcompat-v7:26.+'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:0.5'

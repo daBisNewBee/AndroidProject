@@ -175,7 +175,7 @@ public class LiveCameraActivity extends AppCompatActivity implements TextureView
         mTextureView = findViewById(R.id.texture_view_camera);
         mTextureView.setSurfaceTextureListener(this);
 
-        ActivityCompat.requestPermissions(this, permissions, 200);
+//        ActivityCompat.requestPermissions(this, permissions, 200);
 
         mEditText = findViewById(R.id.live_edit_text);
         mEditText.requestFocus();

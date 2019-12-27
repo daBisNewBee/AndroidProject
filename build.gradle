@@ -4,8 +4,8 @@ buildscript {
     
     repositories {
         mavenCentral()
-        google()
         jcenter()
+        google()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
@@ -34,8 +34,8 @@ buildscript {
 allprojects {
     repositories {
         mavenCentral()
-        google()
         jcenter()
+        google()
     }
     gradle.taskGraph.whenReady {
         tasks.each { task ->

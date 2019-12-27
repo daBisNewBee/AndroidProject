@@ -78,9 +78,10 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
         }
 
         mAudioDecoderThread = new AudioDecoderThread();
-        checkPermission();
+//        checkPermission();
     }
 
+    /*
     void checkPermission(){
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
                 PackageManager.PERMISSION_GRANTED) {
@@ -107,6 +108,7 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
             return;
         }
     }
+    */
 
     @Override
     public void onClick(View v) {

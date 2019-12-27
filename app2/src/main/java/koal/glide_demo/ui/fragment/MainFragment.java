@@ -1,5 +1,6 @@
 package koal.glide_demo.ui.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -157,7 +158,7 @@ public class MainFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Activity context) {
         Log.d("test", "MainFragment onAttach: ");
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
