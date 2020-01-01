@@ -8,6 +8,12 @@ import com.airbnb.lottie.LottieAnimationView;
 
 import koal.glide_demo.R;
 
+/**
+ *
+ * Lottie 动画渲染神器的使用及原理讲解:
+ * https://www.imooc.com/article/29249
+ *
+ */
 public class LottieActivity extends AppCompatActivity {
 
     private LottieAnimationView mLottieAnimationView;
