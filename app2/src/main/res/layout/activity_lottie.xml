@@ -9,8 +9,20 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_view"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"/>
+
+    <koal.glide_demo.XmRecorderSurfaceView
+        android:id="@+id/lottie_surface_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <ImageView
+        android:id="@+id/iv_bitmap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>
