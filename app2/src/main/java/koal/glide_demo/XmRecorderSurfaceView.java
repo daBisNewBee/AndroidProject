@@ -6,10 +6,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PaintFlagsDrawFilter;
+import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -23,13 +24,13 @@ import java.util.List;
 public class XmRecorderSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
 
-    //刷新时间 1帧60ms
+    //刷新时间 1帧60ms(实际绘制一帧耗费60ms左右，大于指定refreshTime，refreshTime不起作用)
     private static int refreshTime = 60;
 
     /**
      * 1帧转1.6度
      */
-    private static final float ROTATE_RADIUS_PER_TIME = 1.6f;
+    private static final float ROTATE_RADIUS_PER_TIME = 0.5f;
 
     private float refreshRotation;
     private int mCenterX;
@@ -50,13 +51,14 @@ public class XmRecorderSurfaceView extends SurfaceView implements SurfaceHolder.
     private Canvas mCanvas;
     private int width;
     private int height;
+    private int INIT_ALPHA = 100;
 
     private List<Integer> spreadRadius = new ArrayList<>();//扩散圆层级数，元素为扩散的距离
     private List<Integer> alphas = new ArrayList<>();//对应每层圆的透明度
-    private int radius = 190; //中心圆半径
+    private int radius = 210; //中心圆半径
     private Paint spreadPaint; //扩散圆paint
     private int distance = 2; //每次圆递增间距
-    private int maxRadius = 38; //最大圆半径
+    private int maxRadius = 55; //最大圆半径
     private Thread mDrawThread;
 
     private boolean isShowWave;
@@ -79,17 +81,31 @@ public class XmRecorderSurfaceView extends SurfaceView implements SurfaceHolder.
     private void initView() {
         mSurfaceHolder = getHolder();
         mSurfaceHolder.addCallback(this);
+        // 去黑底，背景透明 TODO: 为什么绘制 "bitmapBg"有抗锯齿的效果？
+        setZOrderOnTop(true);
+        mSurfaceHolder.setFormat(PixelFormat.TRANSPARENT);   // 全透明
+//        mSurfaceHolder.setFormat(PixelFormat.TRANSLUCENT); // 半透明
+
         setFocusable(true);
         setKeepScreenOn(true);
         setFocusableInTouchMode(true);
+        initParams();
+    }
+
+    private void initParams() {
         bgPaint = new Paint();
-        bgPaint.setAntiAlias(true);
+//        防止边缘的锯齿
+//        bgPaint.setAntiAlias(true);
+//        对位图进行滤波处理
+//        bgPaint.setFilterBitmap(true);
+        // 去抖动
+//        bgPaint.setDither(true);
 
         mCoverPaint = new Paint();
         mCoverPaint.setAntiAlias(true);
 
         //最开始不透明且扩散距离为0
-        alphas.add(255);
+        alphas.add(INIT_ALPHA);
         spreadRadius.add(0);
 
         mShadowPaint = new Paint();
@@ -101,11 +117,10 @@ public class XmRecorderSurfaceView extends SurfaceView implements SurfaceHolder.
 
         spreadPaint = new Paint();
         spreadPaint.setAntiAlias(true);
-        spreadPaint.setAlpha(255);
+        spreadPaint.setAlpha(INIT_ALPHA);
         spreadPaint.setColor(Color.WHITE);
         spreadPaint.setStrokeWidth(3);
         spreadPaint.setStyle(Paint.Style.STROKE);
-        Log.d("todo", "initView: getWidth" + getWidth());
     }
 
     @Override
@@ -113,7 +128,6 @@ public class XmRecorderSurfaceView extends SurfaceView implements SurfaceHolder.
         isCreated = true;
         width = getWidth();
         height = getHeight();
-        Log.d("todo", "surfaceCreated: getWidth" + getWidth());
         mCenterX = getWidth() / 2;
         mCenterY = getHeight() / 2;
         mDrawThread = new Thread(this, "_draw_Thread");
@@ -154,7 +168,8 @@ public class XmRecorderSurfaceView extends SurfaceView implements SurfaceHolder.
         try {
             canvas = mSurfaceHolder.lockCanvas();
             if (canvas != null) {
-                canvas.drawColor(0, PorterDuff.Mode.CLEAR);
+                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+//                canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
                 if (bitmapBg != null) {
                     canvas.drawBitmap(bitmapBg, 0, 0, bgPaint);
                 }
@@ -176,6 +191,12 @@ public class XmRecorderSurfaceView extends SurfaceView implements SurfaceHolder.
     }
 
     public Bitmap captureOneFrame(int width, int height) {
+        if (!isCreated) {
+            initParams();
+            mCenterX = width / 2;
+            mCenterY = height / 2;
+        }
+
         Bitmap bitmap;
         bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -213,7 +234,7 @@ public class XmRecorderSurfaceView extends SurfaceView implements SurfaceHolder.
             if (bitmapBg != null) {
                 mCanvas.drawBitmap(bitmapBg, 0, 0, new Paint());
             }
-            float rotate = (float) ((time * 1.6 / 60) % 360);
+            float rotate = (time * ROTATE_RADIUS_PER_TIME / 60) % 360;
             if (mCenterCoverBitmap != null) {
                 drawAlbumCover(mCanvas, rotate);
             }
@@ -229,7 +250,7 @@ public class XmRecorderSurfaceView extends SurfaceView implements SurfaceHolder.
 
 
     private void drawAlbumCover(Canvas canvas, float rotate) {
-        canvas.drawCircle(mCenterX, mCenterY, mCenterCoverBitmap.getWidth()/2 + 8, mShadowPaint);
+        canvas.drawCircle(mCenterX, mCenterY, mCenterCoverBitmap.getWidth()/2 + 7, mShadowPaint);
         drawRotateBitmap(canvas, mCoverPaint, mCenterCoverBitmap, rotate, mCenterX, mCenterY);
     }
 
@@ -239,7 +260,7 @@ public class XmRecorderSurfaceView extends SurfaceView implements SurfaceHolder.
         } else {
             refreshRotation += ROTATE_RADIUS_PER_TIME;
         }
-        canvas.drawCircle(mCenterX, mCenterY, mCenterCoverBitmap.getWidth()/2 + 8, mShadowPaint);
+        canvas.drawCircle(mCenterX, mCenterY, mCenterCoverBitmap.getWidth()/2 + 7, mShadowPaint);
         drawRotateBitmap(canvas, mCoverPaint, mCenterCoverBitmap, refreshRotation, mCenterX, mCenterY);
     }
 
@@ -251,7 +272,7 @@ public class XmRecorderSurfaceView extends SurfaceView implements SurfaceHolder.
             //绘制扩散的圆
             canvas.drawCircle(mCenterX, mCenterY, radius + width, spreadPaint);
             //每次扩散圆半径递增，圆透明度递减
-            alpha = alpha - 3 > 0 ? alpha - 3 : 1;
+            alpha = alpha - 1 > 0 ? alpha - 1 : 1;
 //            alpha = alpha - distance > 0 ? alpha - distance : 1;
             alphas.set(i, alpha);
             spreadRadius.set(i, width + distance);
@@ -259,10 +280,10 @@ public class XmRecorderSurfaceView extends SurfaceView implements SurfaceHolder.
         //当最外层扩散圆半径达到最大半径时添加新扩散圆
         if (spreadRadius.get(spreadRadius.size() - 1) > maxRadius) {
             spreadRadius.add(0);
-            alphas.add(255);
+            alphas.add(INIT_ALPHA);
         }
         //超过8个扩散圆，删除最先绘制的圆，即最外层的圆
-        if (spreadRadius.size() >= 7) {
+        if (spreadRadius.size() >= 5) {
             alphas.remove(0);
             spreadRadius.remove(0);
         }
@@ -289,6 +310,8 @@ public class XmRecorderSurfaceView extends SurfaceView implements SurfaceHolder.
     }
 
     public void setBitmapBg(Bitmap bitmapBg) {
+        // Bitmap拉伸后出现锯齿的几种解决办法:
+        // https://blog.csdn.net/zcwfengbingdongguke/article/details/10914493
         this.bitmapBg = bitmapBg;
     }
 

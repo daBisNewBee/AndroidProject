@@ -7,22 +7,24 @@
     android:background="@color/colorAccent"
     tools:context=".third.lottie.LottieActivity">
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottie_view"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
+    <RelativeLayout
+        android:id="@+id/lottie_rl_container"
+        android:layout_width="791px"
+        android:layout_height="1407px"
+        android:layout_centerInParent="true">
 
-    <koal.glide_demo.XmRecorderSurfaceView
-        android:id="@+id/lottie_surface_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_view"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
 
-    <ImageView
-        android:id="@+id/iv_bitmap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <koal.glide_demo.XmRecorderSurfaceView
+            android:id="@+id/lottie_surface_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
 
 </RelativeLayout>
