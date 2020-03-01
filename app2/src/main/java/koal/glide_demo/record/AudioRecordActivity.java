@@ -1,6 +1,5 @@
 package koal.glide_demo.record;
 
-import android.Manifest;
 import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -12,8 +11,8 @@ import android.media.audiofx.AudioEffect;
 import android.media.audiofx.AutomaticGainControl;
 import android.media.audiofx.NoiseSuppressor;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -62,7 +61,7 @@ import koal.glide_demo.R;
  */
 public class AudioRecordActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private File audioFile, audioFileMono;
+    private File audioFile, audioFileMono, audioFileFront, audioFileBack;
     private volatile boolean isRecording=false, isPlaying=false;
 
     private static final int RECORDER_SAMPLE_RATE_LOW = 8000;
@@ -74,7 +73,8 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
     // 录制频率，可以为8000hz或者11025hz等，不同的硬件设备这个值不同
     private static final int sampleRateInHz = isLow ? RECORDER_SAMPLE_RATE_LOW : RECORDER_SAMPLE_RATE_HIGH;
     // 录制通道
-    private static final int channelConfig = AudioFormat.CHANNEL_IN_MONO;
+    private static final int audioSource = MediaRecorder.AudioSource.MIC; // MediaRecorder.AudioSource.VOICE_COMMUNICATION
+    private static final int channelConfig = AudioFormat.CHANNEL_IN_STEREO;
     private static final int channelConfig_play = AudioFormat.CHANNEL_OUT_MONO;
 //    private static final int channelConfig = AudioFormat.CHANNEL_IN_STEREO;
     // 录制编码格式，可以为AudioFormat.ENCODING_16BIT和8BIT,其中16BIT的仿真性比8BIT好，但是需要消耗更多的电量和存储空间
@@ -101,6 +101,8 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
 
         try {
             audioFile = File.createTempFile("record-" + Long.toString(System.currentTimeMillis()), ".pcm", new File("/sdcard/pcaps/"));
+            audioFileFront = File.createTempFile("record-front" + Long.toString(System.currentTimeMillis()), ".pcm", new File("/sdcard/pcaps/"));
+            audioFileBack = File.createTempFile("record-back" + Long.toString(System.currentTimeMillis()), ".pcm", new File("/sdcard/pcaps/"));
             if (isOpenSterero2Mono) {
                 audioFileMono = File.createTempFile("record-mono-" + Long.toString(System.currentTimeMillis()), ".pcm", new File("/sdcard/pcaps/"));
             }
@@ -111,6 +113,8 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
 
         mAudioDecoderThread = new AudioDecoderThread();
 //        checkPermission();
+        boolean isEabiLowVersion = IsEabiLowVersion();
+        Log.d("todo", "isEabiLowVersion = " + isEabiLowVersion);
     }
 
     /*
@@ -190,12 +194,14 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
                     return null;
 
                 DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(audioFile)));
+                DataOutputStream dosFront = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(audioFileFront)));
+                DataOutputStream dosBack = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(audioFileBack)));
                 DataOutputStream dos_mono = null;
                 if (isOpenSterero2Mono) {
                     dos_mono = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(audioFileMono)));
                 }
 
-                AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.VOICE_COMMUNICATION, sampleRateInHz, channelConfig, audioFormat, bufferSize);
+                AudioRecord audioRecord = new AudioRecord(audioSource, sampleRateInHz, channelConfig, audioFormat, bufferSize);
                 audioRecord.startRecording();
 
                 /*
@@ -252,8 +258,16 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
                             dos_mono.writeShort(dstMono[i]);
                         }
                     }
+
+                    // 分离双声道 为 左声道、右声道
                     for (int i = 0; i < size; i++){
                         dos.writeShort(buffer[i]);
+
+                        if (i % 2 == 0) {
+                            dosFront.writeShort(buffer[i]);
+                        } else {
+                            dosBack.writeShort(buffer[i]);
+                        }
                     }
                     r++;
                     publishProgress(r);
@@ -263,6 +277,11 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
                 System.out.println("停止录音. length: " + audioFile.length());
                 dos.flush();
                 dos.close();
+
+                dosFront.flush();
+                dosFront.close();
+                dosBack.flush();
+                dosBack.close();
 
                 if (isOpenSterero2Mono) {
                     dos_mono.flush();
