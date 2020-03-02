@@ -1,5 +1,6 @@
 package koal.glide_demo.record;
 
+import android.Manifest;
 import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -13,6 +14,7 @@ import android.media.audiofx.NoiseSuppressor;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +29,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import koal.glide_demo.R;
 
@@ -56,6 +61,22 @@ import koal.glide_demo.R;
  *    网上也有类似情况：
  *    双MIC安卓手机录音问题：
  *    https://www.cnblogs.com/zzugyl/p/3958553.html
+ *
+ *   mic位置：         上(back-奇数)       下(front-偶数)
+ *   声道(奇数、偶数)
+ *
+ *   红米4A：  (左右左右....)
+ *              下 上 下 上.....
+ *   锤子OD103   下 上
+ *   魅族16sPro  下 上
+ *   oppo a57   声道一致(只有一个mic)
+ *   oppo k3    下 上 （单声道时，音量更响，大约4倍）
+ *   诺基亚 X7   声道一致(只有一个mic)
+ *   小米cc9     下 上(更响)
+ *   三星a9lite  声道一致(只有一个mic)
+ *
+ *
+ *
  *
  *
  */
@@ -100,11 +121,13 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
         GlobalSet.RegisterFFmpeg();
 
         try {
-            audioFile = File.createTempFile("record-" + Long.toString(System.currentTimeMillis()), ".pcm", new File("/sdcard/pcaps/"));
-            audioFileFront = File.createTempFile("record-front" + Long.toString(System.currentTimeMillis()), ".pcm", new File("/sdcard/pcaps/"));
-            audioFileBack = File.createTempFile("record-back" + Long.toString(System.currentTimeMillis()), ".pcm", new File("/sdcard/pcaps/"));
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US);
+            String curTime = simpleDateFormat.format(new Date());
+            audioFile = File.createTempFile("record-" + curTime, ".pcm", new File("/sdcard/pcaps/"));
+            audioFileFront = File.createTempFile("record-front-" + curTime, ".pcm", new File("/sdcard/pcaps/"));
+            audioFileBack = File.createTempFile("record-back-" +curTime, ".pcm", new File("/sdcard/pcaps/"));
             if (isOpenSterero2Mono) {
-                audioFileMono = File.createTempFile("record-mono-" + Long.toString(System.currentTimeMillis()), ".pcm", new File("/sdcard/pcaps/"));
+                audioFileMono = File.createTempFile("record-mono-" + curTime, ".pcm", new File("/sdcard/pcaps/"));
             }
             System.out.println("创建录音文件：" + audioFile.getPath());
         } catch (IOException e) {
@@ -112,12 +135,9 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
         }
 
         mAudioDecoderThread = new AudioDecoderThread();
-//        checkPermission();
-        boolean isEabiLowVersion = IsEabiLowVersion();
-        Log.d("todo", "isEabiLowVersion = " + isEabiLowVersion);
+        checkPermission();
     }
 
-    /*
     void checkPermission(){
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
                 PackageManager.PERMISSION_GRANTED) {
@@ -144,7 +164,6 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
             return;
         }
     }
-    */
 
     @Override
     public void onClick(View v) {
@@ -247,8 +266,19 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
                 isRecording = true;
 
                 int r = 0;
-                while (isRecording){
+                int i = 0;
+                long last = System.currentTimeMillis();
+                while (isRecording) {
+                    long cur = System.currentTimeMillis();
+                    if ( cur - last >= 1000) {
+                        // 结论：stereo与mono模式下，1s内都可以read 13次，stereo的的数据量是mono 的两倍，因为bufferSize是两倍
+                        System.out.println("i = " + i);
+                        last = cur;
+                        i = 0;
+                    }
                     int size = audioRecord.read(buffer, 0, bufferSize);
+                    i++;
+                    /*
                     System.out.println("read size = " + size);
                     if (isOpenSterero2Mono) {
                         short[] dstMono = new short[size >> 1];
@@ -260,9 +290,8 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
                     }
 
                     // 分离双声道 为 左声道、右声道
-                    for (int i = 0; i < size; i++){
+                    for (int i = 0; i < size; i++) {
                         dos.writeShort(buffer[i]);
-
                         if (i % 2 == 0) {
                             dosFront.writeShort(buffer[i]);
                         } else {
@@ -271,6 +300,7 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
                     }
                     r++;
                     publishProgress(r);
+                     */
                 }
 
                 audioRecord.stop();
