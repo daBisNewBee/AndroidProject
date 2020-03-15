@@ -18,7 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
-import com.ximalaya.mediaprocessor.GlobalSet;
+//import com.ximalaya.mediaprocessor.GlobalSet;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -119,7 +119,7 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
         findViewById(R.id.btn_play).setOnClickListener(this);
         findViewById(R.id.btn_stop).setOnClickListener(this);
         findViewById(R.id.btn_codec).setOnClickListener(this);
-        GlobalSet.RegisterFFmpeg();
+//        GlobalSet.RegisterFFmpeg();
 
         try {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US);
