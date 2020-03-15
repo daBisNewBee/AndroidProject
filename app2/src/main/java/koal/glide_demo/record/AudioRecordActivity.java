@@ -12,7 +12,6 @@ import android.media.audiofx.AudioEffect;
 import android.media.audiofx.AutomaticGainControl;
 import android.media.audiofx.NoiseSuppressor;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -95,18 +94,20 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
     private static final int sampleRateInHz = isLow ? RECORDER_SAMPLE_RATE_LOW : RECORDER_SAMPLE_RATE_HIGH;
     // 录制通道
     private static final int audioSource = MediaRecorder.AudioSource.MIC; // MediaRecorder.AudioSource.VOICE_COMMUNICATION
-    private static final int channelConfig = AudioFormat.CHANNEL_IN_STEREO;
+    private static final int channelConfig = AudioFormat.CHANNEL_IN_MONO;
     private static final int channelConfig_play = AudioFormat.CHANNEL_OUT_MONO;
 //    private static final int channelConfig = AudioFormat.CHANNEL_IN_STEREO;
     // 录制编码格式，可以为AudioFormat.ENCODING_16BIT和8BIT,其中16BIT的仿真性比8BIT好，但是需要消耗更多的电量和存储空间
     private static final int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
     // 录制缓冲大小
-    private static final int bufferSize = AudioRecord.getMinBufferSize(sampleRateInHz, channelConfig, audioFormat);
+    private static final int bufferSizeInByteWithAudioRecord = AudioRecord.getMinBufferSize(sampleRateInHz, channelConfig, audioFormat);
+    private static final int bufferSizeInByteWithAudioTrack = AudioTrack.getMinBufferSize(sampleRateInHz, channelConfig_play, audioFormat);
 
     private AudioDecoderThread mAudioDecoderThread;
 
     static {
-        System.out.println("getMinBufferSize: " + bufferSize);
+        System.out.println("bufferSizeInByteWithAudioRecord: " + bufferSizeInByteWithAudioRecord);
+        System.out.println("bufferSizeInByteWithAudioTrack: " + bufferSizeInByteWithAudioTrack);
     }
 
     @Override
@@ -220,7 +221,7 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
                     dos_mono = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(audioFileMono)));
                 }
 
-                AudioRecord audioRecord = new AudioRecord(audioSource, sampleRateInHz, channelConfig, audioFormat, bufferSize);
+                AudioRecord audioRecord = new AudioRecord(audioSource, sampleRateInHz, channelConfig, audioFormat, bufferSizeInByteWithAudioRecord);
                 audioRecord.startRecording();
 
                 /*
@@ -261,46 +262,47 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
                     Log.v("todo", "After set getEnabled = " + getEnabled);
                 }
 
-                short[] buffer = new short[bufferSize];
+                short[] buffer = new short[bufferSizeInByteWithAudioRecord >> 2];
 
                 isRecording = true;
 
                 int r = 0;
-                int i = 0;
+                int j = 0;
                 long last = System.currentTimeMillis();
                 while (isRecording) {
                     long cur = System.currentTimeMillis();
                     if ( cur - last >= 1000) {
-                        // 结论：stereo与mono模式下，1s内都可以read 13次，stereo的的数据量是mono 的两倍，因为bufferSize是两倍
-                        System.out.println("i = " + i);
+                        // 结论：
+                        // 1. stereo与mono模式下，1s内都可以read 13次，stereo的的数据量是mono 的两倍，因为bufferSize是两倍
+                        // 2. buf的大小与 实例化 audioRecord时的bufSize无关。
+                        // 总吞吐量是一定的：j * buffer.len (25 * 3584/2);或者 (13 * 3584)、(50 * 3584/2/2)
+                        System.out.println("j = " + j);
                         last = cur;
-                        i = 0;
+                        j = 0;
                     }
-                    int size = audioRecord.read(buffer, 0, bufferSize);
-                    i++;
-                    /*
-                    System.out.println("read size = " + size);
-                    if (isOpenSterero2Mono) {
-                        short[] dstMono = new short[size >> 1];
-                        GlobalSet.StereoToMonoS16(dstMono, buffer, size >> 1);
-                        for (int i = 0; i < dstMono.length; i++) {
-                            System.out.println("i = " + i + " lenL" + dstMono.length);
-                            dos_mono.writeShort(dstMono[i]);
-                        }
-                    }
+                    int size = audioRecord.read(buffer, 0, buffer.length);
+                    j++;
+//                    System.out.println("read size = " + size);
+//                    if (isOpenSterero2Mono) {
+//                        short[] dstMono = new short[size >> 1];
+//                        GlobalSet.StereoToMonoS16(dstMono, buffer, size >> 1);
+//                        for (int i = 0; i < dstMono.length; i++) {
+//                            System.out.println("i = " + i + " lenL" + dstMono.length);
+//                            dos_mono.writeShort(dstMono[i]);
+//                        }
+//                    }
 
                     // 分离双声道 为 左声道、右声道
                     for (int i = 0; i < size; i++) {
                         dos.writeShort(buffer[i]);
-                        if (i % 2 == 0) {
-                            dosFront.writeShort(buffer[i]);
-                        } else {
-                            dosBack.writeShort(buffer[i]);
-                        }
+//                        if (i % 2 == 0) {
+//                            dosFront.writeShort(buffer[i]);
+//                        } else {
+//                            dosBack.writeShort(buffer[i]);
+//                        }
                     }
                     r++;
                     publishProgress(r);
-                     */
                 }
 
                 audioRecord.stop();
@@ -326,7 +328,7 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
 
         @Override
         protected void onProgressUpdate(Integer... values) {
-            System.out.println("onProgressUpdate = " + values[0]);
+//            System.out.println("onProgressUpdate = " + values[0]);
         }
     }
 
@@ -337,27 +339,37 @@ public class AudioRecordActivity extends AppCompatActivity implements View.OnCli
             if (isPlaying)
                 return null;
 
-            short[] buffer = new short[bufferSize];
-//            short[] buffer = new short[bufferSize/4];
+//            short[] buffer = new short[100];
+//            short[] buffer = new short[bufferSizeInByteWithAudioTrack << 1];
+            short[] buffer = new short[bufferSizeInByteWithAudioRecord >> 1];
 
             try {
                 System.out.println("准备播放的文件是："+audioFile.getPath());
                 System.out.println("准备播放的文件大小是："+audioFile.length());
                 DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(audioFile)));
                 // MediaPlayer无法播放pcm
-                AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRateInHz, channelConfig_play, audioFormat, bufferSize, AudioTrack.MODE_STREAM);
+                AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRateInHz, channelConfig_play, audioFormat, bufferSizeInByteWithAudioTrack, AudioTrack.MODE_STREAM);
                 audioTrack.play();
                 isPlaying = true;
-                int sum = 0;
-                while (isPlaying && dis.available() > 0){
+                int sum = 0, j=0;
+                long last = System.currentTimeMillis();
+                while (isPlaying && dis.available() > 0) {
+                    long cur = System.currentTimeMillis();
+                    if ( cur - last >= 1000) {
+                        // 结论：stereo与mono模式下，1s内都可以read 13次，stereo的的数据量是mono 的两倍，因为bufferSize是两倍
+                        System.out.println("i = " + j);
+                        last = cur;
+                        j = 0;
+                    }
                     int i = 0;
                     while (dis.available()>0 && i<buffer.length){
                         buffer[i] = dis.readShort();
                         i++;
                     }
                     audioTrack.write(buffer, 0, buffer.length);
+                    j++;
                     sum += buffer.length;
-                    System.out.println("写入到audioTrack的数据大小为：" + buffer.length +" 合计：" + sum);
+//                    System.out.println("写入到audioTrack的数据大小为：" + buffer.length +" 合计：" + sum);
                 }
                 isPlaying = false;
                 System.out.println("结束播放.");
