@@ -38,6 +38,7 @@ import android.view.ViewGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
 
+import koal.glide_demo.CustomViewpager;
 import koal.glide_demo.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 	private final Handler handler = new Handler();
 
 	private PagerSlidingTabStrip tabs;
-	private ViewPager pager;
+	private CustomViewpager pager;
 	private MyPagerAdapter adapter;
 
 	private Drawable oldBackground = null;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main_pager);
 
 		tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-		pager = (ViewPager) findViewById(R.id.pager);
+		pager = findViewById(R.id.pager);
 		adapter = new MyPagerAdapter(getSupportFragmentManager());
 
 		pager.setAdapter(adapter);
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 		final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources()
 				.getDisplayMetrics());
 		pager.setPageMargin(pageMargin);
-		pager.setCurrentItem(2, true);
+		pager.setCurrentItem(0, true);
 
 		tabs.setViewPager(pager);
 		tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
 			@Override
 			public void onPageSelected(int position) {
+				pager.resetHeight(position);
 //				System.out.println("onPageSelected position = [" + position + "]");
 			}
 
@@ -221,8 +223,8 @@ public class MainActivity extends AppCompatActivity {
 	public class MyPagerAdapter extends FragmentPagerAdapter {
 
 
-		private final String[] TITLES = { "Categories", "Home", "Top Paid", "Top Free", "Top Grossing", "Top New Paid",
-				"Top New Free", "Trending" };
+		private final String[] TITLES = { "Categories", "Home", "Top Paid"};
+//		private final String[] TITLES = { "Categories", "Home", "Top Paid", "Top Free", "Top Grossing", "Top New Paid", "Top New Free", "Trending" };
 
 		public MyPagerAdapter(FragmentManager fm) {
 			super(fm);
@@ -252,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
 
 		@Override
 		public Fragment getItem(int position) {
-			return SuperAwesomeCardFragment.newInstance(position);
+			return SuperAwesomeCardFragment.newInstance(position, pager);
 		}
 
 	}
