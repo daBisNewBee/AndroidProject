@@ -1,30 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent"
     tools:context=".third.lottie.LottieActivity">
 
-    <RelativeLayout
-        android:id="@+id/lottie_rl_container"
-        android:layout_width="791px"
-        android:layout_height="1407px"
-        android:layout_centerInParent="true">
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_view_mic"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@color/colorAccent"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="lottie/mic/data.json"
+            app:lottie_repeatCount="-1" />
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottie_view"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"/>
+            android:id="@+id/lottie_view_recorder"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="lottie/recorder/data.json"
+            app:lottie_repeatCount="-1" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_view_chat"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="lottie/chat/data.json"
+            app:lottie_repeatCount="-1" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_view_wave"
+            android:background="@color/colorAccent"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_fileName="lottie/wave/data.json"
+            app:lottie_repeatCount="-1" />
 
         <koal.glide_demo.XmRecorderSurfaceView
             android:id="@+id/lottie_surface_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-    </RelativeLayout>
-
-</RelativeLayout>
+</LinearLayout>

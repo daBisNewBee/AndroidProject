@@ -44,6 +44,7 @@ dependencies {
 
     implementation 'com.tencent:mmkv:1.0.24'
 
+    // 和主站一致的版本
     api "com.airbnb.android:lottie:2.7.0"
 
     implementation 'cn.carbswang.android:NumberPickerView:1.2.0'

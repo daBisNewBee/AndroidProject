@@ -16,13 +16,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".FlutterActivity">
+
+        </activity>
+        <activity android:name=".third.lottie.LottieActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".third.lottie.LottieActivity"></activity>
         <activity android:name=".ui.TimePickerActivity" />
         <activity android:name=".ui.SoftKeyBoardActivity" />
         <activity

@@ -31,17 +31,36 @@ import koal.glide_demo.utlis.Blur;
 public class LottieActivity extends AppCompatActivity {
 
     private LottieAnimationView mLottieAnimationView;
+    private LottieAnimationView mLottieAnimationView1;
     private XmRecorderSurfaceView mSurfaceView;
-    private RelativeLayout mContainerRl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lottie);
-        mSurfaceView = findViewById(R.id.lottie_surface_view);
-        mContainerRl = findViewById(R.id.lottie_rl_container);
-//        initLottie();
+//        initLottieChat();
+//        initLottieWave();
+//        initSurfaceView();
+    }
 
+    private void initLottieChat() {
+        mLottieAnimationView1 = findViewById(R.id.lottie_view_chat);
+//        mLottieAnimationView1.setImageAssetsFolder("lottie/chat/");
+//        mLottieAnimationView1.setAnimation("lottie/chat/data.json");
+//        mLottieAnimationView1.setRepeatCount(ValueAnimator.INFINITE);
+        mLottieAnimationView1.playAnimation();
+    }
+
+    void initLottieWave() {
+        mLottieAnimationView = findViewById(R.id.lottie_view_wave);
+//        mLottieAnimationView.setImageAssetsFolder("lottie/wave/");
+//        mLottieAnimationView.setAnimation("lottie/wave/data.json");
+//        mLottieAnimationView.setRepeatCount(ValueAnimator.INFINITE);
+        mLottieAnimationView.playAnimation();
+    }
+
+    private void initSurfaceView() {
+        mSurfaceView = findViewById(R.id.lottie_surface_view);
         Bitmap rawBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.scaled_bitmap);
         Bitmap scaledBitmap = Bitmap.createScaledBitmap(rawBitmap, BaseUtil.dp2px(this, 132), BaseUtil.dp2px(this, 132), true);
         Bitmap circleBitmap = createCircleImage(scaledBitmap);
@@ -52,14 +71,6 @@ public class LottieActivity extends AppCompatActivity {
         mSurfaceView.setCoverBitmap(circleBitmap);
         mSurfaceView.setShowWave(true);
         mSurfaceView.setDrawing(true);
-    }
-
-    void initLottie() {
-        mLottieAnimationView = findViewById(R.id.lottie_view);
-        mLottieAnimationView.setImageAssetsFolder("lottie");
-        mLottieAnimationView.setAnimation("lottie/data.json");
-        mLottieAnimationView.setRepeatCount(ValueAnimator.INFINITE);
-        mLottieAnimationView.playAnimation();
     }
 
     void saveBitmap2Local() {
