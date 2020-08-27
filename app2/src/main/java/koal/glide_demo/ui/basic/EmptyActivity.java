@@ -13,12 +13,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 
 import java.util.Collections;
 import java.util.List;
 
 import koal.glide_demo.R;
 import koal.glide_demo.ui.fragment.MainFragment;
+import koal.glide_demo.ui.fragment.MyDialogFragment;
 import koal.glide_demo.ui.fragment.OtherFragment;
 
 import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
@@ -264,12 +266,16 @@ public class EmptyActivity extends AppCompatActivity
                 transaction.replace(R.id.empty_frag_container, new OtherFragment(), OTHER_FRAGMENT_TAG);
                 break;
             case R.id.btn_test:
+                MyDialogFragment dialogFragment = MyDialogFragment.newInstance();
+                dialogFragment.show(transaction, "dialog");
                 printFragments(mFragmentManager);
                 break;
             default:
                 break;
         }
-        transaction.commit();
+        if (id != R.id.btn_test) {
+            transaction.commit();
+        }
     }
 
     private void printFragments(FragmentManager fragmentManager) {
