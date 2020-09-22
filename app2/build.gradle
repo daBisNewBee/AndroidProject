@@ -37,12 +37,13 @@ android {
 }
 
 dependencies {
-    implementation project(":flutter")
+//    implementation project(":flutter")
 
-    implementation(name:'XmRecorder-debug', ext:'aar')
+    implementation(name: 'XmRecorder-debug', ext: 'aar')
 //    implementation(name:'xmrecorder-canary-2.0.7', ext:'aar')
 
     implementation 'com.tencent:mmkv:1.0.24'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 
     // 和主站一致的版本
     api "com.airbnb.android:lottie:2.7.0"

@@ -1,6 +1,8 @@
 package koal.glide_demo.utlis;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
 /**
  * Created by wenbin.liu on 2020-01-16
@@ -40,6 +42,22 @@ public class BaseUtil {
     public static int px2sp(Context context, float pxValue) {
         final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
         return (int) (pxValue / fontScale + 0.5f);
+    }
+
+    public static int getScreenWidth(Context context){
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics dm = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(dm);
+        System.out.println("getScreenWidth :" + dm.widthPixels);
+        return dm.widthPixels;
+    }
+
+    public static int getScreenHeight(Context context){
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics dm = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(dm);
+        System.out.println("getScreenWidth :" + dm.widthPixels);
+        return dm.heightPixels;
     }
 
 }
