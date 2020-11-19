@@ -2,8 +2,8 @@
 //include ':ViewPagerDemo'
 include ':app2'
 
-setBinding(new Binding([gradle:this]))
-evaluate(new File(
-        settingsDir,
-        'my_flutter/.android/include_flutter.groovy'
-))
+//setBinding(new Binding([gradle:this]))
+//evaluate(new File(
+//        settingsDir,
+//        'my_flutter/.android/include_flutter.groovy'
+//))
