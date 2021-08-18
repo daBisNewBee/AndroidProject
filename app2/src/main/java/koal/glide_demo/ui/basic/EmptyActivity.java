@@ -294,6 +294,9 @@ public class EmptyActivity extends AppCompatActivity
      *
      * 结果：
      * buttonA的动画在buttonB点击后才开始回调
+     *
+     * 参考：Android 坑档案：背黑锅的 Fragment
+     * https://zhuanlan.zhihu.com/p/20660984
      */
     private void buttonA() {
         Animation animation = new AlphaAnimation(1, 0);
