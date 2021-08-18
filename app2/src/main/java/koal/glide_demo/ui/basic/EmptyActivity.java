@@ -12,7 +12,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.EditText;
 
 import java.util.Collections;
@@ -85,6 +89,7 @@ public class EmptyActivity extends AppCompatActivity
     private FragmentManager mFragmentManager;
     private final String MAIN_FRAGMENT_TAG = "main_fragment_tag";
     private final String OTHER_FRAGMENT_TAG = "other_fragment_tag";
+    private Button buttonA, buttonB;
 
 
     @Override
@@ -99,8 +104,10 @@ public class EmptyActivity extends AppCompatActivity
         }
         getSupportActionBar().hide();
         setContentView(R.layout.activity_empty);
-        findViewById(R.id.btn_add).setOnClickListener(this);
-        findViewById(R.id.btn_remove).setOnClickListener(this);
+        buttonA = findViewById(R.id.btn_add);
+        buttonA.setOnClickListener(this);
+        buttonB = findViewById(R.id.btn_remove);
+        buttonB.setOnClickListener(this);
         findViewById(R.id.btn_hide).setOnClickListener(this);
         findViewById(R.id.btn_show).setOnClickListener(this);
         findViewById(R.id.btn_attach).setOnClickListener(this);
@@ -192,6 +199,7 @@ public class EmptyActivity extends AppCompatActivity
         int id = v.getId();
         switch (id){
             case R.id.btn_add:
+//                buttonA();
                 /*
                 * onAttach:
                   onCreateView:
@@ -226,6 +234,7 @@ public class EmptyActivity extends AppCompatActivity
                     onDestroyView：
                 * */
                 transaction.remove(mFragmentManager.findFragmentByTag(MAIN_FRAGMENT_TAG));
+//                buttonB();
                 break;
             case R.id.btn_pop:
                 /*
@@ -275,6 +284,43 @@ public class EmptyActivity extends AppCompatActivity
         }
         if (id != R.id.btn_test) {
             transaction.commit();
+        }
+    }
+
+    /**
+     * 验证"Animation的动画依赖view的绘制"
+     *
+     * 先点击buttonA，再点击buttonB
+     *
+     * 结果：
+     * buttonA的动画在buttonB点击后才开始回调
+     */
+    private void buttonA() {
+        Animation animation = new AlphaAnimation(1, 0);
+        animation.setDuration(1000);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                Log.d("todo", "onAnimationStart() called with: " + "animation = [" + animation + "]");
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                Log.d("todo", "onAnimationEnd() called with: " + "animation = [" + animation + "]");
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                Log.d("todo", "onAnimationRepeat() called with: " + "animation = [" + animation + "]");
+            }
+        });
+        ((ViewGroup) buttonA.getParent()).removeView(buttonA);
+        buttonA.startAnimation(animation);
+    }
+
+    private void buttonB(){
+        if(buttonA.getParent() == null){
+            ((ViewGroup) buttonB.getParent()).addView(buttonA);
         }
     }
 

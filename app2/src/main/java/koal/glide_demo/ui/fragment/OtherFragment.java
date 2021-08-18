@@ -51,6 +51,18 @@ public class OtherFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        Log.d("test", "OtherFragment onPause: ");
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        Log.d("test", "OtherFragment onStop: ");
+        super.onStop();
+    }
+
+    @Override
     public void onDetach() {
         Log.d("test", "OtherFragment onDetach: ");
         super.onDetach();
