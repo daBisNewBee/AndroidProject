@@ -16,15 +16,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".IOMonitorActivity">
+        <activity android:name=".FpsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PicassoActivity">
+        <activity android:name=".IOMonitorActivity">
         </activity>
+        <activity android:name=".PicassoActivity"></activity>
         <activity android:name=".FlutterActivity" />
         <activity android:name=".third.lottie.LottieActivity">
 
@@ -40,7 +41,7 @@
         <activity
             android:name=".video.LiveCameraActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".ui.basic.EmptyActivity"></activity>
+        <activity android:name=".ui.basic.EmptyActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".third.com.astuetz.viewpager.extensions.sample.MainActivity" />
         <activity android:name=".record.AudioRecordActivity" />
