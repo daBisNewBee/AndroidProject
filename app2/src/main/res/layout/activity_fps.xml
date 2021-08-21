@@ -1,17 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FpsActivity">
 
+    <koal.glide_demo.xm.XmLinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+<!--        <koal.glide_demo.xm.XmView-->
+<!--            android:text="100dp"-->
+<!--            android:background="@color/colorAccent"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="100dp"/>-->
+
+        <koal.glide_demo.xm.XmTextView
+            android:text="wrap_content"
+            android:background="@color/colorPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+<!--        <koal.glide_demo.xm.XmView-->
+<!--            android:text="match_parent"-->
+<!--            android:background="@color/colorPrimary"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"/>-->
+
+    </koal.glide_demo.xm.XmLinearLayout>
+
     <Button
         android:id="@+id/main_fps_test"
         android:text="test"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+        android:layout_height="wrap_content"/>
 
-
-</RelativeLayout>
+</FrameLayout>
