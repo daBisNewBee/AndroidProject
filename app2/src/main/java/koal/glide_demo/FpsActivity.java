@@ -2,9 +2,12 @@ package koal.glide_demo;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import koal.glide_demo.utlis.FpsTest;
+import koal.glide_demo.xm.XmTextView;
 
 /**
  *
@@ -53,15 +56,28 @@ import koal.glide_demo.utlis.FpsTest;
  */
 public class FpsActivity extends AppCompatActivity {
 
+    private ViewGroup mRootView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fps);
+        mRootView = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.activity_fps, null, false);
+        setContentView(mRootView);
         findViewById(R.id.main_fps_test).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                addViewXmTextView();
                 new FpsTest().startFps();
             }
         });
+    }
+
+    // 验证：各种布局下需要几次onMeasure次数
+    void addViewXmTextView() {
+        XmTextView xmTextView = new XmTextView(this);
+        xmTextView.setText("newTextView");
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mRootView.addView(xmTextView, params);
     }
 }

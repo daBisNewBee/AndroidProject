@@ -1,6 +1,7 @@
 package koal.glide_demo.xm;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -44,6 +45,8 @@ import android.util.Log;
  */
 public class XmTextView extends android.support.v7.widget.AppCompatTextView {
 
+    private static final String TAG = "XmTextView";
+
     public XmTextView(Context context) {
         super(context);
     }
@@ -58,14 +61,26 @@ public class XmTextView extends android.support.v7.widget.AppCompatTextView {
 
     private void printMode(int mode) {
         if (mode == MeasureSpec.UNSPECIFIED) {
-            Log.d("MeasureSpec", "child UNSPECIFIED");
+            Log.d(TAG, "child UNSPECIFIED");
         } else if (mode == MeasureSpec.EXACTLY) {
-            Log.d("MeasureSpec", "child EXACTLY");
+            Log.d(TAG, "child EXACTLY");
         } else if (mode == MeasureSpec.AT_MOST) {
-            Log.d("MeasureSpec", "child AT_MOST");
+            Log.d(TAG, "child AT_MOST");
         } else {
-            Log.d("MeasureSpec", "child UNKONWN");
+            Log.d(TAG, "child UNKONWN");
         }
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        Log.d(TAG, "onDraw: ");
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        Log.d(TAG, "onLayout: ");
     }
 
     /**
@@ -78,10 +93,11 @@ public class XmTextView extends android.support.v7.widget.AppCompatTextView {
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        Log.d(TAG, "onMeasure: ");
         printMode(MeasureSpec.getMode(widthMeasureSpec));
         printMode(MeasureSpec.getMode(heightMeasureSpec));
-        Log.d("MeasureSpec", this.getClass().getName() +" widthSize: " + MeasureSpec.getSize(widthMeasureSpec));
-        Log.d("MeasureSpec", this.getClass().getName() +" heightSize: " + MeasureSpec.getSize(heightMeasureSpec));
+        Log.d(TAG, this.getClass().getName() +" widthSize: " + MeasureSpec.getSize(widthMeasureSpec));
+        Log.d(TAG, this.getClass().getName() +" heightSize: " + MeasureSpec.getSize(heightMeasureSpec));
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         /**
          * 下面展示，如何设置view的最大宽高？

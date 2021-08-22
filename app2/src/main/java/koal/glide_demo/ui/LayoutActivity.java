@@ -23,9 +23,13 @@ import koal.glide_demo.R;
  * 几种布局嵌套时，view的若干方法回调次数比较：
  *
  *                        onMeasure     onLayout    onDraw
- * 一层   FrameLayout      2              1           1
- *       LinearLayout     2(4,当weight时) 1           1
- *       RelativeLayout   4              1           1
+ * 一层   FrameLayout      1              1           1
+ *       LinearLayout     1(2,当weight时) 1           1
+ *       RelativeLayout   2              1           1
+ *  (ps:
+ *      首次加载时，由于"ViewRootImpl"的关系，FrameLayout/LinearLayout的"onMeasure"会走两次，
+ *      RelativeLayout的"onMeasure"走四次
+ *  )
  *
  * 二层   FrameLayout      2              1            1
  *       LinearLayout     2(4,当weight时) 1            1
@@ -42,6 +46,17 @@ import koal.glide_demo.R;
  *
  *  3. 减少层级，从而减少measure和layout
  *
+ *  4. 为什么避免"布局嵌套"很重要？
+ *     因为父布局会影响子布局的测量、布局、绘制三个流程
+ *
+ *  5. 官方为啥建议用"RelativeLayout"？
+ *     减少View层级：一个RelativeLayout好于两层LinearLayout
+ *
+ *  6. RelativeLayout 如何 onMeasure 两次？
+ *     横向遍历一次
+ *     竖向遍历一次
+ *
+ *  7. FrameLayout 的onMeasure 逻辑最少，相对简单
  *
  * ViewStub（"延迟化加载"）的用法注意点：
  *
@@ -91,12 +106,15 @@ import koal.glide_demo.R;
  *  大总结：
  *  布局优化三大方法：
  *  1. include：布局模块化，但是有嵌套冗余布局的可能
- *  2. merge：减少层级
+ *  2. merge：减少层级：干掉一个view层级
  *  3. viewStub：延迟加载
  *
  *  几个比较有用的结论：
- *  怎样优化你的布局层级结构之RelativeLayout和LinearLayout及FrameLayout性能分析：
+ *  1. 怎样优化你的布局层级结构之RelativeLayout和LinearLayout及FrameLayout性能分析：
  *  https://blog.csdn.net/qq_18757557/article/details/80495405
+ *
+ *  2. Android UI布局的性能分析和优化措施：(比较全)
+ *  https://blog.csdn.net/qq_28260521/article/details/78746396
  *
  */
 public class LayoutActivity extends Activity {
