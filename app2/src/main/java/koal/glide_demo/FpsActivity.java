@@ -2,6 +2,7 @@ package koal.glide_demo;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,7 @@ import koal.glide_demo.xm.XmTextView;
 public class FpsActivity extends AppCompatActivity {
 
     private ViewGroup mRootView;
+    private View mXmView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,29 @@ public class FpsActivity extends AppCompatActivity {
                 new FpsTest().startFps();
             }
         });
+        mXmView = findViewById(R.id.main_test_btn);
+    }
+
+    /**
+     * getWidth()方法和getMeasureWidth()区别:
+     *
+     * "onWindowFocusChanged: getWidth = 200 getMeasuredWidth = 199"
+     *
+     * 验证结论：
+     *  1. getWidth = mRight - mLeft，在onLayout后决定
+     *     getMeasuredWidth = setMeasuredDimension的值，在onMeasure后决定
+     *  2. 获得宽度：
+     *     在onLayout中，一般使用getMeasuredWidth
+     *     在onLayout 以外的地方，一般使用getWidth
+     *  3. fixme: "getWidth"更准确！！代表实际宽度，因为onLayout阶段比onMeasure靠后，更准确
+     *
+     * @param hasFocus
+     */
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        Log.d("XmViewGroup", "onWindowFocusChanged: getWidth = " + mXmView.getWidth()
+                + " getMeasuredWidth = " + mXmView.getMeasuredWidth());
     }
 
     // 验证：各种布局下需要几次onMeasure次数
