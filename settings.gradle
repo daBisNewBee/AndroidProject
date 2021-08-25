@@ -1,6 +1,10 @@
-//include ':KotlinLib'//include ':plugin-library', ':plugin', ':processor', ':app'
+//include ':KotlinLib'
+include ':plugin-library'
+include ':app'
+//include ':plugin'
+//include ':processor'
 //include ':ViewPagerDemo'
-include ':app2'
+//include ':app2'
 
 //setBinding(new Binding([gradle:this]))
 //evaluate(new File(

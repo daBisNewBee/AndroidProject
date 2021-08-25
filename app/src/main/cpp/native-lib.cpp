@@ -1,7 +1,9 @@
 #include <jni.h>
-#include <string>
+#include <string.h>
 #include <unistd.h>
 #include <Android/Log.h>
+#include <errno.h>
+#include <string>
 
 #define TAG "jni"
 
