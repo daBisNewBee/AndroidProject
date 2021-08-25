@@ -2,6 +2,7 @@ package com.exa;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -74,7 +75,7 @@ public class ImageActivity extends AppCompatActivity {
 
         bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.shuai_x);
         Log.d(TAG, "bitmap x getByteCount : " + bitmap.getByteCount());
-        Log.d(TAG, "bitmap x getAllocationByteCount : " + bitmap.getByteCount());
+        Log.d(TAG, "bitmap x getAllocationByteCount : " + bitmap.getAllocationByteCount());
         Log.d(TAG, "bitmap x getHeight : " + bitmap.getHeight());
         Log.d(TAG, "bitmap x getWidth : " + bitmap.getWidth());
         /**
@@ -94,4 +95,31 @@ public class ImageActivity extends AppCompatActivity {
          */
 
     }
+
+    /**
+     * 无复用时，
+     *  getAllocationByteCount 和 getByteCount 一样大
+     *
+     * 存在复用时，
+     *  getAllocationByteCount >= getByteCount
+     *
+     * 具体可见：
+     *  https://www.jianshu.com/p/3cb016edbd44
+     *
+     * @param bitmap
+     * @return
+     */
+    public static int getBitmapSize(Bitmap bitmap){
+        if (bitmap == null) {
+            return 0;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //api 19
+            return bitmap.getAllocationByteCount();
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1){ //api 12
+            return bitmap.getByteCount();
+        }
+        return bitmap.getRowBytes() * bitmap.getHeight(); //other version
+    }
+
 }
