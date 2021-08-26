@@ -6,4 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ImageActivity">
+
+    <ImageView
+        android:id="@+id/main_quality_iv"
+        android:scaleType="centerCrop"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
+
+    <SeekBar
+        android:id="@+id/main_seek_bar"
+        android:progress="50"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 </LinearLayout>

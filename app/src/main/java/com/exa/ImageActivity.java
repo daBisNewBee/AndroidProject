@@ -3,9 +3,46 @@ package com.exa;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.support.annotation.WorkerThread;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.SeekBar;
+
+import java.io.ByteArrayOutputStream;
+
+/**
+ * bitmap 的几个注意点：
+ *
+ * 1. 内存占用如何计算？
+ *    资源文件：width * height * 一个像素所占的内存
+ *            * TargetDensity/inDensity * TargetDensity/inDensity（decodeResource）
+ *    其他文件：width * height * 一个像素所占的内存
+ *
+ *    ps:mdpi、hdpi、xdpi加载顺序：
+ *    会先到对应dpi文件夹下的找，找不到会往上比自己dpi高的文件找，然后才会往比自己dpi低的下面找
+ *
+ *
+ * 2. 内存如何复用？
+ *    指定 inMutable、inBitmap
+ *
+ * 3. bitmap如何压缩？
+ *    compress 质量压缩 jpeg 不会对内存产生影响
+ *    inSampleSize 内存压缩
+ *
+ *    压缩的意义？ps.
+ *    一张宽高为2048x1536的图片，设置inSampleSize为4之后，实际加载到内存中的图片宽高是512x384。
+ *    占有的内存就是0.75M而不是12M，足足节省了15倍。
+ *
+ * 4. bitmap内存模型？
+ *    Android 2.3.3（API10）之前，bitmap像素在native里，Bitmap对象本身则存放在Dalvik Heap
+ *    在Android3.0之后，Bitmap的像素数据也被放在了Dalvik Heap中
+ *
+ * 参考：
+ * Android性能优化（五）之细说Bitmap：
+ * https://cloud.tencent.com/developer/article/1190950
+ */
 
 /**
  *
@@ -57,6 +94,15 @@ public class ImageActivity extends AppCompatActivity {
 
     private static final String TAG = "bitmap";
 
+    private Bitmap mXBitmap;
+
+    /**
+     *
+     * 只有 decodeResource 会用到资源所处文件夹对应密度和手机系统密度进行缩放，其他方法都不会。
+     * 此时Bitmap默认占用的内存 = width * height * 一个像素所占的内存
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,8 +139,103 @@ public class ImageActivity extends AppCompatActivity {
          * 同样图片，相比x中加载后的，从h中加载后的图片宽、高都更大！
          *
          */
-
+        mXBitmap = bitmap;
+        compressTest();
+        reuseBitmapTest();
     }
+
+    private ImageView mImageView;
+
+    void compressTest() {
+        SeekBar seekBar = findViewById(R.id.main_seek_bar);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(final SeekBar seekBar) {
+                new Thread(){
+                    @Override
+                    public void run() {
+                        updateBitmap(seekBar.getProgress());
+                    }
+                }.start();
+            }
+        });
+        mImageView = findViewById(R.id.main_quality_iv);
+    }
+
+
+    /**
+     * bitmap 复用
+     */
+    void reuseBitmapTest() {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inMutable = true;
+        options.inTargetDensity = 320;
+        options.inDensity = 320;
+        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.mipmap.shuai_h, options);
+        Log.d(TAG, "bitmap: " + bitmap);
+        Log.d(TAG, "bitmap:getByteCount: " + bitmap.getByteCount() + " getAllocationByteCount: " + bitmap.getAllocationByteCount());
+
+        options.inBitmap = bitmap;
+        options.inMutable = true;
+        options.inTargetDensity = 160;
+        options.inDensity = 320;
+        bitmap = BitmapFactory.decodeResource(this.getResources(), R.mipmap.shuai_h, options);
+        Log.d(TAG, "After bitmap: " + bitmap);
+        Log.d(TAG, "After bitmap:getByteCount: " + bitmap.getByteCount() + " getAllocationByteCount: " + bitmap.getAllocationByteCount());
+        /**
+         * bitmap: android.graphics.Bitmap@d9588a0
+         * bitmap:getByteCount: 11141120 getAllocationByteCount: 11141120
+         * After bitmap: android.graphics.Bitmap@d9588a0
+         * After bitmap:getByteCount: 2785280 getAllocationByteCount: 11141120
+         *
+         * 结论：
+         * 1. bitMap被复用：地址一样
+         * 2. getAllocationByteCount为地址最大空间：大于实际占用getByteCount
+         * 3. 设置缩放宽高为原始宽高一半后，内存占用仅1/4
+         */
+    }
+
+    /**
+     * 1. bitmap 质量压缩:
+     *
+     * 不会减少图片的像素。
+     * 进过它压缩的图片文件大小会变小，但是解码成bitmap后占得内存是不变的。
+     *
+     * 只JPEG，PNG不行，因为无损格式
+     *
+     * 2. bitmap 大小压缩：
+     * 参考"BitMapTest"，通过"inJustDecodeBounds=true"获得图片宽高信息，
+     * 计算采样率inSampleSize，以较小方式加载图片，达到节省内存的目的。
+     *
+     * @param progress
+     */
+    @WorkerThread
+    private void updateBitmap(int progress) {
+        // 大小不会变。quality为10会质量很差！
+        Log.d(TAG, "updateBitmap() called with: progress = [" + progress + "]");
+        long start = System.currentTimeMillis();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        mXBitmap.compress(Bitmap.CompressFormat.JPEG, progress, baos);
+        byte[] bytes = baos.toByteArray();
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+        Log.d(TAG, "bitmap getByteCount : " + bitmap.getByteCount());
+        Log.d(TAG, "bitmap getAllocationByteCount : " + bitmap.getAllocationByteCount());
+        Log.d(TAG, "bitmap getHeight : " + bitmap.getHeight());
+        Log.d(TAG, "bitmap getWidth : " + bitmap.getWidth());
+        Log.d(TAG, "bitmap bytes : " + bytes.length); // 从这个判断变化！其他值不会变
+        Log.d(TAG, "bitmap cost ----> : " + (System.currentTimeMillis() - start) + " ms");
+        mImageView.post(()-> mImageView.setImageBitmap(bitmap));
+    }
+
 
     /**
      * 无复用时，
