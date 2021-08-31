@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.example.android.contentprovidersample.provider.READ_WRITE" />
     <uses-permission android:name="MyContentProvider.READ_WRITE" />
-
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
@@ -17,26 +16,30 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ImageActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".MainActivity"
             android:taskAffinity="Main.task" />
 
-        <service android:name=".ashmem.RemoteService"
-            android:process=":service"></service>
-        
-        <service android:name=".ashmem.ShmService"></service>
-
+        <service
+            android:name=".ashmem.RemoteService"
+            android:process=":service" />
+        <service android:name=".ashmem.ShmService" />
         <service
             android:name=".messenger.RemoteService"
-            android:process=":remote" ></service>
-
+            android:process=":remote" />
         <service
             android:name=".binder.IPCServer"
-            android:process=":ipc" ></service>
+            android:process=":ipc" />
 
         <activity android:name=".binder.BinderActivity" />
         <activity android:name="com.bumptech.glide.samples.contacturi.ContactUriActivity" />
-
         <!--
         standard:
             每启动一个Activity就会在栈顶创建一个新的实例
@@ -49,17 +52,12 @@
         <activity
             android:name=".WelcomeActivity"
             android:theme="@style/Transparent">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".mode.StandardActivity"
             android:launchMode="standard"
             android:taskAffinity="standard.task" />
-        >
         <activity
             android:name=".mode.SignleTopActivity"
             android:launchMode="singleTop"
@@ -77,15 +75,13 @@
         <provider
             android:name=".contProd.MyContentProvider"
             android:authorities="com.exa.MyContentProvider"
-            android:permission="MyContentProvider.READ_WRITE" />
-
-        <!-- 预注册Activity，利用假的Activity来“运行”真的TargetActivity。 -->
+            android:permission="MyContentProvider.READ_WRITE" /> <!-- 预注册Activity，利用假的Activity来“运行”真的TargetActivity。 -->
         <activity android:name=".plugin.ProxyActivity" />
         <activity android:name=".ConstrainActivity" />
         <activity android:name=".eventbus.EventBusActivity" />
         <activity android:name=".leakcanary.LeakActivity" />
         <activity android:name=".listview.MultipleItemsListActivity" />
-        <activity android:name=".listview.RecyclerViewActivity"></activity>
+        <activity android:name=".listview.RecyclerViewActivity" />
     </application>
 
 </manifest>

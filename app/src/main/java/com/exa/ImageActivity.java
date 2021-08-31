@@ -10,7 +10,11 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
+import com.exa.cusview.HighImageView;
+
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * bitmap 的几个注意点：
@@ -38,6 +42,10 @@ import java.io.ByteArrayOutputStream;
  * 4. bitmap内存模型？
  *    Android 2.3.3（API10）之前，bitmap像素在native里，Bitmap对象本身则存放在Dalvik Heap
  *    在Android3.0之后，Bitmap的像素数据也被放在了Dalvik Heap中
+ *    Android 3.0到8.0 之间Bitmap像素数据存在Java堆，而8.0之后像素数据存到native堆中
+ *    < 3.0 : Native heap
+ *    >= 3.0 && < 8.0 Java heap，只此时是Java堆
+ *    >= 8.0 Native (fixme: 好处，Bitmap不再为OOM背锅了！Bitmap导致OOM的问题基本不会在8.0以上设备出现了（没有内存泄漏的情况下）)
  *
  * 参考：
  * Android性能优化（五）之细说Bitmap：
@@ -142,6 +150,20 @@ public class ImageActivity extends AppCompatActivity {
         mXBitmap = bitmap;
         compressTest();
         reuseBitmapTest();
+        largeImageViewTest();
+    }
+
+    private void largeImageViewTest() {
+        HighImageView hiv = findViewById(R.id.main_high_iv);
+        try {
+            InputStream is = getAssets().open("shuai.jpg");
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            hiv.setImage(is, bitmap.getWidth(), bitmap.getHeight());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private ImageView mImageView;
