@@ -8,7 +8,7 @@
 #include <Android/Log.h>
 #include <cstdlib>
 
-#define TAG "System.out"
+#define TAG "System.out.jni"
 
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,TAG ,__VA_ARGS__)
 

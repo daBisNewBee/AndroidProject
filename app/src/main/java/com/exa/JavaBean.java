@@ -35,6 +35,7 @@ public class JavaBean {
     * JVM 查找 native 方法:
     * 1.静态注册： 按照 JNI 规范的命名规则
     * 2.（推荐）动态注册：调用 JNI 提供的 RegisterNatives 函数，将本地函数注册到 JVM 中
+    *   优先使用"动态"的原因：仅需在registerNativeMethods中增加函数声明，不用改动头文件
     *
     * */
     static {

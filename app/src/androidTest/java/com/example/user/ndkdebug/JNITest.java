@@ -10,7 +10,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class JNITest {
@@ -70,6 +69,15 @@ public class JNITest {
         }
     }
 
+    /**
+     *
+     * UTF8 cost = 362 ms
+     * UTF16 cost = 264 ms
+     *
+     * 结论：UTF16更快，大概比快UTF8快1/3
+     *
+     * (UTF16 cost = 876 ms， critical 很慢)
+     */
     @Test
     public void encodeTypeSpeedTest() {
         String rawData = "大大萨达撒大萨达撒大硕大的撒大所萨达所大所多大萨达撒abcdefghijklm";
@@ -271,6 +279,12 @@ public class JNITest {
         String raw = "我是daBisNewBee";
         byte[] rawByte = raw.getBytes("UTF-16");
         System.out.println("UTF-16 编码后的字符串：");
+        for (byte i: rawByte) {
+            System.out.format("%x ", i);
+        }
+        System.out.println();
+        rawByte = raw.getBytes("UTF-8");
+        System.out.println("UTF-8 编码后的字符串：");
         for (byte i: rawByte) {
             System.out.format("%x ", i);
         }
