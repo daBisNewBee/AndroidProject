@@ -1,10 +1,11 @@
 package koal.glide_demo.xm;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.LinearLayout;
+
+import androidx.annotation.Nullable;
 
 public class XmLinearLayout extends LinearLayout {
 
@@ -18,10 +19,6 @@ public class XmLinearLayout extends LinearLayout {
 
     public XmLinearLayout(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    public XmLinearLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     private void printMode(int mode) {

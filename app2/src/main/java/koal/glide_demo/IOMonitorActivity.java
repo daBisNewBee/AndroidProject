@@ -1,14 +1,14 @@
 package koal.glide_demo;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -18,7 +18,6 @@ import java.lang.reflect.Proxy;
 import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
-import okio.Sink;
 
 /**
  *

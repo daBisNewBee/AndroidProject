@@ -1,11 +1,12 @@
 package koal.glide_demo;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import koal.glide_demo.utlis.FpsTest;
 import koal.glide_demo.xm.XmTextView;

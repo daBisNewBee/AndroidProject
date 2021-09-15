@@ -17,7 +17,6 @@
 package koal.glide_demo.third.com.astuetz.viewpager.extensions.sample;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,6 +25,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 import koal.glide_demo.R;
 

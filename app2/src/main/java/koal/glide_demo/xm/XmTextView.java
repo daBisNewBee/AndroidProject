@@ -2,9 +2,11 @@ package koal.glide_demo.xm;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * "MeasureSpec是什么？"
@@ -43,7 +45,7 @@ import android.util.Log;
  * https://www.jianshu.com/p/ca118d704b5e
  *
  */
-public class XmTextView extends android.support.v7.widget.AppCompatTextView {
+public class XmTextView extends AppCompatTextView {
 
     private static final String TAG = "XmTextView";
 

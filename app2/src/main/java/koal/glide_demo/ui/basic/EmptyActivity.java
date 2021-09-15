@@ -3,31 +3,28 @@ package koal.glide_demo.ui.basic;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
-import android.widget.EditText;
 
-import java.util.Collections;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import java.util.List;
 
 import koal.glide_demo.R;
 import koal.glide_demo.ui.fragment.MainFragment;
 import koal.glide_demo.ui.fragment.MyDialogFragment;
 import koal.glide_demo.ui.fragment.OtherFragment;
-
-import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
 /**
  *

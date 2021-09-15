@@ -2,9 +2,6 @@ package koal.glide_demo.ui.fragment;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,8 +11,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+
 import koal.glide_demo.R;
-import koal.glide_demo.utlis.BaseUtil;
 
 /**
  * Created by wenbin.liu on 2020-08-27

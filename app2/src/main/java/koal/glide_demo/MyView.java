@@ -2,10 +2,12 @@ package koal.glide_demo;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
-public class MyView extends android.support.v7.widget.AppCompatTextView {
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
+
+public class MyView extends AppCompatTextView {
 
     public MyView(Context context) {
         super(context);

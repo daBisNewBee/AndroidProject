@@ -1,9 +1,10 @@
 package koal.glide_demo;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import javax.inject.Inject;
 import koal.glide_demo.dagger.Pot;

@@ -1,10 +1,8 @@
 package koal.glide_demo;
 
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 //import io.flutter.facade.Flutter;
 

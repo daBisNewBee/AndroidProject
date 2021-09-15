@@ -4,9 +4,6 @@ package koal.glide_demo.third.com.astuetz.viewpager.extensions.sample;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
@@ -15,6 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
+
+import androidx.fragment.app.DialogFragment;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.astuetz.PagerSlidingTabStrip.IconTabProvider;
@@ -48,7 +49,8 @@ public class QuickContactFragment extends DialogFragment {
 
 		pager.setAdapter(adapter);
 
-		tabs.setViewPager(pager);
+		// TODO:android x不支持
+//		tabs.setViewPager(pager);
 
 		return root;
 	}
