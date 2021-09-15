@@ -1,6 +1,6 @@
 package koal.glide_demo.jetpack;
 
-import android.os.SystemClock;
+import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -11,6 +11,7 @@ public class LiveDataModel extends ViewModel {
     private long mInitialTime;
 
     public LiveDataModel() {
+        Log.d("livedata", "LiveDataModel constructor called");
         mInitialTime = System.currentTimeMillis();
         new Thread(){
             @Override
@@ -22,7 +23,9 @@ public class LiveDataModel extends ViewModel {
                         e.printStackTrace();
                     }
                     long newValue = (System.currentTimeMillis() - mInitialTime) / 1000;
+
                     mElapsedTime.postValue(newValue);
+                    Log.d("livedata", "do postValue = " + newValue);
                 }
             }
         }.start();
