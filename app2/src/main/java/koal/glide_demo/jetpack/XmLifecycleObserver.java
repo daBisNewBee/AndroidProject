@@ -2,25 +2,20 @@ package koal.glide_demo.jetpack;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
 
-public class XmLifecycleObserver implements LifecycleObserver, LifecycleOwner {
+public class XmLifecycleObserver implements LifecycleObserver {
 
     private static final String TAG = "livedata";
 
-    private Lifecycle mRegistry;
-
-    public XmLifecycleObserver(Lifecycle registry) {
-        mRegistry = registry;
+    public XmLifecycleObserver() {
     }
 
+    // 好处：在内部感知Activity或者Fragment的变化，追踪生命周期并做相应处理
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     void XmCreate() {
-//        mRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
         Log.d(TAG, "XmCreate() called");
     }
 
@@ -46,14 +41,6 @@ public class XmLifecycleObserver implements LifecycleObserver, LifecycleOwner {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     void XmStart() {
-//        mRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
         Log.d(TAG, "XmStart() called");
-    }
-
-    @NonNull
-    @Override
-    public Lifecycle getLifecycle() {
-//        mRegistry = new LifecycleRegistry(this);
-        return mRegistry;
     }
 }
