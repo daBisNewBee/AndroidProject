@@ -50,50 +50,104 @@ import androidx.annotation.Nullable;
  */
 public class MyLinearLayout extends LinearLayout {
 
+
+    /**
+     * 正常，不做任何拦截：
+     *
+     * 外外 MyLinearLayout dispatchTouchEvent ev = [MotionEvent { action=ACTION_DOWN, act
+     * 外外 MyLinearLayout onInterceptTouchEvent ev = [MotionEvent { action=ACTION_DOWN,
+     * 内内 MyLinearLayout dispatchTouchEvent ev = [MotionEvent { action=ACTION_DOWN, act
+     * 内内 MyLinearLayout onInterceptTouchEvent ev = [MotionEvent { action=ACTION_DOWN,
+     * MyTextView dispatchTouchEvent event = [MotionEvent { action=ACTION_DOWN, actionB
+     * MyTextView onTouchEvent event = [MotionEvent { action=ACTION_DOWN, actionButton=
+     * 内内 MyLinearLayout onTouchEvent event = [MotionEvent { action=ACTION_DOWN, action
+     * 外外 MyLinearLayout onTouchEvent event = [MotionEvent { action=ACTION_DOWN, action
+     * fixme: 注意没有后续move、up事件了！因为都没消费，就不会再传到这里来
+     *
+     * @param context
+     * @param attrs
+     */
+
     public MyLinearLayout(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
+    /**
+     * 在这里拦截"ACTION_DOWN"：
+     *
+     * 外外 MyLinearLayout dispatchTouchEvent ev = [MotionEvent { action=ACTION_DOWN, ac
+     * 外外 MyLinearLayout onInterceptTouchEvent ev = [MotionEvent { action=ACTION_DOWN,
+     * 内内 MyLinearLayout dispatchTouchEvent ev = [MotionEvent { action=ACTION_DOWN, ac
+     * 内内 MyLinearLayout onInterceptTouchEvent ev = [MotionEvent { action=ACTION_DOWN,
+     *  // fixme:不会再给MyTextView了
+     * 内内 MyLinearLayout onTouchEvent event = [MotionEvent { action=ACTION_DOWN, actio
+     * 外外 MyLinearLayout onTouchEvent event = [MotionEvent { action=ACTION_DOWN, actio
+     * fixme: 注意没有后续move、up事件了！因为都没消费，就不会再传到这里来
+     *
+     * @param ev
+     * @return
+     */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         Log.v("aa", this.getContentDescription() + " MyLinearLayout onInterceptTouchEvent ev = [" + ev + "]");
-        switch (ev.getAction()){
-            case MotionEvent.ACTION_DOWN:
-            case MotionEvent.ACTION_UP:
-                // (默认)表示子View需要，接下来走到子View的onTouchEvent
-//                return false;
-            case MotionEvent.ACTION_MOVE:
-                if (this.getContentDescription().equals("内层布局")) {
-                    // 拦截内层布局的事件，验证"onTouchEvent"可以向上传递，即"6.2"
-                    return true;
-                }
-                // 表示父View需要，接下来走到父View的onTouchEvent
-//                return true;
-                /*
-                * 注意：
-                * 这里被拦截后，给了子控件一个"ACTION_CANCEL"
-                * MyLinearLayout dispatchTouchEvent ev = [MotionEvent { action=ACTION_MOVE, ]
-                  MyLinearLayout onInterceptTouchEvent ev = [MotionEvent { action=ACTION_MOVE, ]
-                  MyButton onTouchEvent event = [MotionEvent { action=ACTION_CANCEL ]
-                * */
+        if (ev.getAction() == MotionEvent.ACTION_DOWN
+                && this.getContentDescription().equals("内内")) {
+            return true;
         }
         return super.onInterceptTouchEvent(ev);
     }
 
+    /**
+     *
+     * 在这里拦截"ACTION_DOWN"：
+     *
+     * 外外 MyLinearLayout dispatchTouchEvent ev = [MotionEvent { action=ACTION_DOWN, a
+     * 外外 MyLinearLayout onInterceptTouchEvent ev = [MotionEvent { action=ACTION_DOWN
+     * 内内 MyLinearLayout dispatchTouchEvent ev = [MotionEvent { action=ACTION_DOWN, a
+     * 内内 MyLinearLayout onInterceptTouchEvent ev = [MotionEvent { action=ACTION_DOWN
+     * MyTextView dispatchTouchEvent event = [MotionEvent { action=ACTION_DOWN, actio // fixme:子view还能收到事件，说明并未终止DOWN事件的传递
+     * MyTextView onTouchEvent event = [MotionEvent { action=ACTION_DOWN, actionButto
+     * 内内 MyLinearLayout onTouchEvent event = [MotionEvent { action=ACTION_DOWN, acti // fixme:在这里被消费，到此为止，不再往"外外"传
+     * 外外 MyLinearLayout dispatchTouchEvent ev = [MotionEvent { action=ACTION_MOVE, a
+     * 外外 MyLinearLayout onInterceptTouchEvent ev = [MotionEvent { action=ACTION_MOVE
+     * 内内 MyLinearLayout dispatchTouchEvent ev = [MotionEvent { action=ACTION_MOVE, a
+     * 内内 MyLinearLayout onTouchEvent event = [MotionEvent { action=ACTION_MOVE, acti // fixme:后续"move、up"直接传到这里
+     *
+     * @param event
+     * @return
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         Log.v("aa", this.getContentDescription() + " MyLinearLayout onTouchEvent event = [" + event + "]");
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            // 返回true，表示事件在本层消费了，那么本层还会去响应ACTION_MOVE和ACTION_UP操作；
-            // 否则不会响应后续操作, 验证"第7"
-            return true;
+        if (event.getAction() == MotionEvent.ACTION_DOWN
+                && this.getContentDescription().equals("内内")) {
+//            return true;
         }
         return super.onTouchEvent(event);
     }
 
+    /**
+     *
+     *  在这里拦截"ACTION_DOWN"：
+     *
+     * 外外 MyLinearLayout dispatchTouchEvent ev = [MotionEvent { action=ACTION_DOWN, ac
+     * 外外 MyLinearLayout onInterceptTouchEvent ev = [MotionEvent { action=ACTION_DOWN,
+     * 内内 MyLinearLayout dispatchTouchEvent ev = [MotionEvent { action=ACTION_DOWN, ac // fixme:Down在这里被拦截了，不再往子view传，比较彻底
+     * 外外 MyLinearLayout dispatchTouchEvent ev = [MotionEvent { action=ACTION_MOVE, ac
+     * 外外 MyLinearLayout onInterceptTouchEvent ev = [MotionEvent { action=ACTION_MOVE,
+     * 内内 MyLinearLayout dispatchTouchEvent ev = [MotionEvent { action=ACTION_MOVE, ac // fixme:后续"move、up"直接传到这里
+     * 内内 MyLinearLayout onTouchEvent event = [MotionEvent { action=ACTION_MOVE, actio
+     *
+     * @param ev
+     * @return
+     */
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         Log.v("aa", this.getContentDescription() + " MyLinearLayout dispatchTouchEvent ev = [" + ev + "]");
+        if (ev.getAction() == MotionEvent.ACTION_DOWN
+                && this.getContentDescription().equals("内内")) {
+//            return true;
+        }
         return super.dispatchTouchEvent(ev);
     }
 }

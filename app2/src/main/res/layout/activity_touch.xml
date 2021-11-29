@@ -10,7 +10,7 @@
         android:background="@color/colorAccent"
         android:orientation="horizontal"
         android:layout_below="@id/my_linear_layout"
-        android:contentDescription="外层布局"
+        android:contentDescription="外外"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -23,11 +23,11 @@
             android:id="@+id/my_linear_layout_inner"
             android:background="@color/colorPrimary"
             android:layout_marginStart="100dp"
-            android:contentDescription="内层布局"
+            android:contentDescription="内内"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <koal.glide_demo.touch.MyTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="这里是内层布局"/>
@@ -59,7 +59,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
+        <koal.glide_demo.touch.MyTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="这里是一层布局"/>
@@ -68,7 +68,6 @@
             android:id="@+id/btn_other"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onClickOther"
             android:text="TouchMyButton" />
 
     </koal.glide_demo.touch.MyLinearLayout>
