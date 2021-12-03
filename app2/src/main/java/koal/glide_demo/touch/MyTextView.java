@@ -13,7 +13,8 @@ import androidx.appcompat.widget.AppCompatTextView;
  * 事件传递的几个要点：
  *
  * 1. 事件传递方向？
- *    由父ViewGroup 传递到 子ViewGroup/子View
+ *    分发流程：由父ViewGroup 传递到 子ViewGroup/子View
+ *    处理流程：相反，由下到上
  *
  * 2. 拦截对象？
  *    ACTION_DOWN
@@ -30,6 +31,9 @@ import androidx.appcompat.widget.AppCompatTextView;
  * 5. "onInterceptTouchEvent"：
  *      只是一个分流作用，不能消费事件，view是没有这个函数的
  *
+ *  ViewGroup 先要走分发流程，再走处理流程
+ *  View 只能走处理流程
+ *s
  *
  * "图解 Android 事件分发机制"：
  * https://www.jianshu.com/p/e99b5e8bd67b/
