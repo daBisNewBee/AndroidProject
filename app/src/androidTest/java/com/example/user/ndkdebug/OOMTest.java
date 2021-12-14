@@ -25,6 +25,7 @@ import java.util.List;
  3. （常见）传统的java堆内存超限，即申请堆内存大小超过了 Runtime.getRuntime().maxMemory()
  4. （低概率）32为系统进程逻辑空间被占满导致OOM.
  5. 其他
+ 6. 内存抖动，频繁GC后剩下内存碎屏，申请大对象需要连续内存，发现不够了
 
  参考：不可思议的OOM
  链接：https://www.jianshu.com/p/e574f0ffdb42
