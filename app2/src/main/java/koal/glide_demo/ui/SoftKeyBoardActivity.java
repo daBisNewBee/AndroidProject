@@ -44,6 +44,22 @@ import koal.glide_demo.R;
  *      在startAnimation中调用了invalidate(),导致了 View 执行 onDraw() 方法.
  *      核心本质就是在一定的持续时间内，不断改变 Matrix 变换，并且不断刷新的过程。
  *
+ *      具体一点：
+ *      当view调用了 View.startAnimation() 时动画并没有马上就执行，会触发遍历view树的绘制，
+ *      调用到 View 的 draw() 方法，如果 View 有绑定动画，那么会去调用applyLegacyAnimation()，
+ *      内部调用 getTransformation() 来根据当前时间计算动画进度，紧接着调用 applyTransformation()
+ *      并传入动画进度来应用动画。getTransformation() 会返回动画是否执行完成的状态， applyLegacyAnimation()
+ *      会根据 getTransformation() 的返回值来决定是否通知 ViewRootImpl 再发起一次遍历请求，遍历 View 树绘制，
+ *      重复上面的步骤，直到动画结束。
+ *
+ *      补间动画的绘制实际上是父布局不停地改变自己的Canvas坐标，而子view虽然位置没有变化，
+ *      但是画布所在Canvas的坐标发生了变化视觉效果也就发生了变化，其实并没有修改任何属性，
+ *      所以只能在原位置才能处理触摸事件。
+ *
+ *
+ *      链接：https://www.jianshu.com/p/26ce9078fef4
+ *
+ *
  *    属性动画：
  *      在一定的时间间隔内，通过不断地对值进行改变，并不断将该值赋给对象的属性，从而实现该对象在属性上的动画效果。
  *
