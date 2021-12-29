@@ -24,7 +24,22 @@ public class MyApplication extends Application {
 
     // Used to load the 'native-lib' library on application startup.
     static {
-        System.loadLibrary("native-lib");
+        /**
+         * java_vm_ext.cc:542] JNI DETECTED ERROR IN APPLICATION: JNI NewGlobalRef called with pending exception java.lang.NoSuchMethodError: no static or non-static method "Lcom/exa/JavaBean;.modifiedUTF8Test_aa(Ljava/lang/String;)Ljava/lang/String;"
+         * java_vm_ext.cc:542]   at java.lang.String java.lang.Runtime.nativeLoad(java.lang.String, java.lang.ClassLoader) (Runtime.java:-2)
+         * java_vm_ext.cc:542]   at void java.lang.Runtime.loadLibrary0(java.lang.ClassLoader, java.lang.String) (Runtime.java:1014)
+         * java_vm_ext.cc:542]   at void java.lang.System.loadLibrary(java.lang.String) (System.java:1669)
+         * java_vm_ext.cc:542]   at void com.exa.MyApplication.<clinit>() (MyApplication.java:27)
+         * java_vm_ext.cc:542]   at java.lang.Object java.lang.Class.newInstance() (Class.java:-2)
+         * java_vm_ext.cc:542]   at android.app.Application android.app.AppComponentFactory.instantiateApplication
+         */
+        try {
+            System.loadLibrary("native-lib");
+        } catch (Throwable e) {
+            e.printStackTrace();
+            Log.e("todo", "loadLibrary error:  " + e.getLocalizedMessage());
+        }
+        // System.loadLibrary源码分析: https://blog.csdn.net/u014099894/article/details/111655768
     }
 
     private static Context context;

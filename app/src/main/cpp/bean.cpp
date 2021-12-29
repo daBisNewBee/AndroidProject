@@ -156,6 +156,23 @@ static JNINativeMethod methods[] = {
         // 优先于func被调用之前发现错误，这也是显示注册JNI方法的优势之一。
 };
 
+bool checkExc(JNIEnv* env) {
+    if (env->ExceptionCheck()) {
+        env->ExceptionDescribe();
+        env->ExceptionClear();
+        return true;
+    }
+    return false;
+}
+
+void JNI_ThrowByName(JNIEnv* env, const char *name, const char * msg) {
+    jclass cls = env->FindClass(name);
+    if (cls != NULL) {
+        env->ThrowNew(cls, msg);
+    }
+    env->DeleteLocalRef(cls);
+}
+
 int registerNativeMethods(JNIEnv* env,
                             const char* className,
                             const JNINativeMethod* gMethods,
@@ -171,8 +188,17 @@ int registerNativeMethods(JNIEnv* env,
     }
     // 关键方法：RegisterNatives
     if ((tmp = env->RegisterNatives(clazz, methods, numMethods)) < 0){
+        if (tmp == JNI_ERR) {
+            if (checkExc(env)) {
+                // TODO: 走到了这里，但是动态加载的函数声明crash，还是未能在java catch
+                JNI_ThrowByName(env, "java/lang/Exception", "RegisterNatives 失败，避免崩溃");
+                LOGD("RegisterNatives checkExc. ret");
+            }
+        }
+        // JNI Crash:异常定位与捕获处理: https://blog.csdn.net/rootmego/article/details/84327956
         LOGD("RegisterNatives failed. ret:%d", tmp);
-        return JNI_ERR;
+        return JNI_OK;
+//        return JNI_ERR;
     }
 
     return JNI_OK;
