@@ -17,15 +17,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".video.GLSurfaceActivity">
+
+        </activity>
+        <activity android:name=".jetpack.LiveDataActivity">
+        </activity>
+        <activity android:name=".FpsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".jetpack.LiveDataActivity">
-        </activity>
-        <activity android:name=".FpsActivity"></activity>
         <activity android:name=".IOMonitorActivity" />
         <activity android:name=".PicassoActivity" />
         <activity android:name=".FlutterActivity" />

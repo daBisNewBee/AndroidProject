@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -60,6 +61,7 @@ public class FpsActivity extends AppCompatActivity {
 
     private ViewGroup mRootView;
     private View mXmView;
+    private XmTextView mXmTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,84 @@ public class FpsActivity extends AppCompatActivity {
             }
         });
         mXmView = findViewById(R.id.main_test_btn);
+        mXmTextView = findViewById(R.id.main_fps_xm_tv);
+
+
+        /**
+         *
+         *  android中获取view在布局中的高度和宽度:
+         *  https://www.jianshu.com/p/a4d1093e2e59
+         *
+         *
+         *  1. 使用 View.measure 测量 View
+         *  该方法测量的宽度和高度可能与视图绘制完成后的真实的宽度和高度不一致
+         *
+         *  主动调用measure方法
+         *  好处:可以立即获得宽和高
+         *  坏处:多了一次测量过程
+         */
+        int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        mXmTextView.measure(width, height);
+        Log.d("measure", "mXmTextView.measure 获取到的宽高: ");
+        Log.d("measure", "getMeasuredHeight: " + mXmTextView.getMeasuredHeight());
+        Log.d("measure", "getMeasuredWidth: " + mXmTextView.getMeasuredWidth());
+
+
+        /**
+         * 2. 使用 ViewTreeObserver. OnPreDrawListener 监听事件
+         *
+         * 在视图将要绘制时调用该监听事件
+         */
+        mXmTextView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mXmTextView.getViewTreeObserver().removeOnPreDrawListener(this);
+                Log.d("measure", "OnPreDrawListener 获取到的宽高: ");
+                Log.d("measure", "getHeight: " + mXmTextView.getHeight());
+                Log.d("measure", "getWidth: " + mXmTextView.getWidth());
+                return true;
+            }
+        });
+
+        /**
+         * 3. 使用 ViewTreeObserver.OnGlobalLayoutListener 监听事件
+         *
+         * 在布局发生改变或者某个视图的可视状态发生改变时调用该事件，会被多次调用，
+         * 因此需要在获取到视图的宽度和高度后执行 remove 方法移除该监听事件。
+         */
+        mXmTextView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mXmTextView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                Log.d("measure", "onGlobalLayout 获取到的宽高: ");
+                Log.d("measure", "getHeight: " + mXmTextView.getHeight());
+                Log.d("measure", "getWidth: " + mXmTextView.getWidth());
+            }
+        });
+
+        /**
+         * 6. 使用 View.OnLayoutChangeListener 监听事件
+         *
+         * 在视图的 layout 改变时调用该事件，会被多次调用
+         */
+        mXmTextView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                mXmTextView.removeOnLayoutChangeListener(this);
+                Log.d("measure", "onLayoutChange 获取到的宽高: ");
+                Log.d("measure", "getHeight: " + mXmTextView.getHeight());
+                Log.d("measure", "getWidth: " + mXmTextView.getWidth());
+            }
+        });
+        /**
+         * 7. 使用 View.post() 方法
+         */
+        mXmTextView.post(() -> {
+            Log.d("measure", "View.post 获取到的宽高: ");
+            Log.d("measure", "getHeight: " + mXmTextView.getHeight());
+            Log.d("measure", "getWidth: " + mXmTextView.getWidth());
+        });
     }
 
     /**

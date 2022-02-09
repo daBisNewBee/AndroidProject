@@ -79,10 +79,40 @@ public class XmTextView extends AppCompatTextView {
         Log.d(TAG, "onDraw: ");
     }
 
+    /**
+     * 5. 重写 View 的 onLayout 方法
+     * @param changed
+     * @param left
+     * @param top
+     * @param right
+     * @param bottom
+     */
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         Log.d(TAG, "onLayout: ");
+        Log.d("measure", "onLayout 获取到的宽高: ");
+        Log.d("measure", "getHeight: " + getHeight());
+        Log.d("measure", "getWidth: " + getWidth());
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        Log.d(TAG, "onFinishInflate: ");
+    }
+
+    /**
+     * 4. 重写 View 的 onSizeChanged 方法
+     *
+     */
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        Log.d(TAG, "onSizeChanged() called with: w = [" + w + "], h = [" + h + "], oldw = [" + oldw + "], oldh = [" + oldh + "]");
+        Log.d("measure", "onSizeChanged 获取到的宽高: ");
+        Log.d("measure", "getHeight: " + getHeight());
+        Log.d("measure", "getWidth: " + getWidth());
     }
 
     /**
