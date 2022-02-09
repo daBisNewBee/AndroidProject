@@ -56,6 +56,22 @@ import koal.glide_demo.xm.XmTextView;
  * https://blog.csdn.net/my_csdnboke/article/details/106685736
  * 绘制过程，注意"常见的问题"
  *
+ *
+ *
+ * "View的onAttachedToWindow和onDetachedFromWindow的调用时机分析" 的理解：
+ * https://www.jianshu.com/p/e7b6fa788ae6
+ *
+ * 几个关键类：
+ *
+ * "ViewRootImpl" 的作用:
+ * 1、管理和绘制view树
+ * 2、触摸事件的中转
+ * 3、负责和WMS通信
+ * 4、负责连接view和window的桥梁事务
+ *
+ * "ViewTreeObserver" 视图树:
+ *
+ *
  */
 public class FpsActivity extends AppCompatActivity {
 
