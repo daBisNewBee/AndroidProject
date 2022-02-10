@@ -12,7 +12,8 @@
         android:layout_height="wrap_content">
 
         <koal.glide_demo.xm.XmTextView
-            android:text="wrap_content"
+            android:id="@+id/main_fps_xm_tv"
+            android:text="XmTextView"
             android:background="@color/colorPrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
