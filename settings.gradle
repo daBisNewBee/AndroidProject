@@ -1,8 +1,8 @@
 //include ':KotlinLib'
-//include ':plugin-library'
-//include ':app'
-//include ':plugin'
-//include ':processor'
+include ':plugin-library'
+include ':app'
+include ':plugin'
+include ':processor'
 //include ':ViewPagerDemo'
 include ':app2'
 

@@ -124,7 +124,7 @@ public class MainActivity extends BaseActivity
 
         // Example of a call to a native method
         stringFromJNI();
-//        startAndBindService();
+        startAndBindService();
 
         try {
             scanClassesFromApk();

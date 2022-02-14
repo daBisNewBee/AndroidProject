@@ -1,5 +1,6 @@
 package com.exa.messenger;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,7 +20,9 @@ public class RemoteService extends Service {
     public final static int SERVICEID = 0x0001;
     public final static int CLIENTID = 0x0002;
 
+    @SuppressLint("HandlerLeak")
     private Messenger messenger = new Messenger(new Handler(){
+
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);

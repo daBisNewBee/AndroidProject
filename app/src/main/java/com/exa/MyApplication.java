@@ -127,11 +127,11 @@ public class MyApplication extends Application {
         ARouter.init(this);
 
         setupLeakCanary();
-        Stetho.initialize(
-                Stetho.newInitializerBuilder(this)
-                        .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-                        .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
-                        .build());
+//        Stetho.initialize(
+//                Stetho.newInitializerBuilder(this)
+//                        .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+//                        .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+//                        .build());
 
         OkHttpClient client=new OkHttpClient.Builder()
                 .addNetworkInterceptor(new StethoInterceptor())
