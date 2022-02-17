@@ -7,7 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.asynclayoutinflater.view.AsyncLayoutInflater;
 
 import koal.glide_demo.utlis.FpsTest;
 import koal.glide_demo.xm.XmTextView;
@@ -82,7 +85,16 @@ public class FpsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mRootView = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.activity_fps, null, false);
+
+        // "异步加载布局"
+        new AsyncLayoutInflater(getBaseContext()).inflate(R.layout.activity_fps, null, (view, resid, parent) -> {
+            Log.d("todo", "OnInflateFinishedListener ----> ");
+            initUi();
+        });
+    }
+
+    private void initUi() {
+        mRootView = (ViewGroup) LayoutInflater.from(FpsActivity.this).inflate(R.layout.activity_fps, null, false);
         setContentView(mRootView);
         findViewById(R.id.main_fps_test).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,8 +104,6 @@ public class FpsActivity extends AppCompatActivity {
             }
         });
         mXmView = findViewById(R.id.main_test_btn);
-        mXmTextView = findViewById(R.id.main_fps_xm_tv);
-
 
         /**
          *
