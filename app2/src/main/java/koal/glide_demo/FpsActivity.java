@@ -104,6 +104,7 @@ public class FpsActivity extends AppCompatActivity {
             }
         });
         mXmView = findViewById(R.id.main_test_btn);
+        mXmTextView = findViewById(R.id.main_fps_xm_tv);
 
         /**
          *
