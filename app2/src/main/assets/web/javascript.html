@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <title>Carson_Ho</title>
@@ -9,9 +8,23 @@
     <!-- Android需要调用的方法-->
     <script>
        function callJS() {
+          console.log("callJs called");
           alert("Android调用了JS的callJS方法");
        }
+
+       // “JS 调用 Java”
+       function jsCallNative(param) {
+          // 规则： 有要求，必须要 window + "interfaceName"(addJavascriptInterface中) + “@JavascriptInterface”的方法名
+          window.sapphireWebViewBridge.send(param);
+          let time = new Date();
+          window.sapphireWebViewBridge.send(time.toTimeString());
+          window.sapphireWebViewBridgeEx.sendEx(time.toTimeString());
+       }
+
     </script>
+    <body> This is body.
+        <input type="button" value="JS调用java" onclick="javascript:jsCallNative(1234)"/>
+    </body>
 
 </head>
 

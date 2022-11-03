@@ -3,12 +3,16 @@ package koal.glide_demo;
 import android.app.AlertDialog;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -35,11 +39,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class WebViewActivity extends AppCompatActivity {
 
+    public static final String TAG = "js";
+    private TextView mContentTv;
+    private Handler mHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
         WebView webView = findViewById(R.id.webview);
+        mContentTv = findViewById(R.id.content_tv);
+        mHandler = new Handler(Looper.getMainLooper());
 
         // 先载入JS代码
         // 格式规定为:file:///android_asset/文件名.html
@@ -48,6 +58,17 @@ public class WebViewActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(true);
         }
+
+        /**
+         * 1. “JS 调用 Java”
+         * 原生通过向JS注入方法,可以添加多个
+         *
+         * a. 通过 WebView.addJavascriptInterface() 进行对象映射
+         * b. 通过 WebViewClient.shouldOverrideUrlLoading()方法回调拦截 url
+         * c. 通过 WebChromeClient 的onJsAlert()、onJsConfirm()、onJsPrompt()方法回调拦截JS对话框
+         */
+        webView.addJavascriptInterface(new DefaultJSInterface("12344", 111), "sapphireWebViewBridge");
+        webView.addJavascriptInterface(new DefaultJSInterfaceEx(), "sapphireWebViewBridgeEx");
 
         WebSettings webSettings = webView.getSettings();
         // 设置与Js交互的权限
@@ -58,16 +79,19 @@ public class WebViewActivity extends AppCompatActivity {
         Button button = findViewById(R.id.call_js_btn);
         button.setOnClickListener(v ->
                 webView.post(()->{
+                    /**
+                     * 2. “Java 调用 JS”
+                     */
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                         // 不能少了"()"!!
-                        // 方法一：调用javascript的callJS()方法
+                        // 方法一：调用javascript的callJS()方法,拿不到返回值，刷新webview导致效率低
                         webView.loadUrl("javascript:callJS()");
                     } else {
                         //此处为 js 返回的结果
-                        // 方法二：该方法比第一种方法效率更高、使用更简洁。
+                        // 方法二：可以拿返回值；不刷新webview，效率高；
                         // 因为该方法的执行不会使页面刷新，而第一种方法（loadUrl ）的执行则会
                         webView.evaluateJavascript("javascript:callJS()", value -> {
-                            Log.d("js", "evaluateJavascript onReceiveValue = [" + value + "]");
+                            Log.d(TAG, "evaluateJavascript onReceiveValue = [" + value + "]");
                         });
                     }
                 })
@@ -89,5 +113,32 @@ public class WebViewActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private class DefaultJSInterfaceEx {
+        public DefaultJSInterfaceEx() {
+        }
+
+        @JavascriptInterface
+        public void sendEx(String message) {
+            Log.d(TAG, "sendEx() called with: message = [" + message + "]");
+            mHandler.post(()->{mContentTv.setText(message);});
+        }
+    }
+
+    private class DefaultJSInterface {
+//        private SapphireJsBridgeIdentifier bridgeIdentifier;
+        public DefaultJSInterface(String miniAppId, int miniAppType) {
+//            bridgeIdentifier = new SapphireJsBridgeIdentifier(miniAppId, 0);
+        }
+
+        @JavascriptInterface
+        public void send(String message) {
+            Log.d(TAG, "send() called with: message = [" + message + "]");
+            mHandler.post(()->{mContentTv.setText(message);});
+//            mHandler.post(()
+//                    -> SapphireBridgeHandler.INSTANCE.processWebViewMessage(
+//                    message, bridgeIdentifier));
+        }
     }
 }
