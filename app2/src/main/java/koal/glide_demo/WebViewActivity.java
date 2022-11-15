@@ -1,16 +1,24 @@
 package koal.glide_demo;
 
 import android.app.AlertDialog;
+import android.graphics.Bitmap;
+import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -39,7 +47,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class WebViewActivity extends AppCompatActivity {
 
-    public static final String TAG = "js";
+    public static final String TAG = WebViewActivity.class.getSimpleName();
     private TextView mContentTv;
     private Handler mHandler;
 
@@ -111,6 +119,47 @@ public class WebViewActivity extends AppCompatActivity {
                 b.setCancelable(false);
                 b.create().show();
                 return true;
+            }
+
+            @Override
+            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                Log.d(TAG, "onConsoleMessage: " + consoleMessage.messageLevel()
+                        + " " + consoleMessage.message()
+                        + " " + consoleMessage.sourceId()
+                        + " " + consoleMessage.lineNumber());
+                return super.onConsoleMessage(consoleMessage);
+            }
+        });
+
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                Log.d(TAG, "onPageStarted() called with: view = [" + view + "], url = [" + url + "], favicon = [" + favicon + "]");
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                Log.d(TAG, "onPageFinished() called with: view = [" + view + "], url = [" + url + "]");
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+                Log.d(TAG, "onReceivedError() called with: view = [" + view + "], request = [" + request + "], error = [" + error + "]");
+            }
+
+            @Override
+            public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+                super.onReceivedHttpError(view, request, errorResponse);
+                Log.d(TAG, "onReceivedHttpError() called with: view = [" + view + "], request = [" + request + "], errorResponse = [" + errorResponse + "]");
+            }
+
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                super.onReceivedSslError(view, handler, error);
+                Log.d(TAG, "onReceivedSslError() called with: view = [" + view + "], handler = [" + handler + "], error = [" + error + "]");
             }
         });
     }
