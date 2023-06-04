@@ -101,9 +101,13 @@ public class WebViewActivity extends AppCompatActivity {
                     } else {
                         //此处为 js 返回的结果
                         // 方法二：可以拿返回值；不刷新webview，效率高；
-                        // 因为该方法的执行不会使页面刷新，而第一种方法（loadUrl ）的执行则会
-                        webView.evaluateJavascript("javascript:callJS()", value -> {
-                            Log.d(TAG, "evaluateJavascript onReceiveValue = [" + value + "]");
+                        // 因为该方法的执行不会使页面刷新，而第一（种方法loadUrl ）的执行则会
+                        webView.evaluateJavascript("javascript:callJS('我来自Java')", value -> {
+                            mHandler.post(() -> mContentTv.setText(value));
+                            Log.d(TAG, "evaluateJavascript, callJS, onReceiveValue = [" + value + "]");
+                        });
+                        webView.evaluateJavascript("javascript:getPageText()", value -> {
+                            Log.d(TAG, "evaluateJavascript, callJS, getPageText = [" + value + "]");
                         });
                     }
                 })

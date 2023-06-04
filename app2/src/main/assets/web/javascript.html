@@ -4,17 +4,21 @@
     <meta charset="utf-8">
     <title>Carson_Ho</title>
 
-    <!--    // JS代码-->
-    <!-- Android需要调用的方法-->
-    <script>
-       function callJS() {
+    <!-- 在 HTML 文档中引入外部JavaScript 代码脚本文件   -->
+    <script type="text/javascript" src="main.js"></script>
+    <!-- 现代浏览器默认 <script> 标签的脚本类型为 JavaScript，因此可以省略 type 属性；如果考虑到兼容早期版本浏览器，则需要设置 type 属性。   -->
+    <script type="text/javascript">
+       var s = '我来自Js方法'
+       function callJS(param) {
           console.log("callJs called");
-          console.debug("This is console debug message.");
-          console.log("This is console log message.");
-          console.info("This is console info message.");
-          console.warn("This is console warn message.");
-          console.error("This is console error message.");
-          alert("Android调用了JS的callJS方法");
+<!--          console.debug("This is console debug message.");-->
+<!--          console.log("This is console log message.");-->
+<!--          console.info("This is console info message.");-->
+<!--          console.warn("This is console warn message.");-->
+<!--          console.error("This is console error message.");-->
+<!--          alert("Android调用了JS的callJS方法");-->
+          document.getElementById("textshow").innerHTML = (param);
+          return s;
        }
 
        // “JS 调用 Java”
@@ -27,8 +31,11 @@
        }
 
     </script>
+    <!--    // JS代码-->
+    <!-- Android需要调用的方法-->
     <body> This is body.
         <input type="button" value="JS调用java" onclick="javascript:jsCallNative(1234)"/>
+        <h3 id="textshow">调用结果</h3>
     </body>
 
 </head>
