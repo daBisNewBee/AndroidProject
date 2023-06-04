@@ -1,6 +1,8 @@
 package koal.glide_demo;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Build;
@@ -58,6 +60,8 @@ public class WebViewActivity extends AppCompatActivity {
         WebView webView = findViewById(R.id.webview);
         mContentTv = findViewById(R.id.content_tv);
         mHandler = new Handler(Looper.getMainLooper());
+
+        printMemory();
 
         // 先载入JS代码
         // 格式规定为:file:///android_asset/文件名.html
@@ -162,6 +166,26 @@ public class WebViewActivity extends AppCompatActivity {
                 Log.d(TAG, "onReceivedSslError() called with: view = [" + view + "], handler = [" + handler + "], error = [" + error + "]");
             }
         });
+    }
+
+    private void printMemory() {
+        Runtime runtime = Runtime.getRuntime();
+        long maxMemory = runtime.maxMemory();
+        long freeMemory = runtime.freeMemory();
+        long totalMemory = runtime.totalMemory();
+        Log.d("memory", "maxMemory = " + maxMemory + " freeMemory = " + freeMemory + " totalMemory = " + totalMemory);
+        // large Heap: maxMemory = 536870912 freeMemory = 531623104 totalMemory = 536870912
+        // no large:   maxMemory = 268435456 freeMemory = 263188024 totalMemory = 268435456
+        /**
+         * [dalvik.vm.heapgrowthlimit]: [256m]
+         * [dalvik.vm.heapmaxfree]: [8m]
+         * [dalvik.vm.heapminfree]: [512k]
+         * [dalvik.vm.heapsize]: [512m]
+         * [dalvik.vm.heapstartsize]: [8m]
+         * [dalvik.vm.heaptargetutilization]: [0.75]
+         */
+        ActivityManager am =(ActivityManager)getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        Log.d("todo", "getMemoryClass: " + am.getMemoryClass() + " am.getLargeMemoryClass() = " + am.getLargeMemoryClass());
     }
 
     private class DefaultJSInterfaceEx {
